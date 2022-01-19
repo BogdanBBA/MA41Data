@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MA41Geodaten": {
+      "commandName": "Project",
+      "commandLineArgs": "download unpack"
+    }
+  }
+}
