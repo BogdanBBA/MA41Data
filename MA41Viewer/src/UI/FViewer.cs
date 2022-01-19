@@ -1,6 +1,8 @@
-﻿using MA41Viewer.Data;
+﻿using MA41.Commons;
+using MA41Viewer.Data;
 using MA41Viewer.UI.Controls;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,11 +11,19 @@ namespace MA41Viewer.UI
 {
 	public partial class FViewer : Form
 	{
-		//private readonly FStartup fStartup;
-
-		public FViewer(/*FStartup fStartup*/)
+		protected static readonly List<Tuple<uint, float, float>> DEFAULT_LOCATIONS = new() // order as per UI // X, Y, Zoom
 		{
-			//this.fStartup = fStartup;
+			new(16, 3750, -12250),
+			new(9, 3000, -11111),
+			new(6, 3350, -8500),
+			new(2, 2390, -9160),
+			new(2, 6460, -19570),
+			new(7, -3400, -9250),
+			new(7, 10400, -16100)
+		};
+
+		public FViewer()
+		{
 			InitializeComponent();
 		}
 
@@ -30,7 +40,10 @@ namespace MA41Viewer.UI
 
 			InitializeMyComponents();
 			_MapViewer.InitializeGeoModel(GeoData.GeoModel, zoomLevel => ZoomLevelTrB.Value = (int)zoomLevel);
-			ZoomLevelTrB.Maximum = MapViewer.MapSettings.ZOOMS.Length - 1;
+			_MapViewer.Sett.LoadFromFile(Paths.SETTINGS_FILE);
+
+			(YearFLP.Controls.Find($"year{_MapViewer.Sett.Year}", false)[0] as RadioButton).Checked = true;
+			ZoomLevelTrB.Maximum = MapSettings.ZOOMS.Length - 1;
 			ZoomLevelTrB.Value = (int)_MapViewer.Sett.ZoomLevel;
 		}
 
@@ -64,18 +77,17 @@ namespace MA41Viewer.UI
 				uint year = GeoData.GeoModel.Years[iYear];
 				var rb = new RadioButton()
 				{
+					Name = $"year{year}",
 					Text = $"{year}",
 					Cursor = Cursors.Hand,
 					Font = new Font("Segoe UI", 12, FontStyle.Bold),
 					Tag = year,
 					AutoSize = true,
-					Checked = iYear == GeoData.GeoModel.Years.Length - 1
+					Checked = false // iYear == GeoData.GeoModel.Years.Length - 1
 				};
 				rb.Click += yearRB_ClickHandler;
 				YearFLP.Controls.Add(rb);
 			}
-
-			yearRB_ClickHandler(YearFLP.Controls[0], null);
 		}
 
 		private void DebugModeChB_CheckedChanged(object sender, EventArgs e)
@@ -88,7 +100,7 @@ namespace MA41Viewer.UI
 		private void ZoomLevelTrB_Scroll(object sender, EventArgs e)
 		{
 			_MapViewer.Sett.ZoomLevel = (uint)ZoomLevelTrB.Value;
-			_MapViewer.Sett.CenterMap(_MapViewer.Sett.CurrentMapCoordCenter);
+			_MapViewer.Sett.CenterMap(_MapViewer.Sett.GetCurrentMapCoordCenter());
 			_MapViewer.Invalidate();
 		}
 
@@ -109,8 +121,62 @@ namespace MA41Viewer.UI
 
 		protected override void OnClosed(EventArgs e)
 		{
-			//fStartup.Show();
+			_MapViewer.Sett.SaveToFile(Paths.SETTINGS_FILE);
 			base.OnClosed(e);
 		}
+
+		#region Main menu events
+		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
+		private void location_ToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var toolstripItemTag = int.Parse((sender as ToolStripMenuItem).Tag as string);
+			var location = DEFAULT_LOCATIONS[toolstripItemTag];
+			_MapViewer.CenterAndZoom(location.Item1, location.Item2, location.Item3);
+		}
+
+		private void debugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void lowToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void mediumToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void highToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void mouseCursorInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void drawingQualityInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+
+		private void memoryAllocationInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("not yet implemented");
+		}
+		#endregion
 	}
 }

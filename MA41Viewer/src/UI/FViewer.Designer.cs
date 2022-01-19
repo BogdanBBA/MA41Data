@@ -37,6 +37,8 @@ namespace MA41Viewer.UI
 			this.ZoomHeaderL = new System.Windows.Forms.Label();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.locationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.viennaOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.innereStadtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,8 +60,6 @@ namespace MA41Viewer.UI
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.ZoomLevelTrB)).BeginInit();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -86,7 +86,7 @@ namespace MA41Viewer.UI
 			this.YearHeaderL.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.YearHeaderL.Location = new System.Drawing.Point(12, 27);
 			this.YearHeaderL.Name = "YearHeaderL";
-			this.YearHeaderL.Size = new System.Drawing.Size(67, 37);
+			this.YearHeaderL.Size = new System.Drawing.Size(51, 30);
 			this.YearHeaderL.TabIndex = 2;
 			this.YearHeaderL.Text = "Year";
 			// 
@@ -98,7 +98,7 @@ namespace MA41Viewer.UI
 			this.DebugModeChB.Cursor = System.Windows.Forms.Cursors.Help;
 			this.DebugModeChB.Location = new System.Drawing.Point(358, 436);
 			this.DebugModeChB.Name = "DebugModeChB";
-			this.DebugModeChB.Size = new System.Drawing.Size(128, 24);
+			this.DebugModeChB.Size = new System.Drawing.Size(102, 19);
 			this.DebugModeChB.TabIndex = 3;
 			this.DebugModeChB.Text = "DEBUG_MODE";
 			this.DebugModeChB.UseVisualStyleBackColor = true;
@@ -113,7 +113,7 @@ namespace MA41Viewer.UI
 			this.ZoomLevelTrB.Orientation = System.Windows.Forms.Orientation.Vertical;
 			this.ZoomLevelTrB.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.ZoomLevelTrB.RightToLeftLayout = true;
-			this.ZoomLevelTrB.Size = new System.Drawing.Size(56, 137);
+			this.ZoomLevelTrB.Size = new System.Drawing.Size(45, 137);
 			this.ZoomLevelTrB.TabIndex = 4;
 			this.ZoomLevelTrB.Scroll += new System.EventHandler(this.ZoomLevelTrB_Scroll);
 			// 
@@ -123,7 +123,7 @@ namespace MA41Viewer.UI
 			this.ZoomHeaderL.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.ZoomHeaderL.Location = new System.Drawing.Point(12, 380);
 			this.ZoomHeaderL.Name = "ZoomHeaderL";
-			this.ZoomHeaderL.Size = new System.Drawing.Size(85, 37);
+			this.ZoomHeaderL.Size = new System.Drawing.Size(67, 30);
 			this.ZoomHeaderL.TabIndex = 5;
 			this.ZoomHeaderL.Text = "Zoom";
 			// 
@@ -137,7 +137,7 @@ namespace MA41Viewer.UI
             this.exportToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1231, 28);
+			this.menuStrip1.Size = new System.Drawing.Size(1231, 24);
 			this.menuStrip1.TabIndex = 6;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -147,8 +147,22 @@ namespace MA41Viewer.UI
             this.aboutToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.appToolStripMenuItem.Name = "appToolStripMenuItem";
-			this.appToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
+			this.appToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
 			this.appToolStripMenuItem.Text = "App";
+			// 
+			// aboutToolStripMenuItem
+			// 
+			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.aboutToolStripMenuItem.Text = "About";
+			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+			// 
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.exitToolStripMenuItem.Text = "Exit";
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
 			// locationsToolStripMenuItem
 			// 
@@ -161,50 +175,64 @@ namespace MA41Viewer.UI
             this.hietzingPenzingToolStripMenuItem,
             this.iKEANordToolStripMenuItem});
 			this.locationsToolStripMenuItem.Name = "locationsToolStripMenuItem";
-			this.locationsToolStripMenuItem.Size = new System.Drawing.Size(86, 24);
+			this.locationsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
 			this.locationsToolStripMenuItem.Text = "Locations";
 			// 
 			// viennaOverviewToolStripMenuItem
 			// 
 			this.viennaOverviewToolStripMenuItem.Name = "viennaOverviewToolStripMenuItem";
-			this.viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.viennaOverviewToolStripMenuItem.Tag = "0";
 			this.viennaOverviewToolStripMenuItem.Text = "Vienna overview";
+			this.viennaOverviewToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// innereStadtToolStripMenuItem
 			// 
 			this.innereStadtToolStripMenuItem.Name = "innereStadtToolStripMenuItem";
-			this.innereStadtToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.innereStadtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.innereStadtToolStripMenuItem.Tag = "1";
 			this.innereStadtToolStripMenuItem.Text = "Innere Stadt";
+			this.innereStadtToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// hauptbahnhofToolStripMenuItem
 			// 
 			this.hauptbahnhofToolStripMenuItem.Name = "hauptbahnhofToolStripMenuItem";
-			this.hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.hauptbahnhofToolStripMenuItem.Tag = "2";
 			this.hauptbahnhofToolStripMenuItem.Text = "Hauptbahnhof";
+			this.hauptbahnhofToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// lambrechtgasseToolStripMenuItem
 			// 
 			this.lambrechtgasseToolStripMenuItem.Name = "lambrechtgasseToolStripMenuItem";
-			this.lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.lambrechtgasseToolStripMenuItem.Tag = "3";
 			this.lambrechtgasseToolStripMenuItem.Text = "Lambrechtgasse";
+			this.lambrechtgasseToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// rittingergasseToolStripMenuItem
 			// 
 			this.rittingergasseToolStripMenuItem.Name = "rittingergasseToolStripMenuItem";
-			this.rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.rittingergasseToolStripMenuItem.Tag = "4";
 			this.rittingergasseToolStripMenuItem.Text = "Rittingergasse";
+			this.rittingergasseToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// hietzingPenzingToolStripMenuItem
 			// 
 			this.hietzingPenzingToolStripMenuItem.Name = "hietzingPenzingToolStripMenuItem";
-			this.hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.hietzingPenzingToolStripMenuItem.Tag = "5";
 			this.hietzingPenzingToolStripMenuItem.Text = "Hietzing/Penzing";
+			this.hietzingPenzingToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// iKEANordToolStripMenuItem
 			// 
 			this.iKEANordToolStripMenuItem.Name = "iKEANordToolStripMenuItem";
-			this.iKEANordToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+			this.iKEANordToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.iKEANordToolStripMenuItem.Tag = "6";
 			this.iKEANordToolStripMenuItem.Text = "IKEA Nord";
+			this.iKEANordToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
 			// 
 			// debuggingToolStripMenuItem
 			// 
@@ -213,14 +241,15 @@ namespace MA41Viewer.UI
             this.drawingQualityToolStripMenuItem,
             this.informationShownToolStripMenuItem});
 			this.debuggingToolStripMenuItem.Name = "debuggingToolStripMenuItem";
-			this.debuggingToolStripMenuItem.Size = new System.Drawing.Size(98, 24);
+			this.debuggingToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
 			this.debuggingToolStripMenuItem.Text = "Debugging";
 			// 
 			// debugONOFFToolStripMenuItem
 			// 
 			this.debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
+			this.debugONOFFToolStripMenuItem.Click += new System.EventHandler(this.debugONOFFToolStripMenuItem_Click);
 			// 
 			// drawingQualityToolStripMenuItem
 			// 
@@ -229,26 +258,29 @@ namespace MA41Viewer.UI
             this.mediumToolStripMenuItem,
             this.highToolStripMenuItem});
 			this.drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
 			// 
 			this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
-			this.lowToolStripMenuItem.Size = new System.Drawing.Size(147, 26);
+			this.lowToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.lowToolStripMenuItem.Text = "Low";
+			this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
 			// 
 			// mediumToolStripMenuItem
 			// 
 			this.mediumToolStripMenuItem.Name = "mediumToolStripMenuItem";
-			this.mediumToolStripMenuItem.Size = new System.Drawing.Size(147, 26);
+			this.mediumToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.mediumToolStripMenuItem.Text = "Medium";
+			this.mediumToolStripMenuItem.Click += new System.EventHandler(this.mediumToolStripMenuItem_Click);
 			// 
 			// highToolStripMenuItem
 			// 
 			this.highToolStripMenuItem.Name = "highToolStripMenuItem";
-			this.highToolStripMenuItem.Size = new System.Drawing.Size(147, 26);
+			this.highToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.highToolStripMenuItem.Text = "High";
+			this.highToolStripMenuItem.Click += new System.EventHandler(this.highToolStripMenuItem_Click);
 			// 
 			// informationShownToolStripMenuItem
 			// 
@@ -257,26 +289,29 @@ namespace MA41Viewer.UI
             this.drawingQualityInfoToolStripMenuItem,
             this.memoryAllocationInfoToolStripMenuItem});
 			this.informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
 			// 
 			this.mouseCursorInfoToolStripMenuItem.Name = "mouseCursorInfoToolStripMenuItem";
-			this.mouseCursorInfoToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+			this.mouseCursorInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.mouseCursorInfoToolStripMenuItem.Text = "Mouse cursor info";
+			this.mouseCursorInfoToolStripMenuItem.Click += new System.EventHandler(this.mouseCursorInfoToolStripMenuItem_Click);
 			// 
 			// drawingQualityInfoToolStripMenuItem
 			// 
 			this.drawingQualityInfoToolStripMenuItem.Name = "drawingQualityInfoToolStripMenuItem";
-			this.drawingQualityInfoToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+			this.drawingQualityInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.drawingQualityInfoToolStripMenuItem.Text = "Drawing quality info";
+			this.drawingQualityInfoToolStripMenuItem.Click += new System.EventHandler(this.drawingQualityInfoToolStripMenuItem_Click);
 			// 
 			// memoryAllocationInfoToolStripMenuItem
 			// 
 			this.memoryAllocationInfoToolStripMenuItem.Name = "memoryAllocationInfoToolStripMenuItem";
-			this.memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(247, 26);
+			this.memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.memoryAllocationInfoToolStripMenuItem.Text = "Memory allocation info";
+			this.memoryAllocationInfoToolStripMenuItem.Click += new System.EventHandler(this.memoryAllocationInfoToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
@@ -284,32 +319,20 @@ namespace MA41Viewer.UI
             this.currentViewToolStripMenuItem,
             this.currentViewallYearsToolStripMenuItem});
 			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(66, 24);
+			this.exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
 			this.exportToolStripMenuItem.Text = "Export";
 			// 
 			// currentViewToolStripMenuItem
 			// 
 			this.currentViewToolStripMenuItem.Name = "currentViewToolStripMenuItem";
-			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.currentViewToolStripMenuItem.Text = "Current view";
 			// 
 			// currentViewallYearsToolStripMenuItem
 			// 
 			this.currentViewallYearsToolStripMenuItem.Name = "currentViewallYearsToolStripMenuItem";
-			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.currentViewallYearsToolStripMenuItem.Text = "Current view (all years)";
-			// 
-			// aboutToolStripMenuItem
-			// 
-			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-			this.aboutToolStripMenuItem.Text = "About";
-			// 
-			// exitToolStripMenuItem
-			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-			this.exitToolStripMenuItem.Text = "Exit";
 			// 
 			// FViewer
 			// 

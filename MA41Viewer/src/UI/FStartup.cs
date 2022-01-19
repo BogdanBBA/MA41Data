@@ -27,8 +27,7 @@ namespace MA41Viewer.UI
 		{
 			Hide();
 			new FViewer().ShowDialog(this);
-			Show();
-			Close(); // <-- temporary
+			Show(); /* -> */ Close(); // <-- temporary
 		}
 
 		private void ExitB_Click(object sender, EventArgs e)

@@ -10,6 +10,7 @@ namespace MA41.Commons
 		public static string IMAGES_FOLDER { get; private set; }
 		public static string THUMBNAILS_FOLDER { get; private set; }
 		public static string IMAGE_SIZE_DICTIONARY_FILE { get; private set; }
+		public static string SETTINGS_FILE { get; private set; }
 
 		private static string GetParentFolder(string name)
 		{
@@ -41,6 +42,7 @@ namespace MA41.Commons
 			}
 
 			IMAGE_SIZE_DICTIONARY_FILE = Path.Combine(ROOT_FOLDER, dataFolder, "image-sizes.txt");
+			SETTINGS_FILE = Path.Combine(ROOT_FOLDER, dataFolder, "settings.txt");
 		}
 	}
 }
