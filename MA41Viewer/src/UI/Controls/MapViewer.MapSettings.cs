@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,80 @@ namespace MA41Viewer.UI.Controls
 {
 	public class MapSettings
 	{
+		// inner classes
+
+		public class QualitySettings
+		{
+			public static readonly QualitySettings LOW = new(CompositingMode.SourceOver, CompositingQuality.HighSpeed, InterpolationMode.Low, PixelOffsetMode.HighSpeed, SmoothingMode.HighSpeed, TextRenderingHint.SingleBitPerPixel);
+			public static readonly QualitySettings MEDIUM = new(CompositingMode.SourceOver, CompositingQuality.GammaCorrected, InterpolationMode.NearestNeighbor, PixelOffsetMode.HighQuality, SmoothingMode.HighQuality, TextRenderingHint.AntiAlias);
+			public static readonly QualitySettings HIGH = new(CompositingMode.SourceOver, CompositingQuality.HighQuality, InterpolationMode.HighQualityBicubic, PixelOffsetMode.Half, SmoothingMode.AntiAlias, TextRenderingHint.ClearTypeGridFit);
+
+			public CompositingMode CompositingModeValue { get; private set; }
+			public CompositingQuality CompositingQualityValue { get; private set; }
+			public InterpolationMode InterpolationModeValue { get; private set; }
+			public PixelOffsetMode PixelOffsetModeValue { get; private set; }
+			public SmoothingMode SmoothingModeValue { get; private set; }
+			public TextRenderingHint TextRenderingHintValue { get; private set; }
+
+			public QualitySettings(int cmv, int cqv, int imv, int pomv, int smv, int trhv)
+				: this((CompositingMode)cmv, (CompositingQuality)cqv, (InterpolationMode)imv, (PixelOffsetMode)pomv, (SmoothingMode)smv, (TextRenderingHint)trhv) { }
+
+			public QualitySettings(CompositingMode compositingModeValue, CompositingQuality compositingQualityValue, InterpolationMode interpolationModeValue, PixelOffsetMode pixelOffsetModeValue, SmoothingMode smoothingModeValue, TextRenderingHint textRenderingHintValue)
+			{
+				CompositingModeValue = compositingModeValue;
+				CompositingQualityValue = compositingQualityValue;
+				InterpolationModeValue = interpolationModeValue;
+				PixelOffsetModeValue = pixelOffsetModeValue;
+				SmoothingModeValue = smoothingModeValue;
+				TextRenderingHintValue = textRenderingHintValue;
+			}
+
+			public void SetFrom(QualitySettings settings)
+			{
+				CompositingModeValue = settings.CompositingModeValue;
+				CompositingQualityValue = settings.CompositingQualityValue;
+				InterpolationModeValue = settings.InterpolationModeValue;
+				PixelOffsetModeValue = settings.PixelOffsetModeValue;
+				SmoothingModeValue = settings.SmoothingModeValue;
+				TextRenderingHintValue = settings.TextRenderingHintValue;
+			}
+
+			public override string ToString()
+				=> $"{(int)CompositingModeValue},{(int)CompositingQualityValue},{(int)InterpolationModeValue},{(int)PixelOffsetModeValue},{(int)SmoothingModeValue},{(int)TextRenderingHintValue}";
+		}
+
+		public class DebugInfoShown
+		{
+			public bool MouseCursorInfo { get; set; } = true;
+			public bool DrawingQualityInfo { get; set; } = true;
+			public bool MemoryAllocationInfo { get; set; } = true;
+
+			public DebugInfoShown()
+				: this(true, true, true) { }
+
+			public DebugInfoShown(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo)
+			{
+				MouseCursorInfo = mouseCursorInfo;
+				DrawingQualityInfo = drawingQualityInfo;
+				MemoryAllocationInfo = memoryAllocationInfo;
+			}
+
+			public void SetFrom(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo)
+			{
+				MouseCursorInfo = mouseCursorInfo;
+				DrawingQualityInfo = drawingQualityInfo;
+				MemoryAllocationInfo = memoryAllocationInfo;
+			}
+
+			public override string ToString()
+				=> $"{MouseCursorInfo},{DrawingQualityInfo},{MemoryAllocationInfo}";
+		}
+
+		protected class ObjectState
+		{
+			public uint Year { get; set; }
+		}
+
 		// static members and methods
 
 		public static readonly float[] ZOOMS = { 0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f };
@@ -30,6 +106,8 @@ namespace MA41Viewer.UI.Controls
 
 		// instance members
 
+		public QualitySettings CurrentQualitySettings { get; private set; } = QualitySettings.HIGH;
+		public DebugInfoShown CurrentDebugInfoShown { get; private set; } = new DebugInfoShown();
 		public SizeF MapviewSizePx { get; set; } = SizeF.Empty;
 		public PointF MouseLocationPx { get; set; } = PointF.Empty;
 		public RectangleF CurrentMapCoordBounds { get; set; } = RectangleF.Empty;
@@ -37,6 +115,7 @@ namespace MA41Viewer.UI.Controls
 		public PointF LastMouseDown_MapviewLocationPx { get; set; } = PointF.Empty;
 		public uint? Year { get; set; } = null;
 		public DateTime LastDrawingTime { get; set; } = DateTime.Now;
+		protected ObjectState BackupState { get; private set; } = null;
 
 		/// <summary>Gets the map coordinate bounds, centered on the given map coordinate. Takes the current zoom level / ratio and mapview size into account.</summary>
 		/// <param name="centerCoordinate">the map coordinate to the center the map on</param>
@@ -129,6 +208,11 @@ namespace MA41Viewer.UI.Controls
 			ZoomLevel = uint.Parse(lines[1]);
 			float[] parts = lines[2].Split(',').Select(part => float.Parse(part)).ToArray();
 			CenterMap(new PointF(parts[0], parts[1]));
+			// default drawing quality setting should be HIGH
+			//int[] qs = lines[3].Split(',').Select(part => int.Parse(part)).ToArray();
+			//CurrentQualitySettings = new QualitySettings(qs[0], qs[1], qs[2], qs[3], qs[4], qs[5]);
+			bool[] vals = lines[3].Split(',').Select(part => bool.Parse(part)).ToArray();
+			CurrentDebugInfoShown.SetFrom(vals[0], vals[1], vals[2]);
 		}
 
 		public void SaveToFile(string path)
@@ -138,7 +222,24 @@ namespace MA41Viewer.UI.Controls
 				.AppendLine($"{Year}")
 				.AppendLine($"{ZoomLevel}")
 				.AppendLine($"{mapCenter.X:F},{mapCenter.Y:F}")
+				// default drawing quality setting should be HIGH
+				//.AppendLine(CurrentQualitySettings.ToString())
+				.AppendLine(CurrentDebugInfoShown.ToString())
 				.ToString());
+		}
+
+		public void SaveState()
+		{
+			BackupState = new ObjectState()
+			{
+				Year = Year.Value
+			};
+		}
+
+		public void RestoreState()
+		{
+			Year = BackupState.Year;
+			BackupState = null;
 		}
 	}
 }

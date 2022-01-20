@@ -3,8 +3,8 @@ using MA41Viewer.Data;
 using MA41Viewer.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace MA41Viewer.UI
@@ -38,13 +38,9 @@ namespace MA41Viewer.UI
 				return;
 			}
 
-			InitializeMyComponents();
 			_MapViewer.InitializeGeoModel(GeoData.GeoModel, zoomLevel => ZoomLevelTrB.Value = (int)zoomLevel);
 			_MapViewer.Sett.LoadFromFile(Paths.SETTINGS_FILE);
-
-			(YearFLP.Controls.Find($"year{_MapViewer.Sett.Year}", false)[0] as RadioButton).Checked = true;
-			ZoomLevelTrB.Maximum = MapSettings.ZOOMS.Length - 1;
-			ZoomLevelTrB.Value = (int)_MapViewer.Sett.ZoomLevel;
+			InitializeMyComponents();
 		}
 
 		private void FViewer_Resize(object sender, EventArgs e)
@@ -54,17 +50,14 @@ namespace MA41Viewer.UI
 			YearHeaderL.Location = new Point(10, menuStrip1.Bottom + 10);
 			YearFLP.Location = new Point(10, YearHeaderL.Bottom + 10);
 			ZoomHeaderL.Location = new Point(10, YearFLP.Bottom + 10);
-			DebugModeChB.Location = new Point(YearHeaderL.Left, _MapViewer.Bottom - DebugModeChB.Height);
-
-			ZoomLevelTrB.Bounds = new Rectangle(YearHeaderL.Left + YearFLP.Width / 2 - ZoomLevelTrB.Width / 2 - 10,
-				ZoomHeaderL.Bottom + 3, ZoomLevelTrB.Width, Math.Min(250, DebugModeChB.Top - ZoomHeaderL.Bottom - 2 * 3));
+			ZoomLevelTrB.Bounds = new Rectangle(YearHeaderL.Left + YearFLP.Width / 2 - ZoomLevelTrB.Width / 2 - 10, ZoomHeaderL.Bottom + 3, ZoomLevelTrB.Width, _MapViewer.Bottom - ZoomHeaderL.Bottom);
 
 			_MapViewer.Invalidate();
 		}
 
 		private void InitializeMyComponents()
 		{
-			DebugModeChB.Checked = _MapViewer.DebugMode;
+			debugONOFFToolStripMenuItem.Checked = _MapViewer.DebugMode;
 
 			void yearRB_ClickHandler(object sender, EventArgs e)
 			{
@@ -83,18 +76,21 @@ namespace MA41Viewer.UI
 					Font = new Font("Segoe UI", 12, FontStyle.Bold),
 					Tag = year,
 					AutoSize = true,
-					Checked = false // iYear == GeoData.GeoModel.Years.Length - 1
+					Checked = year == _MapViewer.Sett.Year
 				};
 				rb.Click += yearRB_ClickHandler;
 				YearFLP.Controls.Add(rb);
 			}
-		}
 
-		private void DebugModeChB_CheckedChanged(object sender, EventArgs e)
-		{
-			(sender as RadioButton)?.Invalidate();
-			_MapViewer.DebugMode = DebugModeChB.Checked;
-			_MapViewer.Invalidate();
+			ZoomLevelTrB.Maximum = MapSettings.ZOOMS.Length - 1;
+			ZoomLevelTrB.Value = (int)_MapViewer.Sett.ZoomLevel;
+
+			// default drawing quality setting should be HIGH
+			setDrawingQualityToolstripItemChecked(highToolStripMenuItem);
+
+			mouseCursorInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo;
+			drawingQualityInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo;
+			memoryAllocationInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo;
 		}
 
 		private void ZoomLevelTrB_Scroll(object sender, EventArgs e)
@@ -108,15 +104,15 @@ namespace MA41Viewer.UI
 		{
 			return;
 
-			YearHeaderL.Text = e.KeyData.ToString();
-			if ((e.KeyData & Keys.N) == Keys.N)
-			{
-				var oldIndex = Enumerable.Range(0, YearFLP.Controls.Count).Where(index => (YearFLP.Controls[index] as RadioButton).Checked).First();
-				var newIndex = oldIndex + (((e.KeyData & Keys.Shift) == Keys.Shift) ? -1 : 1);
-				newIndex = newIndex < 0 ? YearFLP.Controls.Count - 1 : (newIndex >= YearFLP.Controls.Count ? 0 : newIndex);
-				//(YearFLP.Controls[oldIndex] as RadioButton).Checked = false;
-				DebugModeChB_CheckedChanged(YearFLP.Controls[newIndex], e);
-			}
+			//YearHeaderL.Text = e.KeyData.ToString();
+			//if ((e.KeyData & Keys.N) == Keys.N)
+			//{
+			//	var oldIndex = Enumerable.Range(0, YearFLP.Controls.Count).Where(index => (YearFLP.Controls[index] as RadioButton).Checked).First();
+			//	var newIndex = oldIndex + (((e.KeyData & Keys.Shift) == Keys.Shift) ? -1 : 1);
+			//	newIndex = newIndex < 0 ? YearFLP.Controls.Count - 1 : (newIndex >= YearFLP.Controls.Count ? 0 : newIndex);
+			//	//(YearFLP.Controls[oldIndex] as RadioButton).Checked = false;
+			//	DebugModeChB_CheckedChanged(YearFLP.Controls[newIndex], e);
+			//}
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -128,7 +124,12 @@ namespace MA41Viewer.UI
 		#region Main menu events
 		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			MessageBox.Show($"by BogdanBBA{Environment.NewLine}{Environment.NewLine}December 2021 - January 2022");
+		}
+
+		private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			System.Diagnostics.Process.Start("explorer.exe", Paths.ROOT_FOLDER);
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -145,37 +146,73 @@ namespace MA41Viewer.UI
 
 		private void debugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			debugONOFFToolStripMenuItem.Checked = !debugONOFFToolStripMenuItem.Checked;
+			_MapViewer.DebugMode = debugONOFFToolStripMenuItem.Checked;
+			_MapViewer.Invalidate();
+		}
+
+		private void setDrawingQualityToolstripItemChecked(ToolStripItem item)
+		{
+			foreach (var iItem in new[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem })
+			{
+				iItem.Checked = iItem.Equals(item);
+			}
 		}
 
 		private void lowToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.LOW);
+			_MapViewer.Invalidate();
 		}
 
 		private void mediumToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.MEDIUM);
+			_MapViewer.Invalidate();
 		}
 
 		private void highToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.HIGH);
+			_MapViewer.Invalidate();
 		}
 
 		private void mouseCursorInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			mouseCursorInfoToolStripMenuItem.Checked = !mouseCursorInfoToolStripMenuItem.Checked;
+			_MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo = mouseCursorInfoToolStripMenuItem.Checked;
+			_MapViewer.Invalidate();
 		}
 
 		private void drawingQualityInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			drawingQualityInfoToolStripMenuItem.Checked = !drawingQualityInfoToolStripMenuItem.Checked;
+			_MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo = drawingQualityInfoToolStripMenuItem.Checked;
+			_MapViewer.Invalidate();
 		}
 
 		private void memoryAllocationInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("not yet implemented");
+			memoryAllocationInfoToolStripMenuItem.Checked = !memoryAllocationInfoToolStripMenuItem.Checked;
+			_MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo = memoryAllocationInfoToolStripMenuItem.Checked;
+			_MapViewer.Invalidate();
+		}
+
+		private void currentViewToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
+			_MapViewer.SaveCurrentViewToFile(filename);
+			Process.Start("explorer.exe", $"/select, \"{filename}\"");
+		}
+
+		private void currentViewallYearsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
+			_MapViewer.SaveAllYearsToFile(filename);
+			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 		#endregion
 	}

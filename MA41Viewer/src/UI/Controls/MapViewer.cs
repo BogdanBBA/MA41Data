@@ -11,7 +11,7 @@ namespace MA41Viewer.UI.Controls
 		protected static readonly Brush BACKBRUSH = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
 		private readonly object _lock = new();
-		public bool DebugMode { get; set; } = true;
+		public bool DebugMode { get; set; } = false;
 		protected Action<uint> MouseZoomCallback { get; private set; }
 		protected GeoModel GeoModel { get; private set; }
 		public MapSettings Sett { get; protected set; }
@@ -94,5 +94,19 @@ namespace MA41Viewer.UI.Controls
 			Invalidate();
 		}
 		#endregion
+
+		public void SaveCurrentViewToFile(string filename)
+		{
+			var bmp = GenerateBitmap();
+			bmp.Save(filename);
+		}
+
+		public void SaveAllYearsToFile(string filename)
+		{
+			Sett.SaveState();
+			var bmp = GenerateAllYearsBitmap(GeoModel.Years);
+			bmp.Save(filename);
+			Sett.RestoreState();
+		}
 	}
 }

@@ -9,6 +9,7 @@ namespace MA41.Commons
 		public static string DOWNLOAD_FOLDER { get; private set; }
 		public static string IMAGES_FOLDER { get; private set; }
 		public static string THUMBNAILS_FOLDER { get; private set; }
+		public static string EXPORTS_FOLDER { get; private set; }
 		public static string IMAGE_SIZE_DICTIONARY_FILE { get; private set; }
 		public static string SETTINGS_FILE { get; private set; }
 
@@ -31,8 +32,9 @@ namespace MA41.Commons
 			DOWNLOAD_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "downloads");
 			IMAGES_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "unpacked");
 			THUMBNAILS_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "thumbnails");
+			EXPORTS_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "exports");
 
-			foreach (string folder in new[] { DOWNLOAD_FOLDER, IMAGES_FOLDER, THUMBNAILS_FOLDER })
+			foreach (string folder in new[] { DOWNLOAD_FOLDER, IMAGES_FOLDER, THUMBNAILS_FOLDER, EXPORTS_FOLDER })
 			{
 				if (!Directory.Exists(folder))
 				{
