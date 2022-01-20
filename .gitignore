@@ -6,6 +6,7 @@
 data/downloads/
 data/thumbnails/
 data/unpacked/
+data/exports/
 
 # User-specific files
 *.rsuser
