@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -57,31 +58,41 @@ namespace MA41Viewer.UI.Controls
 			public bool MouseCursorInfo { get; set; } = true;
 			public bool DrawingQualityInfo { get; set; } = true;
 			public bool MemoryAllocationInfo { get; set; } = true;
+			public bool DetailedTileInfo { get; set; } = true;
 
 			public DebugInfoShown()
-				: this(true, true, true) { }
+				: this(true, true, true, true) { }
 
-			public DebugInfoShown(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo)
+			public DebugInfoShown(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo, bool detailedTileInfo)
 			{
 				MouseCursorInfo = mouseCursorInfo;
 				DrawingQualityInfo = drawingQualityInfo;
 				MemoryAllocationInfo = memoryAllocationInfo;
+				DetailedTileInfo = detailedTileInfo;
 			}
 
-			public void SetFrom(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo)
+			public void SetFrom(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo, bool detailedTileInfo)
 			{
 				MouseCursorInfo = mouseCursorInfo;
 				DrawingQualityInfo = drawingQualityInfo;
 				MemoryAllocationInfo = memoryAllocationInfo;
+				DetailedTileInfo = detailedTileInfo;
 			}
 
 			public override string ToString()
-				=> $"{MouseCursorInfo},{DrawingQualityInfo},{MemoryAllocationInfo}";
+				=> $"{MouseCursorInfo},{DrawingQualityInfo},{MemoryAllocationInfo},{DetailedTileInfo}";
 		}
 
 		protected class ObjectState
 		{
 			public uint Year { get; set; }
+		}
+
+		public enum MapDrawingState
+		{
+			AtRest,
+			MouseMovement,
+			ZoomEvent
 		}
 
 		// static members and methods
@@ -108,9 +119,11 @@ namespace MA41Viewer.UI.Controls
 
 		public QualitySettings CurrentQualitySettings { get; private set; } = QualitySettings.HIGH;
 		public DebugInfoShown CurrentDebugInfoShown { get; private set; } = new DebugInfoShown();
+		public MapDrawingState DrawingState { get; set; } = MapDrawingState.AtRest;
 		public SizeF MapviewSizePx { get; set; } = SizeF.Empty;
 		public PointF MouseLocationPx { get; set; } = PointF.Empty;
 		public RectangleF CurrentMapCoordBounds { get; set; } = RectangleF.Empty;
+		public KeyValuePair<RectangleF, Bitmap>? LastFrame { get; set; } = null;
 		public uint ZoomLevel { get; set; } = 11;
 		public PointF LastMouseDown_MapviewLocationPx { get; set; } = PointF.Empty;
 		public uint? Year { get; set; } = null;
@@ -137,16 +150,28 @@ namespace MA41Viewer.UI.Controls
 
 		/// <summary>Modifies the current map coordiante bounds to allow for a relatively intuitive zooming experience - the map 'zooms in where the mouse is'. Should be called after the zoom level has been changed.</summary>
 		/// <param name="mouseMapviewLocationPx">the mapview location of the mouse</param>
-		public void ResetMapAfterZoom(PointF mouseMapviewLocationPx)
+		/// <param name="alsoUpdateLastFrameBounds">indicated whether the bounds of the last (saved) frame are to be updated to reflect the new map bounds after this zoom event</param>
+		public void ResetMapAfterZoom(PointF mouseMapviewLocationPx, bool alsoUpdateLastFrameBounds = true)
 		{
 			var centerPx = GetMapviewCenterPx();
 			var deltaToCenterPx = new SizeF(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
 			var zoomRatio = ZOOMS[ZoomLevel];
+			var oldMapBounds = CurrentMapCoordBounds;
 			var newMapBounds = GetMapCoordBounds(Translate_MapviewLocationPx_To_MapCoordinates(mouseMapviewLocationPx));
-			CurrentMapCoordBounds = new RectangleF(newMapBounds.Left - deltaToCenterPx.Width * zoomRatio,
+			CurrentMapCoordBounds = new RectangleF(
+				newMapBounds.Left - deltaToCenterPx.Width * zoomRatio,
 				newMapBounds.Top - deltaToCenterPx.Height * zoomRatio,
 				newMapBounds.Width,
 				newMapBounds.Height);
+			if (alsoUpdateLastFrameBounds && LastFrame.HasValue)
+			{
+				var bounds = new RectangleF(
+					newMapBounds.Left,
+					newMapBounds.Top,
+					(oldMapBounds.Width / newMapBounds.Width) * MapviewSizePx.Width,
+					(oldMapBounds.Height / newMapBounds.Height) * MapviewSizePx.Height);
+				//LastFrame = new KeyValuePair<RectangleF, Bitmap>(bounds, LastFrame.Value.Value);
+			}
 		}
 
 		/// <summary>Modifies the current map coordiante bounds to allow panning the map by mouse
@@ -212,7 +237,7 @@ namespace MA41Viewer.UI.Controls
 			//int[] qs = lines[3].Split(',').Select(part => int.Parse(part)).ToArray();
 			//CurrentQualitySettings = new QualitySettings(qs[0], qs[1], qs[2], qs[3], qs[4], qs[5]);
 			bool[] vals = lines[3].Split(',').Select(part => bool.Parse(part)).ToArray();
-			CurrentDebugInfoShown.SetFrom(vals[0], vals[1], vals[2]);
+			CurrentDebugInfoShown.SetFrom(vals[0], vals[1], vals[2], vals[3]);
 		}
 
 		public void SaveToFile(string path)

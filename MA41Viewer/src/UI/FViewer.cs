@@ -86,11 +86,12 @@ namespace MA41Viewer.UI
 			ZoomLevelTrB.Value = (int)_MapViewer.Sett.ZoomLevel;
 
 			// default drawing quality setting should be HIGH
-			setDrawingQualityToolstripItemChecked(highToolStripMenuItem);
+			SetDrawingQualityToolstripItemChecked(highToolStripMenuItem);
 
 			mouseCursorInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo;
 			drawingQualityInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo;
 			memoryAllocationInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo;
+			detailedTileInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.DetailedTileInfo;
 		}
 
 		private void ZoomLevelTrB_Scroll(object sender, EventArgs e)
@@ -122,36 +123,36 @@ namespace MA41Viewer.UI
 		}
 
 		#region Main menu events
-		private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			MessageBox.Show($"by BogdanBBA{Environment.NewLine}{Environment.NewLine}December 2021 - January 2022");
 		}
 
-		private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+		private void ShowInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			System.Diagnostics.Process.Start("explorer.exe", Paths.ROOT_FOLDER);
 		}
 
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Close();
 		}
 
-		private void location_ToolStripMenuItem_Click(object sender, EventArgs e)
+		private void Location_ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			var toolstripItemTag = int.Parse((sender as ToolStripMenuItem).Tag as string);
 			var location = DEFAULT_LOCATIONS[toolstripItemTag];
 			_MapViewer.CenterAndZoom(location.Item1, location.Item2, location.Item3);
 		}
 
-		private void debugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
+		private void DebugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			debugONOFFToolStripMenuItem.Checked = !debugONOFFToolStripMenuItem.Checked;
 			_MapViewer.DebugMode = debugONOFFToolStripMenuItem.Checked;
 			_MapViewer.Invalidate();
 		}
 
-		private void setDrawingQualityToolstripItemChecked(ToolStripItem item)
+		private void SetDrawingQualityToolstripItemChecked(ToolStripItem item)
 		{
 			foreach (var iItem in new[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem })
 			{
@@ -159,56 +160,63 @@ namespace MA41Viewer.UI
 			}
 		}
 
-		private void lowToolStripMenuItem_Click(object sender, EventArgs e)
+		private void LowToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
 			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.LOW);
 			_MapViewer.Invalidate();
 		}
 
-		private void mediumToolStripMenuItem_Click(object sender, EventArgs e)
+		private void MediumToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
 			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.MEDIUM);
 			_MapViewer.Invalidate();
 		}
 
-		private void highToolStripMenuItem_Click(object sender, EventArgs e)
+		private void HighToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			setDrawingQualityToolstripItemChecked(sender as ToolStripItem);
+			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
 			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.HIGH);
 			_MapViewer.Invalidate();
 		}
 
-		private void mouseCursorInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		private void MouseCursorInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			mouseCursorInfoToolStripMenuItem.Checked = !mouseCursorInfoToolStripMenuItem.Checked;
 			_MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo = mouseCursorInfoToolStripMenuItem.Checked;
 			_MapViewer.Invalidate();
 		}
 
-		private void drawingQualityInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		private void DrawingQualityInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			drawingQualityInfoToolStripMenuItem.Checked = !drawingQualityInfoToolStripMenuItem.Checked;
 			_MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo = drawingQualityInfoToolStripMenuItem.Checked;
 			_MapViewer.Invalidate();
 		}
 
-		private void memoryAllocationInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		private void MemoryAllocationInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			memoryAllocationInfoToolStripMenuItem.Checked = !memoryAllocationInfoToolStripMenuItem.Checked;
 			_MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo = memoryAllocationInfoToolStripMenuItem.Checked;
 			_MapViewer.Invalidate();
 		}
 
-		private void currentViewToolStripMenuItem_Click(object sender, EventArgs e)
+		private void DetailedTileInfoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			detailedTileInfoToolStripMenuItem.Checked = !detailedTileInfoToolStripMenuItem.Checked;
+			_MapViewer.Sett.CurrentDebugInfoShown.DetailedTileInfo = detailedTileInfoToolStripMenuItem.Checked;
+			_MapViewer.Invalidate();
+		}
+
+		private void CurrentViewToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
 			_MapViewer.SaveCurrentViewToFile(filename);
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 
-		private void currentViewallYearsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void CurrentViewallYearsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
 			_MapViewer.SaveAllYearsToFile(filename);

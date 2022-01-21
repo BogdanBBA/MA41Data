@@ -1,13 +1,14 @@
 ﻿using MA41Viewer.Data;
 using System;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MA41Viewer.UI.Controls
 {
 	public partial class MapViewer : UserControl
 	{
-		private const int DEBUG_COORD_X = 10;
 		protected static readonly Brush BACKBRUSH = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
 
 		private readonly object _lock = new();
@@ -17,6 +18,7 @@ namespace MA41Viewer.UI.Controls
 		public MapSettings Sett { get; protected set; }
 		protected ThumbnailDictionary ThumbDictionary { get; private set; }
 		protected ThumbnailDictionary FullSizeTileDictionary { get; private set; }
+		//protected CancellationTokenSource cancellationTokenSource { get; private set; } = new();
 
 		public MapViewer()
 		{
@@ -58,25 +60,38 @@ namespace MA41Viewer.UI.Controls
 
 		protected override void OnMouseEnter(EventArgs e)
 		{
-			Invalidate();
+			if (DebugMode)
+			{
+				Invalidate();
+			}
 		}
 
 		protected override void OnMouseLeave(EventArgs e)
 		{
 			Sett.MouseLocationPx = PointF.Empty;
-			Invalidate();
+			if (DebugMode)
+			{
+				Invalidate();
+			}
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			Sett.DrawingState = MapSettings.MapDrawingState.MouseMovement;
+			Sett.LastMouseDown_MapviewLocationPx = e.Location;
+			if (DebugMode)
+			{
+				Invalidate();
+			}
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			Sett.MouseLocationPx = e.Location;
-			Invalidate();
-		}
-
-		protected override void OnMouseDown(MouseEventArgs e)
-		{
-			Sett.LastMouseDown_MapviewLocationPx = e.Location;
-			Invalidate();
+			if (DebugMode || Sett.DrawingState == MapSettings.MapDrawingState.MouseMovement)
+			{
+				Invalidate();
+			}
 		}
 
 
@@ -84,20 +99,38 @@ namespace MA41Viewer.UI.Controls
 		{
 			Sett.MoveMap(e.Location);
 			Invalidate();
+			Sett.DrawingState = MapSettings.MapDrawingState.AtRest;
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
+			CancellationTokenSource cancellationTokenSource = new ();
+			CancellationToken token = cancellationTokenSource.Token;
+
+			if (Sett.DrawingState == MapSettings.MapDrawingState.ZoomEvent)
+			{
+				cancellationTokenSource.Cancel();
+			}
+			Sett.DrawingState = MapSettings.MapDrawingState.ZoomEvent;
 			Sett.ZoomLevel = (uint)Math.Max(0, Math.Min(MapSettings.ZOOMS.Length - 1, Sett.ZoomLevel + (-e.Delta / SystemInformation.MouseWheelScrollDelta)));
-			Sett.ResetMapAfterZoom(e.Location);
+			Sett.ResetMapAfterZoom(e.Location, true);
 			MouseZoomCallback(Sett.ZoomLevel);
 			Invalidate();
+			Task.Run(async () =>
+			{
+				await Task.Delay(1000);
+				if (!token.IsCancellationRequested)
+				{
+					Sett.DrawingState = MapSettings.MapDrawingState.AtRest;
+					Invalidate();
+				}
+			}, token);
 		}
 		#endregion
 
 		public void SaveCurrentViewToFile(string filename)
 		{
-			var bmp = GenerateBitmap();
+			var bmp = GenerateBitmap(out DebugInfoWrapper _);
 			bmp.Save(filename);
 		}
 

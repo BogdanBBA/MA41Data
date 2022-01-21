@@ -61,12 +61,14 @@ namespace MA41Viewer.UI
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.detailedTileInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.ZoomLevelTrB)).BeginInit();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _MapViewer
 			// 
+			this._MapViewer.DebugMode = false;
 			this._MapViewer.Location = new System.Drawing.Point(155, 27);
 			this._MapViewer.Name = "_MapViewer";
 			this._MapViewer.Size = new System.Drawing.Size(241, 99);
@@ -142,21 +144,21 @@ namespace MA41Viewer.UI
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
 			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
 			this.aboutToolStripMenuItem.Text = "About";
-			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
 			// 
 			// showInExplorerToolStripMenuItem
 			// 
 			this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
 			this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
 			this.showInExplorerToolStripMenuItem.Text = "Show in Explorer";
-			this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
+			this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.ShowInExplorerToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
 			// 
 			// debuggingToolStripMenuItem
 			// 
@@ -171,9 +173,9 @@ namespace MA41Viewer.UI
 			// debugONOFFToolStripMenuItem
 			// 
 			this.debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
-			this.debugONOFFToolStripMenuItem.Click += new System.EventHandler(this.debugONOFFToolStripMenuItem_Click);
+			this.debugONOFFToolStripMenuItem.Click += new System.EventHandler(this.DebugONOFFToolStripMenuItem_Click);
 			// 
 			// drawingQualityToolStripMenuItem
 			// 
@@ -182,7 +184,7 @@ namespace MA41Viewer.UI
             this.mediumToolStripMenuItem,
             this.highToolStripMenuItem});
 			this.drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
@@ -190,30 +192,31 @@ namespace MA41Viewer.UI
 			this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
 			this.lowToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
 			this.lowToolStripMenuItem.Text = "Low";
-			this.lowToolStripMenuItem.Click += new System.EventHandler(this.lowToolStripMenuItem_Click);
+			this.lowToolStripMenuItem.Click += new System.EventHandler(this.LowToolStripMenuItem_Click);
 			// 
 			// mediumToolStripMenuItem
 			// 
 			this.mediumToolStripMenuItem.Name = "mediumToolStripMenuItem";
 			this.mediumToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
 			this.mediumToolStripMenuItem.Text = "Medium";
-			this.mediumToolStripMenuItem.Click += new System.EventHandler(this.mediumToolStripMenuItem_Click);
+			this.mediumToolStripMenuItem.Click += new System.EventHandler(this.MediumToolStripMenuItem_Click);
 			// 
 			// highToolStripMenuItem
 			// 
 			this.highToolStripMenuItem.Name = "highToolStripMenuItem";
 			this.highToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
 			this.highToolStripMenuItem.Text = "High";
-			this.highToolStripMenuItem.Click += new System.EventHandler(this.highToolStripMenuItem_Click);
+			this.highToolStripMenuItem.Click += new System.EventHandler(this.HighToolStripMenuItem_Click);
 			// 
 			// informationShownToolStripMenuItem
 			// 
 			this.informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mouseCursorInfoToolStripMenuItem,
             this.drawingQualityInfoToolStripMenuItem,
-            this.memoryAllocationInfoToolStripMenuItem});
+            this.memoryAllocationInfoToolStripMenuItem,
+            this.detailedTileInfoToolStripMenuItem});
 			this.informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
@@ -221,21 +224,21 @@ namespace MA41Viewer.UI
 			this.mouseCursorInfoToolStripMenuItem.Name = "mouseCursorInfoToolStripMenuItem";
 			this.mouseCursorInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.mouseCursorInfoToolStripMenuItem.Text = "Mouse cursor info";
-			this.mouseCursorInfoToolStripMenuItem.Click += new System.EventHandler(this.mouseCursorInfoToolStripMenuItem_Click);
+			this.mouseCursorInfoToolStripMenuItem.Click += new System.EventHandler(this.MouseCursorInfoToolStripMenuItem_Click);
 			// 
 			// drawingQualityInfoToolStripMenuItem
 			// 
 			this.drawingQualityInfoToolStripMenuItem.Name = "drawingQualityInfoToolStripMenuItem";
 			this.drawingQualityInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.drawingQualityInfoToolStripMenuItem.Text = "Drawing quality info";
-			this.drawingQualityInfoToolStripMenuItem.Click += new System.EventHandler(this.drawingQualityInfoToolStripMenuItem_Click);
+			this.drawingQualityInfoToolStripMenuItem.Click += new System.EventHandler(this.DrawingQualityInfoToolStripMenuItem_Click);
 			// 
 			// memoryAllocationInfoToolStripMenuItem
 			// 
 			this.memoryAllocationInfoToolStripMenuItem.Name = "memoryAllocationInfoToolStripMenuItem";
 			this.memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.memoryAllocationInfoToolStripMenuItem.Text = "Memory allocation info";
-			this.memoryAllocationInfoToolStripMenuItem.Click += new System.EventHandler(this.memoryAllocationInfoToolStripMenuItem_Click);
+			this.memoryAllocationInfoToolStripMenuItem.Click += new System.EventHandler(this.MemoryAllocationInfoToolStripMenuItem_Click);
 			// 
 			// locationsToolStripMenuItem
 			// 
@@ -257,7 +260,7 @@ namespace MA41Viewer.UI
 			this.viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.viennaOverviewToolStripMenuItem.Tag = "0";
 			this.viennaOverviewToolStripMenuItem.Text = "Vienna overview";
-			this.viennaOverviewToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.viennaOverviewToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// innereStadtToolStripMenuItem
 			// 
@@ -265,7 +268,7 @@ namespace MA41Viewer.UI
 			this.innereStadtToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.innereStadtToolStripMenuItem.Tag = "1";
 			this.innereStadtToolStripMenuItem.Text = "Innere Stadt";
-			this.innereStadtToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.innereStadtToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// hauptbahnhofToolStripMenuItem
 			// 
@@ -273,7 +276,7 @@ namespace MA41Viewer.UI
 			this.hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.hauptbahnhofToolStripMenuItem.Tag = "2";
 			this.hauptbahnhofToolStripMenuItem.Text = "Hauptbahnhof";
-			this.hauptbahnhofToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.hauptbahnhofToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// lambrechtgasseToolStripMenuItem
 			// 
@@ -281,7 +284,7 @@ namespace MA41Viewer.UI
 			this.lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.lambrechtgasseToolStripMenuItem.Tag = "3";
 			this.lambrechtgasseToolStripMenuItem.Text = "Lambrechtgasse";
-			this.lambrechtgasseToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.lambrechtgasseToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// rittingergasseToolStripMenuItem
 			// 
@@ -289,7 +292,7 @@ namespace MA41Viewer.UI
 			this.rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.rittingergasseToolStripMenuItem.Tag = "4";
 			this.rittingergasseToolStripMenuItem.Text = "Rittingergasse";
-			this.rittingergasseToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.rittingergasseToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// hietzingPenzingToolStripMenuItem
 			// 
@@ -297,7 +300,7 @@ namespace MA41Viewer.UI
 			this.hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.hietzingPenzingToolStripMenuItem.Tag = "5";
 			this.hietzingPenzingToolStripMenuItem.Text = "Hietzing/Penzing";
-			this.hietzingPenzingToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.hietzingPenzingToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// iKEANordToolStripMenuItem
 			// 
@@ -305,7 +308,7 @@ namespace MA41Viewer.UI
 			this.iKEANordToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
 			this.iKEANordToolStripMenuItem.Tag = "6";
 			this.iKEANordToolStripMenuItem.Text = "IKEA Nord";
-			this.iKEANordToolStripMenuItem.Click += new System.EventHandler(this.location_ToolStripMenuItem_Click);
+			this.iKEANordToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
 			// 
 			// exportToolStripMenuItem
 			// 
@@ -321,14 +324,21 @@ namespace MA41Viewer.UI
 			this.currentViewToolStripMenuItem.Name = "currentViewToolStripMenuItem";
 			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.currentViewToolStripMenuItem.Text = "Current view";
-			this.currentViewToolStripMenuItem.Click += new System.EventHandler(this.currentViewToolStripMenuItem_Click);
+			this.currentViewToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewToolStripMenuItem_Click);
 			// 
 			// currentViewallYearsToolStripMenuItem
 			// 
 			this.currentViewallYearsToolStripMenuItem.Name = "currentViewallYearsToolStripMenuItem";
 			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.currentViewallYearsToolStripMenuItem.Text = "Current view (all years)";
-			this.currentViewallYearsToolStripMenuItem.Click += new System.EventHandler(this.currentViewallYearsToolStripMenuItem_Click);
+			this.currentViewallYearsToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewallYearsToolStripMenuItem_Click);
+			// 
+			// detailedTileInfoToolStripMenuItem
+			// 
+			this.detailedTileInfoToolStripMenuItem.Name = "detailedTileInfoToolStripMenuItem";
+			this.detailedTileInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			this.detailedTileInfoToolStripMenuItem.Text = "Detailed tile info";
+			this.detailedTileInfoToolStripMenuItem.Click += new System.EventHandler(this.DetailedTileInfoToolStripMenuItem_Click);
 			// 
 			// FViewer
 			// 
@@ -391,5 +401,6 @@ namespace MA41Viewer.UI
 		private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem detailedTileInfoToolStripMenuItem;
 	}
 }

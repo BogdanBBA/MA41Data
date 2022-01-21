@@ -11,17 +11,84 @@ namespace MA41Viewer.UI.Controls
 {
 	public partial class MapViewer
 	{
-		protected const bool FORCE_DEBUG = false;
+		private struct DebugInfoWrapper
+		{
+			public int VisibleTileCount;
+			public int YearTileCount;
+			public int OldThumbnailCount;
+			public int OldFullsizeCount;
+			public HashSet<Size> ThumbnailSizes;
+			public int LoadedThumbnailCount;
+			public int LoadedFullsizeCount;
+			public long DrawingDurationMs;
+		}
 
-		protected void DrawDebugText(Graphics g, string text, float x, float y = 10.0f, bool forceDebug = false)
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			lock (_lock)
+			{
+				DebugInfoWrapper debugInfo = default;
+				var stopwatch = Stopwatch.StartNew();
+				var g = e.Graphics;
+				switch (Sett.DrawingState)
+				{
+					case MapSettings.MapDrawingState.AtRest:
+						{
+							var bmp = GenerateBitmap(out debugInfo);
+							Sett.LastFrame = new KeyValuePair<RectangleF, Bitmap>(Sett.CurrentMapCoordBounds, bmp);
+							g.DrawImageUnscaled(bmp, Point.Empty);
+						}
+						break;
+					case MapSettings.MapDrawingState.MouseMovement:
+						{
+							if (!Sett.LastFrame.HasValue)
+							{
+								DrawDebugText(g, "There is no 'last frame' available", 10, 10, true);
+								break;
+							}
+							var location = new Point((int)(Sett.MouseLocationPx.X - Sett.LastMouseDown_MapviewLocationPx.X), (int)(Sett.MouseLocationPx.Y - Sett.LastMouseDown_MapviewLocationPx.Y));
+							g.DrawImageUnscaled(Sett.LastFrame.Value.Value, location);
+						}
+						break;
+					case MapSettings.MapDrawingState.ZoomEvent:
+						{
+							if (!Sett.LastFrame.HasValue)
+							{
+								DrawDebugText(g, "There is no 'last frame' available", 10, 10, true);
+								break;
+							}
+							RectangleF mapviewBounds = Sett.Translate_MapCoordinateBounds_To_MapviewLocationBoundsPx(Sett.LastFrame.Value.Key);
+							g.DrawImage(Sett.LastFrame.Value.Value, mapviewBounds);
+							DrawDebugText(g, $"current map coords:    {Sett.CurrentMapCoordBounds.Left:F0}, {Sett.CurrentMapCoordBounds.Top:F0} / {Sett.CurrentMapCoordBounds.Width:F0} x {Sett.CurrentMapCoordBounds.Height:F0}", 10, -65, true);
+							DrawDebugText(g, $"last frame map coords: {Sett.LastFrame?.Key.Left:F0}, {Sett.LastFrame?.Key.Top:F0} / {Sett.LastFrame?.Key.Width:F0} x {Sett.LastFrame?.Key.Height:F0}", 10, -50, true);
+							DrawDebugText(g, $"last frame bounds px:  {mapviewBounds.Left:F0}, {mapviewBounds.Top:F0} / {mapviewBounds.Width:F0} x {mapviewBounds.Height:F0}", 10, -35, true);
+						}
+						break;
+					default:
+						{
+							DrawDebugText(g, $"Unknown drawing state: {Sett.DrawingState}", 10, 10, true);
+						}
+						break;
+				}
+				stopwatch.Stop();
+				debugInfo.DrawingDurationMs = stopwatch.ElapsedMilliseconds;
+				DrawDebugInformation(g, debugInfo);
+				Sett.LastDrawingTime = DateTime.Now;
+			}
+		}
+
+		protected void DrawDebugText(Graphics g, string text, float relX, float relY = 10.0f, bool forceDebug = false)
 		{
 			if (!DebugMode && !forceDebug) return;
 			var font = new Font("Ubuntu Mono", 10f, FontStyle.Bold);
-			g.FillRectangle(BACKBRUSH, new RectangleF(new PointF(x, y), g.MeasureString(text, font)));
+			var size = g.MeasureString(text, font);
+			var x = relX >= 0 ? relX : Width + relX - size.Width;
+			var y = relY >= 0 ? relY : Height + relY - size.Height;
+			g.FillRectangle(BACKBRUSH, new RectangleF(new PointF(x, y), size));
 			g.DrawString(text, font, Brushes.Black, x, y);
 		}
 
-		protected void DrawSquareInfo(Graphics g, RectangleF rect, uint year, (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdy) info, Size imageSize, bool ignoreDebugMode = false)
+		protected void DrawSquareInfo(Graphics g, RectangleF rect, uint year, (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdy) info, Size imageSize, bool detailedInfo, bool ignoreDebugMode = false)
 		{
 			if (!DebugMode && !ignoreDebugMode) return;
 			var text = $"Year {year}{Environment.NewLine}Sq/Q {info.tileInfo.MA41.Square}/{info.tileInfo.MA41.Quadrant}{Environment.NewLine}Tile {info.tileInfo.App.Row},{info.tileInfo.App.Column}";
@@ -30,32 +97,51 @@ namespace MA41Viewer.UI.Controls
 			var location = new PointF(rect.Left + rect.Width / 2 - size.Width / 2, rect.Top + rect.Height / 2 - size.Height / 2);
 			g.FillRectangle(BACKBRUSH, location.X, location.Y, size.Width, size.Height);
 			g.DrawString(text, font, Brushes.Purple, location);
-			return;
-			text = new StringBuilder()
-				.AppendLine($"  Tile zoom: {rect.Width / imageSize.Width:P1}")
-				.AppendLine($" Image size: {imageSize.Width}px x {imageSize.Height}px")
-				.AppendLine($"        - Mapview -")
-				.AppendLine($"   Location: {rect.Left:F2}px, {rect.Top:F2}px")
-				.AppendLine($"       Size: {rect.Width:F2}px x {rect.Height:F2}px")
-				.AppendLine($"       - MapCoords -")
-				.AppendLine($"   Location: {info.wfdy.TopLeftX:F0}m, {info.wfdy.TopLeftY:F0}m")
-				.AppendLine($"       Size: {info.wfdy.TileMapCoordinateBounds.Width:F0}m x {info.wfdy.TileMapCoordinateBounds.Height:F0}m")
-				.ToString();
-			var newFont = new Font("Ubuntu Mono", 10, FontStyle.Bold);
-			var newSize = g.MeasureString(text, newFont);
-			var newLocation = new PointF(rect.Left + rect.Width / 2 - newSize.Width / 2, location.Y + size.Height);
-			g.FillRectangle(BACKBRUSH, newLocation.X, newLocation.Y, newSize.Width, newSize.Height);
-			g.DrawString(text, newFont, Brushes.Black, newLocation);
+			if (detailedInfo)
+			{
+				text = new StringBuilder()
+					.AppendLine($"  Tile zoom: {rect.Width / imageSize.Width:P1}")
+					.AppendLine($" Image size: {imageSize.Width}px x {imageSize.Height}px")
+					.AppendLine($"        - Mapview -")
+					.AppendLine($"   Location: {rect.Left:F2}px, {rect.Top:F2}px")
+					.AppendLine($"       Size: {rect.Width:F2}px x {rect.Height:F2}px")
+					.AppendLine($"       - MapCoords -")
+					.AppendLine($"   Location: {info.wfdy.TopLeftX:F0}m, {info.wfdy.TopLeftY:F0}m")
+					.AppendLine($"       Size: {info.wfdy.TileMapCoordinateBounds.Width:F0}m x {info.wfdy.TileMapCoordinateBounds.Height:F0}m")
+					.ToString();
+				var newFont = new Font("Ubuntu Mono", 10, FontStyle.Bold);
+				var newSize = g.MeasureString(text, newFont);
+				var newLocation = new PointF(rect.Left + rect.Width / 2 - newSize.Width / 2, location.Y + size.Height);
+				g.FillRectangle(BACKBRUSH, newLocation.X, newLocation.Y, newSize.Width, newSize.Height);
+				g.DrawString(text, newFont, Brushes.Black, newLocation);
+			}
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		private void DrawDebugInformation(Graphics g, DebugInfoWrapper debugInfo)
 		{
-			lock (_lock)
+			const bool forceDebug = false;
+			int edgePx = 10, y = -5;
+			DrawDebugText(g, $"Now: {DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}", edgePx, y += 15, forceDebug);
+			DrawDebugText(g, $"Year: {Sett.Year} (tiles: {debugInfo.VisibleTileCount} visible / {debugInfo.YearTileCount} year's / {GeoModel.Tiles.Length} total)", edgePx, y += 15, forceDebug);
+			DrawDebugText(g, $"Zoom: ratio {MapSettings.ZOOMS[Sett.ZoomLevel]}x, level {Sett.ZoomLevel} (range 0..{MapSettings.ZOOMS.Length - 1})", edgePx, y += 15, forceDebug);
+			DrawDebugText(g, $"Map coordinates: XL,YT={Sett.CurrentMapCoordBounds.X:F2},{Sett.CurrentMapCoordBounds.Y:F2}; XR,YB={Sett.CurrentMapCoordBounds.Right:F2},{Sett.CurrentMapCoordBounds.Bottom:F2}; W,H={Sett.CurrentMapCoordBounds.Width:F2},{Sett.CurrentMapCoordBounds.Height:F2}", edgePx, y += 15, forceDebug);
+			if (Sett.CurrentDebugInfoShown.MouseCursorInfo)
 			{
-				var bmp = GenerateBitmap();
-				var g = e.Graphics;
-				g.DrawImageUnscaled(bmp, Point.Empty);
+				DrawDebugText(g, Sett.MouseLocationPx == PointF.Empty ? "Mouse out of bounds" : $"Mouse: mapview location {Sett.MouseLocationPx.X:F0}px, {Sett.MouseLocationPx.Y:F0}px / map coordinates {Sett.Translate_MapviewX_To_MapCoordinateX(Sett.MouseLocationPx.X):F1}, {Sett.Translate_MapviewY_To_MapCoordinateY(Sett.MouseLocationPx.Y):F1}", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta { Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, { Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", edgePx, y += 15, forceDebug);
 			}
+			if (Sett.CurrentDebugInfoShown.DrawingQualityInfo)
+			{
+				DrawDebugText(g, $"CompositingMode={g.CompositingMode}, CompositingQuality={g.CompositingQuality}, InterpolationMode={g.InterpolationMode}, PixelOffsetMode={g.PixelOffsetMode}, SmoothingMode={g.SmoothingMode}, TextRenderingHint={g.TextRenderingHint}, ", edgePx, y += 15, forceDebug);
+			}
+			if (Sett.CurrentDebugInfoShown.MemoryAllocationInfo)
+			{
+				DrawDebugText(g, $"Memory usage: total allocated {GC.GetTotalAllocatedBytes() / 1048576f:F2}MB, total {GC.GetTotalMemory(false) / 1048576f:F2}MB, current thread {GC.GetAllocatedBytesForCurrentThread() / 1048576f:F2}MB", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Image dictionaries (count/capacity; +new): thumbnails {ThumbDictionary.Count}/{ThumbDictionary.DictionaryCapacity} (+{ThumbDictionary.Count - debugInfo.OldThumbnailCount}) / full-size {FullSizeTileDictionary.Count}/{FullSizeTileDictionary.DictionaryCapacity} (+{FullSizeTileDictionary.Count - debugInfo.OldFullsizeCount}) | sizes: {string.Join(", ", debugInfo.ThumbnailSizes.OrderByDescending(size => size.Width * size.Height).ThenByDescending(size => size.Width).Select(size => $"{size.Width}x{size.Height}"))}", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Tiles loaded from file: thumbnails {debugInfo.LoadedThumbnailCount}, full-size {debugInfo.LoadedFullsizeCount})", edgePx, y += 15, forceDebug);
+			}
+			DrawDebugText(g, $"Drawing took {debugInfo.DrawingDurationMs} ms", edgePx, -edgePx, true);
+			DrawDebugText(g, $"Drawing state: {Sett.DrawingState}", -edgePx, -edgePx, true);
 		}
 
 		public Bitmap GenerateAllYearsBitmap(uint[] years)
@@ -72,7 +158,7 @@ namespace MA41Viewer.UI.Controls
 				foreach (var year in years)
 				{
 					Sett.Year = year;
-					var frame = GenerateBitmap();
+					var frame = GenerateBitmap(out DebugInfoWrapper _);
 					g.DrawImageUnscaled(frame, location);
 					location.Offset(addX, addY);
 				}
@@ -80,18 +166,12 @@ namespace MA41Viewer.UI.Controls
 			return result;
 		}
 
-		private Bitmap GenerateBitmap()
+		private Bitmap GenerateBitmap(out DebugInfoWrapper oDebugInfo)
 		{
+			var debugInfo = new DebugInfoWrapper() { ThumbnailSizes = new HashSet<Size>() };
 			var result = new Bitmap(Size.Width, Size.Height);
 			using (var g = Graphics.FromImage(result))
 			{
-				var stopwatch = Stopwatch.StartNew();
-				var loadedThumbs = 0u;
-				var loadedFullSize = 0u;
-				var oldThumbCount = ThumbDictionary.Count;
-				var oldFullsizeCount = FullSizeTileDictionary.Count;
-				var thumbnailSizes = new HashSet<Size>();
-
 				g.CompositingMode = Sett.CurrentQualitySettings.CompositingModeValue;
 				g.CompositingQuality = Sett.CurrentQualitySettings.CompositingQualityValue;
 				g.InterpolationMode = Sett.CurrentQualitySettings.InterpolationModeValue;
@@ -102,21 +182,29 @@ namespace MA41Viewer.UI.Controls
 				if (GeoModel == null)
 				{
 					g.Clear(Color.LightGray);
-					DrawDebugText(g, "not initialized", DEBUG_COORD_X, DEBUG_COORD_X, true);
+					DrawDebugText(g, "not initialized", 10, 10, true);
+					oDebugInfo = debugInfo;
 					return result;
 				}
 
 				if (Sett.Year == null)
 				{
 					g.Clear(Color.LightGray);
-					DrawDebugText(g, "incorrect settings", DEBUG_COORD_X, DEBUG_COORD_X, true);
+					DrawDebugText(g, "incorrect settings", 10, 10, true);
+					oDebugInfo = debugInfo;
 					return result;
 				}
 
 				g.Clear(Color.WhiteSmoke);
 
 				var yearTileWFDY = GeoModel.GetByYear(Sett.Year.Value);
+				debugInfo.YearTileCount = yearTileWFDY.Length;
+
 				var visibleTileWFDY = yearTileWFDY.Where(wfdd => wfdd.wfdd.TileMapCoordinateBounds.IntersectsWith(Sett.CurrentMapCoordBounds)).ToArray();
+				debugInfo.VisibleTileCount = visibleTileWFDY.Length;
+
+				debugInfo.OldThumbnailCount = ThumbDictionary.Count;
+				debugInfo.OldFullsizeCount = FullSizeTileDictionary.Count;
 
 				foreach (var info in visibleTileWFDY)
 				{
@@ -127,7 +215,7 @@ namespace MA41Viewer.UI.Controls
 					{
 						image = ThumbDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize, () =>
 						{
-							loadedThumbs++;
+							debugInfo.LoadedThumbnailCount++;
 							var thumbnailPath = GeoData.GetJpgThumbnailPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize);
 							return Image.FromFile(thumbnailPath);
 						});
@@ -137,44 +225,23 @@ namespace MA41Viewer.UI.Controls
 						// image must be added to (and retrieved from) dictionary resized, not full-size
 						image = FullSizeTileDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, uint.MinValue, () =>
 						{
-							loadedFullSize++;
+							debugInfo.LoadedFullsizeCount++;
 							var path = GeoData.GetJpgPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant);
 							return Image.FromFile(path);
 						});
 					}
-					thumbnailSizes.Add(image.Size);
+					debugInfo.ThumbnailSizes.Add(image.Size);
 
 					g.DrawImage(image, mouseTile);
 
 					if (DebugMode)
 					{
 						g.DrawRectangle(Pens.Purple, mouseTile.Left, mouseTile.Top, mouseTile.Width, mouseTile.Height);
-						DrawSquareInfo(g, mouseTile, Sett.Year.Value, info, image.Size);
+						DrawSquareInfo(g, mouseTile, Sett.Year.Value, info, image.Size, Sett.CurrentDebugInfoShown.DetailedTileInfo);
 					}
 				}
 
-				int y = -5;
-				DrawDebugText(g, $"Now: {DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				DrawDebugText(g, $"Year: {Sett.Year} (tiles: {visibleTileWFDY.Length} visible / {yearTileWFDY.Length} year's / {GeoModel.Tiles.Length} total)", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				DrawDebugText(g, $"Zoom: ratio {MapSettings.ZOOMS[Sett.ZoomLevel]}x, level {Sett.ZoomLevel} (range 0..{MapSettings.ZOOMS.Length - 1})", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				DrawDebugText(g, $"Map coordinates: XL,YT={Sett.CurrentMapCoordBounds.X:F2},{Sett.CurrentMapCoordBounds.Y:F2}; XR,YB={Sett.CurrentMapCoordBounds.Right:F2},{Sett.CurrentMapCoordBounds.Bottom:F2}; W,H={Sett.CurrentMapCoordBounds.Width:F2},{Sett.CurrentMapCoordBounds.Height:F2}", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				if (Sett.CurrentDebugInfoShown.MouseCursorInfo)
-				{
-					DrawDebugText(g, Sett.MouseLocationPx == PointF.Empty ? "Mouse out of bounds" : $"Mouse: mapview location {Sett.MouseLocationPx.X:F0}px, {Sett.MouseLocationPx.Y:F0}px / map coordinates {Sett.Translate_MapviewX_To_MapCoordinateX(Sett.MouseLocationPx.X):F1}, {Sett.Translate_MapviewY_To_MapCoordinateY(Sett.MouseLocationPx.Y):F1}", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-					DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta { Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, { Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				}
-				if (Sett.CurrentDebugInfoShown.DrawingQualityInfo)
-				{
-					DrawDebugText(g, $"CompositingMode={g.CompositingMode}, CompositingQuality={g.CompositingQuality}, InterpolationMode={g.InterpolationMode}, PixelOffsetMode={g.PixelOffsetMode}, SmoothingMode={g.SmoothingMode}, TextRenderingHint={g.TextRenderingHint}, ", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				}
-				if (Sett.CurrentDebugInfoShown.MemoryAllocationInfo)
-				{
-					DrawDebugText(g, $"Memory usage: total allocated {GC.GetTotalAllocatedBytes() / 1048576f:F2}MB, total {GC.GetTotalMemory(false) / 1048576f:F2}MB, current thread {GC.GetAllocatedBytesForCurrentThread() / 1048576f:F2}MB", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-					DrawDebugText(g, $"Image dictionaries (count/capacity; +new): thumbnails {ThumbDictionary.Count}/{ThumbDictionary.DictionaryCapacity} (+{ThumbDictionary.Count - oldThumbCount}) / full-size {FullSizeTileDictionary.Count}/{FullSizeTileDictionary.DictionaryCapacity} (+{FullSizeTileDictionary.Count - oldFullsizeCount}) | sizes: {string.Join(", ", thumbnailSizes.OrderByDescending(size => size.Width * size.Height).ThenByDescending(size => size.Width).Select(size => $"{size.Width}x{size.Height}"))}", DEBUG_COORD_X, y += 15, FORCE_DEBUG);
-				}
-				stopwatch.Stop();
-				DrawDebugText(g, $"Drawing took {stopwatch.ElapsedMilliseconds} ms (tiles loaded from file: thumbnails {loadedThumbs}, full-size {loadedFullSize})", DEBUG_COORD_X, Sett.MapviewSizePx.Height - 20, true);
-				Sett.LastDrawingTime = DateTime.Now;
+				oDebugInfo = debugInfo;
 				return result;
 			}
 		}
