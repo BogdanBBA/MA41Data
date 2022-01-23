@@ -1,4 +1,4 @@
-2021
-11
-3907.97,-12490.07
-True,False,False,False
+2014
+12
+3507.08,-9561.10
+True,False,False,True

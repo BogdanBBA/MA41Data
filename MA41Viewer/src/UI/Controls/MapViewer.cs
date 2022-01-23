@@ -18,7 +18,6 @@ namespace MA41Viewer.UI.Controls
 		public MapSettings Sett { get; protected set; }
 		protected ThumbnailDictionary ThumbDictionary { get; private set; }
 		protected ThumbnailDictionary FullSizeTileDictionary { get; private set; }
-		//protected CancellationTokenSource cancellationTokenSource { get; private set; } = new();
 
 		public MapViewer()
 		{
@@ -113,7 +112,7 @@ namespace MA41Viewer.UI.Controls
 			}
 			Sett.DrawingState = MapSettings.MapDrawingState.ZoomEvent;
 			Sett.ZoomLevel = (uint)Math.Max(0, Math.Min(MapSettings.ZOOMS.Length - 1, Sett.ZoomLevel + (-e.Delta / SystemInformation.MouseWheelScrollDelta)));
-			Sett.ResetMapAfterZoom(e.Location, true);
+			Sett.ResetMapAfterZoom(e.Location);
 			MouseZoomCallback(Sett.ZoomLevel);
 			Invalidate();
 			Task.Run(async () =>

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -13,6 +15,7 @@ namespace MA41Viewer.UI.Controls
 	{
 		private struct DebugInfoWrapper
 		{
+			public bool KaboomExplosionNotOk;
 			public int VisibleTileCount;
 			public int YearTileCount;
 			public int OldThumbnailCount;
@@ -25,9 +28,10 @@ namespace MA41Viewer.UI.Controls
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			const bool forceDebug = false;
 			lock (_lock)
 			{
-				DebugInfoWrapper debugInfo = default;
+				DebugInfoWrapper debugInfo = new() { ThumbnailSizes = new HashSet<Size>() };
 				var stopwatch = Stopwatch.StartNew();
 				var g = e.Graphics;
 				switch (Sett.DrawingState)
@@ -59,9 +63,9 @@ namespace MA41Viewer.UI.Controls
 							}
 							RectangleF mapviewBounds = Sett.Translate_MapCoordinateBounds_To_MapviewLocationBoundsPx(Sett.LastFrame.Value.Key);
 							g.DrawImage(Sett.LastFrame.Value.Value, mapviewBounds);
-							DrawDebugText(g, $"current map coords:    {Sett.CurrentMapCoordBounds.Left:F0}, {Sett.CurrentMapCoordBounds.Top:F0} / {Sett.CurrentMapCoordBounds.Width:F0} x {Sett.CurrentMapCoordBounds.Height:F0}", 10, -65, true);
-							DrawDebugText(g, $"last frame map coords: {Sett.LastFrame?.Key.Left:F0}, {Sett.LastFrame?.Key.Top:F0} / {Sett.LastFrame?.Key.Width:F0} x {Sett.LastFrame?.Key.Height:F0}", 10, -50, true);
-							DrawDebugText(g, $"last frame bounds px:  {mapviewBounds.Left:F0}, {mapviewBounds.Top:F0} / {mapviewBounds.Width:F0} x {mapviewBounds.Height:F0}", 10, -35, true);
+							DrawDebugText(g, $"current map coords:    {Sett.CurrentMapCoordBounds.Left:F0}, {Sett.CurrentMapCoordBounds.Top:F0} / {Sett.CurrentMapCoordBounds.Width:F0} x {Sett.CurrentMapCoordBounds.Height:F0}", 10, -65, forceDebug);
+							DrawDebugText(g, $"last frame map coords: {Sett.LastFrame?.Key.Left:F0}, {Sett.LastFrame?.Key.Top:F0} / {Sett.LastFrame?.Key.Width:F0} x {Sett.LastFrame?.Key.Height:F0}", 10, -50, forceDebug);
+							DrawDebugText(g, $"last frame bounds px:  {mapviewBounds.Left:F0}, {mapviewBounds.Top:F0} / {mapviewBounds.Width:F0} x {mapviewBounds.Height:F0}", 10, -35, forceDebug);
 						}
 						break;
 					default:
@@ -72,7 +76,8 @@ namespace MA41Viewer.UI.Controls
 				}
 				stopwatch.Stop();
 				debugInfo.DrawingDurationMs = stopwatch.ElapsedMilliseconds;
-				DrawDebugInformation(g, debugInfo);
+				if (!debugInfo.KaboomExplosionNotOk)
+					DrawDebugInformation(g, debugInfo, forceDebug);
 				Sett.LastDrawingTime = DateTime.Now;
 			}
 		}
@@ -88,9 +93,9 @@ namespace MA41Viewer.UI.Controls
 			g.DrawString(text, font, Brushes.Black, x, y);
 		}
 
-		protected void DrawSquareInfo(Graphics g, RectangleF rect, uint year, (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdy) info, Size imageSize, bool detailedInfo, bool ignoreDebugMode = false)
+		protected void DrawSquareInfo(Graphics g, RectangleF rect, uint year, (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdy) info, Size imageSize, bool detailedInfo, bool forceDebug = false)
 		{
-			if (!DebugMode && !ignoreDebugMode) return;
+			if (!DebugMode && !forceDebug) return;
 			var text = $"Year {year}{Environment.NewLine}Sq/Q {info.tileInfo.MA41.Square}/{info.tileInfo.MA41.Quadrant}{Environment.NewLine}Tile {info.tileInfo.App.Row},{info.tileInfo.App.Column}";
 			var font = new Font("Ubuntu Mono", 12.0f, FontStyle.Bold);
 			var size = g.MeasureString(text, font);
@@ -102,10 +107,10 @@ namespace MA41Viewer.UI.Controls
 				text = new StringBuilder()
 					.AppendLine($"  Tile zoom: {rect.Width / imageSize.Width:P1}")
 					.AppendLine($" Image size: {imageSize.Width}px x {imageSize.Height}px")
-					.AppendLine($"        - Mapview -")
+					.AppendLine($"          - Mapview -")
 					.AppendLine($"   Location: {rect.Left:F2}px, {rect.Top:F2}px")
 					.AppendLine($"       Size: {rect.Width:F2}px x {rect.Height:F2}px")
-					.AppendLine($"       - MapCoords -")
+					.AppendLine($"         - MapCoords -")
 					.AppendLine($"   Location: {info.wfdy.TopLeftX:F0}m, {info.wfdy.TopLeftY:F0}m")
 					.AppendLine($"       Size: {info.wfdy.TileMapCoordinateBounds.Width:F0}m x {info.wfdy.TileMapCoordinateBounds.Height:F0}m")
 					.ToString();
@@ -117,28 +122,30 @@ namespace MA41Viewer.UI.Controls
 			}
 		}
 
-		private void DrawDebugInformation(Graphics g, DebugInfoWrapper debugInfo)
+		private void DrawDebugInformation(Graphics g, DebugInfoWrapper debugInfo, bool forceDebug)
 		{
-			const bool forceDebug = false;
 			int edgePx = 10, y = -5;
-			DrawDebugText(g, $"Now: {DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}", edgePx, y += 15, forceDebug);
-			DrawDebugText(g, $"Year: {Sett.Year} (tiles: {debugInfo.VisibleTileCount} visible / {debugInfo.YearTileCount} year's / {GeoModel.Tiles.Length} total)", edgePx, y += 15, forceDebug);
-			DrawDebugText(g, $"Zoom: ratio {MapSettings.ZOOMS[Sett.ZoomLevel]}x, level {Sett.ZoomLevel} (range 0..{MapSettings.ZOOMS.Length - 1})", edgePx, y += 15, forceDebug);
-			DrawDebugText(g, $"Map coordinates: XL,YT={Sett.CurrentMapCoordBounds.X:F2},{Sett.CurrentMapCoordBounds.Y:F2}; XR,YB={Sett.CurrentMapCoordBounds.Right:F2},{Sett.CurrentMapCoordBounds.Bottom:F2}; W,H={Sett.CurrentMapCoordBounds.Width:F2},{Sett.CurrentMapCoordBounds.Height:F2}", edgePx, y += 15, forceDebug);
-			if (Sett.CurrentDebugInfoShown.MouseCursorInfo)
+			if (DebugMode || forceDebug)
 			{
-				DrawDebugText(g, Sett.MouseLocationPx == PointF.Empty ? "Mouse out of bounds" : $"Mouse: mapview location {Sett.MouseLocationPx.X:F0}px, {Sett.MouseLocationPx.Y:F0}px / map coordinates {Sett.Translate_MapviewX_To_MapCoordinateX(Sett.MouseLocationPx.X):F1}, {Sett.Translate_MapviewY_To_MapCoordinateY(Sett.MouseLocationPx.Y):F1}", edgePx, y += 15, forceDebug);
-				DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta { Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, { Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", edgePx, y += 15, forceDebug);
-			}
-			if (Sett.CurrentDebugInfoShown.DrawingQualityInfo)
-			{
-				DrawDebugText(g, $"CompositingMode={g.CompositingMode}, CompositingQuality={g.CompositingQuality}, InterpolationMode={g.InterpolationMode}, PixelOffsetMode={g.PixelOffsetMode}, SmoothingMode={g.SmoothingMode}, TextRenderingHint={g.TextRenderingHint}, ", edgePx, y += 15, forceDebug);
-			}
-			if (Sett.CurrentDebugInfoShown.MemoryAllocationInfo)
-			{
-				DrawDebugText(g, $"Memory usage: total allocated {GC.GetTotalAllocatedBytes() / 1048576f:F2}MB, total {GC.GetTotalMemory(false) / 1048576f:F2}MB, current thread {GC.GetAllocatedBytesForCurrentThread() / 1048576f:F2}MB", edgePx, y += 15, forceDebug);
-				DrawDebugText(g, $"Image dictionaries (count/capacity; +new): thumbnails {ThumbDictionary.Count}/{ThumbDictionary.DictionaryCapacity} (+{ThumbDictionary.Count - debugInfo.OldThumbnailCount}) / full-size {FullSizeTileDictionary.Count}/{FullSizeTileDictionary.DictionaryCapacity} (+{FullSizeTileDictionary.Count - debugInfo.OldFullsizeCount}) | sizes: {string.Join(", ", debugInfo.ThumbnailSizes.OrderByDescending(size => size.Width * size.Height).ThenByDescending(size => size.Width).Select(size => $"{size.Width}x{size.Height}"))}", edgePx, y += 15, forceDebug);
-				DrawDebugText(g, $"Tiles loaded from file: thumbnails {debugInfo.LoadedThumbnailCount}, full-size {debugInfo.LoadedFullsizeCount})", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Now: {DateTime.Now:yyyy/MM/dd HH:mm:ss.fff}", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Year: {Sett.Year} (tiles: {debugInfo.VisibleTileCount} visible / {debugInfo.YearTileCount} year's / {GeoModel.Tiles.Length} total)", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Zoom: ratio {MapSettings.ZOOMS[Sett.ZoomLevel]}x, level {Sett.ZoomLevel} (range 0..{MapSettings.ZOOMS.Length - 1})", edgePx, y += 15, forceDebug);
+				DrawDebugText(g, $"Map coordinates: XL,YT={Sett.CurrentMapCoordBounds.X:F2},{Sett.CurrentMapCoordBounds.Y:F2}; XR,YB={Sett.CurrentMapCoordBounds.Right:F2},{Sett.CurrentMapCoordBounds.Bottom:F2}; W,H={Sett.CurrentMapCoordBounds.Width:F2},{Sett.CurrentMapCoordBounds.Height:F2}", edgePx, y += 15, forceDebug);
+				if (Sett.CurrentDebugInfoShown.MouseCursorInfo)
+				{
+					DrawDebugText(g, Sett.MouseLocationPx == PointF.Empty ? "Mouse out of bounds" : $"Mouse: mapview location {Sett.MouseLocationPx.X:F0}px, {Sett.MouseLocationPx.Y:F0}px / map coordinates {Sett.Translate_MapviewX_To_MapCoordinateX(Sett.MouseLocationPx.X):F1}, {Sett.Translate_MapviewY_To_MapCoordinateY(Sett.MouseLocationPx.Y):F1}", edgePx, y += 15, forceDebug);
+					DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta { Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, { Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", edgePx, y += 15, forceDebug);
+				}
+				if (Sett.CurrentDebugInfoShown.DrawingQualityInfo)
+				{
+					DrawDebugText(g, $"CompositingMode={g.CompositingMode}, CompositingQuality={g.CompositingQuality}, InterpolationMode={g.InterpolationMode}, PixelOffsetMode={g.PixelOffsetMode}, SmoothingMode={g.SmoothingMode}, TextRenderingHint={g.TextRenderingHint}, ", edgePx, y += 15, forceDebug);
+				}
+				if (Sett.CurrentDebugInfoShown.MemoryAllocationInfo)
+				{
+					DrawDebugText(g, $"Memory usage: total allocated {GC.GetTotalAllocatedBytes() / 1048576f:F2}MB, total {GC.GetTotalMemory(false) / 1048576f:F2}MB, current thread {GC.GetAllocatedBytesForCurrentThread() / 1048576f:F2}MB", edgePx, y += 15, forceDebug);
+					DrawDebugText(g, $"Image dictionaries (count/capacity; +new): thumbnails {ThumbDictionary.Count}/{ThumbDictionary.DictionaryCapacity} (+{ThumbDictionary.Count - debugInfo.OldThumbnailCount}) / full-size {FullSizeTileDictionary.Count}/{FullSizeTileDictionary.DictionaryCapacity} (+{FullSizeTileDictionary.Count - debugInfo.OldFullsizeCount}) | sizes: {string.Join(", ", debugInfo.ThumbnailSizes.OrderByDescending(size => size.Width * size.Height).ThenByDescending(size => size.Width).Select(size => $"{size.Width}x{size.Height}"))}", edgePx, y += 15, forceDebug);
+					DrawDebugText(g, $"Tiles loaded from file: thumbnails {debugInfo.LoadedThumbnailCount}, full-size {debugInfo.LoadedFullsizeCount})", edgePx, y += 15, forceDebug);
+				}
 			}
 			DrawDebugText(g, $"Drawing took {debugInfo.DrawingDurationMs} ms", edgePx, -edgePx, true);
 			DrawDebugText(g, $"Drawing state: {Sett.DrawingState}", -edgePx, -edgePx, true);
@@ -168,7 +175,7 @@ namespace MA41Viewer.UI.Controls
 
 		private Bitmap GenerateBitmap(out DebugInfoWrapper oDebugInfo)
 		{
-			var debugInfo = new DebugInfoWrapper() { ThumbnailSizes = new HashSet<Size>() };
+			var debugInfo = new DebugInfoWrapper() { KaboomExplosionNotOk = true, ThumbnailSizes = new HashSet<Size>() };
 			var result = new Bitmap(Size.Width, Size.Height);
 			using (var g = Graphics.FromImage(result))
 			{
@@ -211,7 +218,10 @@ namespace MA41Viewer.UI.Controls
 					var mouseTile = Sett.Translate_MapCoordinateBounds_To_MapviewLocationBoundsPx(info.wfdd.TileMapCoordinateBounds);
 					Image image;
 
-					if (MapSettings.TryGetRecommendedThumbnailSize(Math.Max(mouseTile.Width, mouseTile.Height), out uint recommendedThumbnailSize))
+					// extend destination rectangle for tile outward, to avoid line artefacts at edges of tile image caused by floating-point resizing in g.DrawImage()
+					mouseTile = new RectangleF(mouseTile.X - 1, mouseTile.Y - 1, mouseTile.Width + 2, mouseTile.Height + 2);
+
+					if (MapSettings.TryGetRecommendedThumbnailSize(Math.Max(mouseTile.Width, mouseTile.Height), Sett.CurrentQualitySettings.ThumbnailQualityLevel, out uint recommendedThumbnailSize))
 					{
 						image = ThumbDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize, () =>
 						{
@@ -222,7 +232,7 @@ namespace MA41Viewer.UI.Controls
 					}
 					else
 					{
-						// image must be added to (and retrieved from) dictionary resized, not full-size
+						// TODO (maybe?): image must be added to (and retrieved from) dictionary resized, not full-size
 						image = FullSizeTileDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, uint.MinValue, () =>
 						{
 							debugInfo.LoadedFullsizeCount++;
@@ -241,6 +251,7 @@ namespace MA41Viewer.UI.Controls
 					}
 				}
 
+				debugInfo.KaboomExplosionNotOk = false;
 				oDebugInfo = debugInfo;
 				return result;
 			}

@@ -1,88 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace MA41Viewer.UI.Controls
 {
-	public class MapSettings
+	public partial class MapSettings
 	{
-		// inner classes
-
-		public class QualitySettings
-		{
-			public static readonly QualitySettings LOW = new(CompositingMode.SourceOver, CompositingQuality.HighSpeed, InterpolationMode.Low, PixelOffsetMode.HighSpeed, SmoothingMode.HighSpeed, TextRenderingHint.SingleBitPerPixel);
-			public static readonly QualitySettings MEDIUM = new(CompositingMode.SourceOver, CompositingQuality.GammaCorrected, InterpolationMode.NearestNeighbor, PixelOffsetMode.HighQuality, SmoothingMode.HighQuality, TextRenderingHint.AntiAlias);
-			public static readonly QualitySettings HIGH = new(CompositingMode.SourceOver, CompositingQuality.HighQuality, InterpolationMode.HighQualityBicubic, PixelOffsetMode.Half, SmoothingMode.AntiAlias, TextRenderingHint.ClearTypeGridFit);
-
-			public CompositingMode CompositingModeValue { get; private set; }
-			public CompositingQuality CompositingQualityValue { get; private set; }
-			public InterpolationMode InterpolationModeValue { get; private set; }
-			public PixelOffsetMode PixelOffsetModeValue { get; private set; }
-			public SmoothingMode SmoothingModeValue { get; private set; }
-			public TextRenderingHint TextRenderingHintValue { get; private set; }
-
-			public QualitySettings(int cmv, int cqv, int imv, int pomv, int smv, int trhv)
-				: this((CompositingMode)cmv, (CompositingQuality)cqv, (InterpolationMode)imv, (PixelOffsetMode)pomv, (SmoothingMode)smv, (TextRenderingHint)trhv) { }
-
-			public QualitySettings(CompositingMode compositingModeValue, CompositingQuality compositingQualityValue, InterpolationMode interpolationModeValue, PixelOffsetMode pixelOffsetModeValue, SmoothingMode smoothingModeValue, TextRenderingHint textRenderingHintValue)
-			{
-				CompositingModeValue = compositingModeValue;
-				CompositingQualityValue = compositingQualityValue;
-				InterpolationModeValue = interpolationModeValue;
-				PixelOffsetModeValue = pixelOffsetModeValue;
-				SmoothingModeValue = smoothingModeValue;
-				TextRenderingHintValue = textRenderingHintValue;
-			}
-
-			public void SetFrom(QualitySettings settings)
-			{
-				CompositingModeValue = settings.CompositingModeValue;
-				CompositingQualityValue = settings.CompositingQualityValue;
-				InterpolationModeValue = settings.InterpolationModeValue;
-				PixelOffsetModeValue = settings.PixelOffsetModeValue;
-				SmoothingModeValue = settings.SmoothingModeValue;
-				TextRenderingHintValue = settings.TextRenderingHintValue;
-			}
-
-			public override string ToString()
-				=> $"{(int)CompositingModeValue},{(int)CompositingQualityValue},{(int)InterpolationModeValue},{(int)PixelOffsetModeValue},{(int)SmoothingModeValue},{(int)TextRenderingHintValue}";
-		}
-
-		public class DebugInfoShown
-		{
-			public bool MouseCursorInfo { get; set; } = true;
-			public bool DrawingQualityInfo { get; set; } = true;
-			public bool MemoryAllocationInfo { get; set; } = true;
-			public bool DetailedTileInfo { get; set; } = true;
-
-			public DebugInfoShown()
-				: this(true, true, true, true) { }
-
-			public DebugInfoShown(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo, bool detailedTileInfo)
-			{
-				MouseCursorInfo = mouseCursorInfo;
-				DrawingQualityInfo = drawingQualityInfo;
-				MemoryAllocationInfo = memoryAllocationInfo;
-				DetailedTileInfo = detailedTileInfo;
-			}
-
-			public void SetFrom(bool mouseCursorInfo, bool drawingQualityInfo, bool memoryAllocationInfo, bool detailedTileInfo)
-			{
-				MouseCursorInfo = mouseCursorInfo;
-				DrawingQualityInfo = drawingQualityInfo;
-				MemoryAllocationInfo = memoryAllocationInfo;
-				DetailedTileInfo = detailedTileInfo;
-			}
-
-			public override string ToString()
-				=> $"{MouseCursorInfo},{DrawingQualityInfo},{MemoryAllocationInfo},{DetailedTileInfo}";
-		}
-
 		protected class ObjectState
 		{
 			public uint Year { get; set; }
@@ -99,25 +25,9 @@ namespace MA41Viewer.UI.Controls
 
 		public static readonly float[] ZOOMS = { 0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f };
 
-		public static readonly uint[] THUMBNAILS_SIZES = { 128, 256, 512, 1024, 2048 };
-
-		public static bool TryGetRecommendedThumbnailSize(float tileLengthPx, out uint recommendedThumbnailSize)
-		{
-			foreach (uint thumbnailSize in THUMBNAILS_SIZES)
-			{
-				if (tileLengthPx <= 1.5 * thumbnailSize)
-				{
-					recommendedThumbnailSize = thumbnailSize;
-					return true;
-				}
-			}
-			recommendedThumbnailSize = 0u;
-			return false;
-		}
-
 		// instance members
 
-		public QualitySettings CurrentQualitySettings { get; private set; } = QualitySettings.HIGH;
+		public QualitySettings CurrentQualitySettings { get; private set; } = new();
 		public DebugInfoShown CurrentDebugInfoShown { get; private set; } = new DebugInfoShown();
 		public MapDrawingState DrawingState { get; set; } = MapDrawingState.AtRest;
 		public SizeF MapviewSizePx { get; set; } = SizeF.Empty;
@@ -151,7 +61,7 @@ namespace MA41Viewer.UI.Controls
 		/// <summary>Modifies the current map coordiante bounds to allow for a relatively intuitive zooming experience - the map 'zooms in where the mouse is'. Should be called after the zoom level has been changed.</summary>
 		/// <param name="mouseMapviewLocationPx">the mapview location of the mouse</param>
 		/// <param name="alsoUpdateLastFrameBounds">indicated whether the bounds of the last (saved) frame are to be updated to reflect the new map bounds after this zoom event</param>
-		public void ResetMapAfterZoom(PointF mouseMapviewLocationPx, bool alsoUpdateLastFrameBounds = true)
+		public void ResetMapAfterZoom(PointF mouseMapviewLocationPx)
 		{
 			var centerPx = GetMapviewCenterPx();
 			var deltaToCenterPx = new SizeF(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
@@ -163,15 +73,6 @@ namespace MA41Viewer.UI.Controls
 				newMapBounds.Top - deltaToCenterPx.Height * zoomRatio,
 				newMapBounds.Width,
 				newMapBounds.Height);
-			if (alsoUpdateLastFrameBounds && LastFrame.HasValue)
-			{
-				var bounds = new RectangleF(
-					newMapBounds.Left,
-					newMapBounds.Top,
-					(oldMapBounds.Width / newMapBounds.Width) * MapviewSizePx.Width,
-					(oldMapBounds.Height / newMapBounds.Height) * MapviewSizePx.Height);
-				//LastFrame = new KeyValuePair<RectangleF, Bitmap>(bounds, LastFrame.Value.Value);
-			}
 		}
 
 		/// <summary>Modifies the current map coordiante bounds to allow panning the map by mouse
@@ -235,7 +136,7 @@ namespace MA41Viewer.UI.Controls
 			CenterMap(new PointF(parts[0], parts[1]));
 			// default drawing quality setting should be HIGH
 			//int[] qs = lines[3].Split(',').Select(part => int.Parse(part)).ToArray();
-			//CurrentQualitySettings = new QualitySettings(qs[0], qs[1], qs[2], qs[3], qs[4], qs[5]);
+			//CurrentQualitySettings = new QualitySettings(qs[0], qs[1], qs[2], qs[3], qs[4], qs[5], ...);
 			bool[] vals = lines[3].Split(',').Select(part => bool.Parse(part)).ToArray();
 			CurrentDebugInfoShown.SetFrom(vals[0], vals[1], vals[2], vals[3]);
 		}

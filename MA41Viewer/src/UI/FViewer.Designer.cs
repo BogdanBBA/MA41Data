@@ -50,6 +50,7 @@ namespace MA41Viewer.UI
 			this.mouseCursorInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.drawingQualityInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.memoryAllocationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.detailedTileInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.locationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.viennaOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.innereStadtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,7 +62,6 @@ namespace MA41Viewer.UI
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.detailedTileInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.ZoomLevelTrB)).BeginInit();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -71,7 +71,7 @@ namespace MA41Viewer.UI
 			this._MapViewer.DebugMode = false;
 			this._MapViewer.Location = new System.Drawing.Point(155, 27);
 			this._MapViewer.Name = "_MapViewer";
-			this._MapViewer.Size = new System.Drawing.Size(241, 99);
+			this._MapViewer.Size = new System.Drawing.Size(716, 251);
 			this._MapViewer.TabIndex = 0;
 			// 
 			// YearFLP
@@ -173,7 +173,7 @@ namespace MA41Viewer.UI
 			// debugONOFFToolStripMenuItem
 			// 
 			this.debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
 			this.debugONOFFToolStripMenuItem.Click += new System.EventHandler(this.DebugONOFFToolStripMenuItem_Click);
 			// 
@@ -184,7 +184,7 @@ namespace MA41Viewer.UI
             this.mediumToolStripMenuItem,
             this.highToolStripMenuItem});
 			this.drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
@@ -216,7 +216,7 @@ namespace MA41Viewer.UI
             this.memoryAllocationInfoToolStripMenuItem,
             this.detailedTileInfoToolStripMenuItem});
 			this.informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
 			this.informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
@@ -239,6 +239,13 @@ namespace MA41Viewer.UI
 			this.memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
 			this.memoryAllocationInfoToolStripMenuItem.Text = "Memory allocation info";
 			this.memoryAllocationInfoToolStripMenuItem.Click += new System.EventHandler(this.MemoryAllocationInfoToolStripMenuItem_Click);
+			// 
+			// detailedTileInfoToolStripMenuItem
+			// 
+			this.detailedTileInfoToolStripMenuItem.Name = "detailedTileInfoToolStripMenuItem";
+			this.detailedTileInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			this.detailedTileInfoToolStripMenuItem.Text = "Detailed tile info";
+			this.detailedTileInfoToolStripMenuItem.Click += new System.EventHandler(this.DetailedTileInfoToolStripMenuItem_Click);
 			// 
 			// locationsToolStripMenuItem
 			// 
@@ -332,13 +339,6 @@ namespace MA41Viewer.UI
 			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
 			this.currentViewallYearsToolStripMenuItem.Text = "Current view (all years)";
 			this.currentViewallYearsToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewallYearsToolStripMenuItem_Click);
-			// 
-			// detailedTileInfoToolStripMenuItem
-			// 
-			this.detailedTileInfoToolStripMenuItem.Name = "detailedTileInfoToolStripMenuItem";
-			this.detailedTileInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-			this.detailedTileInfoToolStripMenuItem.Text = "Detailed tile info";
-			this.detailedTileInfoToolStripMenuItem.Click += new System.EventHandler(this.DetailedTileInfoToolStripMenuItem_Click);
 			// 
 			// FViewer
 			// 
