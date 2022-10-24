@@ -5,8 +5,6 @@ using System.Linq;
 
 namespace MA41Viewer.Data
 {
-
-
 	public class GeoModel
 	{
 		protected Dictionary<TileInfo, WorldFileDataDictionary> WorldFileData { get; private set; }

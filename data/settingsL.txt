@@ -1,0 +1,4 @@
+1992
+3
+8850.47,-19328.83
+False,False,False,True

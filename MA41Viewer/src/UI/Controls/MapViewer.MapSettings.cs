@@ -23,7 +23,28 @@ namespace MA41Viewer.UI.Controls
 
 		// static members and methods
 
-		public static readonly float[] ZOOMS = { 0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f };
+		public class Zoom
+		{
+			public uint Level { get; private set; }
+			public float Ratio { get; private set; }
+
+			public Zoom(uint level, float ratio)
+			{
+				Level = level;
+				Ratio = ratio;
+			}
+		}
+
+		public static readonly float[] zoomRatios = { 0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f };
+
+		public static readonly Zoom[] ZOOMS;
+
+		static MapSettings()
+		{
+			ZOOMS = Enumerable.Range(1, zoomRatios.Length)
+				.Select(zoomLevel => new Zoom((uint)zoomLevel, zoomRatios[^zoomLevel]))
+				.ToArray();
+		}
 
 		// instance members
 
@@ -44,7 +65,7 @@ namespace MA41Viewer.UI.Controls
 		/// <param name="centerCoordinate">the map coordinate to the center the map on</param>
 		private RectangleF GetMapCoordBounds(PointF centerCoordinate)
 		{
-			var zoomRatio = ZOOMS[ZoomLevel];
+			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
 			return new(centerCoordinate.X - MapviewSizePx.Width * zoomRatio / 2,
 				centerCoordinate.Y - MapviewSizePx.Height * zoomRatio / 2,
 				MapviewSizePx.Width * zoomRatio,
@@ -65,7 +86,7 @@ namespace MA41Viewer.UI.Controls
 		{
 			var centerPx = GetMapviewCenterPx();
 			var deltaToCenterPx = new SizeF(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
-			var zoomRatio = ZOOMS[ZoomLevel];
+			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
 			var oldMapBounds = CurrentMapCoordBounds;
 			var newMapBounds = GetMapCoordBounds(Translate_MapviewLocationPx_To_MapCoordinates(mouseMapviewLocationPx));
 			CurrentMapCoordBounds = new RectangleF(
@@ -81,7 +102,7 @@ namespace MA41Viewer.UI.Controls
 		public void MoveMap(PointF mouseMapviewLocationPx)
 		{
 			var delta = new SizeF(LastMouseDown_MapviewLocationPx.X - mouseMapviewLocationPx.X, LastMouseDown_MapviewLocationPx.Y - mouseMapviewLocationPx.Y);
-			var zoomRatio = ZOOMS[ZoomLevel];
+			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
 			CurrentMapCoordBounds = new RectangleF(CurrentMapCoordBounds.Left + delta.Width * zoomRatio,
 				CurrentMapCoordBounds.Top + delta.Height * zoomRatio,
 				CurrentMapCoordBounds.Width,

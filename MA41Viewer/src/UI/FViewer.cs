@@ -1,10 +1,12 @@
 ﻿using MA41.Commons;
 using MA41Viewer.Data;
+using MA41Viewer.src.UI.Controls;
 using MA41Viewer.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MA41Viewer.UI
@@ -38,72 +40,115 @@ namespace MA41Viewer.UI
 				return;
 			}
 
-			_MapViewer.InitializeGeoModel(GeoData.GeoModel, zoomLevel => ZoomLevelTrB.Value = (int)zoomLevel);
-			_MapViewer.Sett.LoadFromFile(Paths.SETTINGS_FILE);
 			InitializeMyComponents();
 		}
 
 		private void FViewer_Resize(object sender, EventArgs e)
 		{
-			_MapViewer.Size = new Size(Width - _MapViewer.Left - 30, Height - _MapViewer.Top - 55);
+			const int hPadd = 10, wZoom = 80, hYear = 45;
+			Rectangle controlArea = new(5, 25, Width - 22, Height - 70);
 
-			YearHeaderL.Location = new Point(10, menuStrip1.Bottom + 10);
-			YearFLP.Location = new Point(10, YearHeaderL.Bottom + 10);
-			ZoomHeaderL.Location = new Point(10, YearFLP.Bottom + 10);
-			ZoomLevelTrB.Bounds = new Rectangle(YearHeaderL.Left + YearFLP.Width / 2 - ZoomLevelTrB.Width / 2 - 10, ZoomHeaderL.Bottom + 3, ZoomLevelTrB.Width, _MapViewer.Bottom - ZoomHeaderL.Bottom);
+			_zoomControl.SetBounds(controlArea.Left, controlArea.Top, wZoom, controlArea.Height);
+			_zoomControl.Invalidate();
 
-			_MapViewer.Invalidate();
+			_YearControlLeft.SetBounds(_zoomControl.Right + hPadd, controlArea.Top, (controlArea.Width - _zoomControl.Right - hPadd) / 2 - hPadd / 2, hYear);
+			_YearControlLeft.Invalidate();
+
+			_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, controlArea.Height - _YearControlLeft.Height);
+			_MapViewerLeft.Invalidate();
+
+			_YearControlRight.SetBounds(_YearControlLeft.Right + hPadd, _YearControlLeft.Top, _YearControlLeft.Width, _YearControlLeft.Height);
+			_YearControlRight.Invalidate();
+
+			_MapViewerRight.SetBounds(_YearControlRight.Left, _YearControlRight.Bottom, _YearControlRight.Width, _MapViewerLeft.Height);
+			_MapViewerRight.Invalidate();
 		}
 
 		private void InitializeMyComponents()
 		{
-			debugONOFFToolStripMenuItem.Checked = _MapViewer.DebugMode;
-
-			void yearRB_ClickHandler(object sender, EventArgs e)
+			_MapViewerLeft.InitializeGeoModel(GeoData.GeoModel);
+			_MapViewerLeft.Sett.LoadFromFile(Paths.SETTINGS_FILE_LEFT);
+			_MapViewerLeft.OnMapBoundsChanged = (zoom, center) =>
 			{
-				_MapViewer.Sett.Year = (uint)(sender as RadioButton).Tag;
-				_MapViewer.Invalidate();
-			}
+				_MapViewerRight.CenterAndZoom(zoom, center.X, center.Y);
+				_zoomControl.SelectedItemIndex = (int)zoom;
+				_zoomControl.Invalidate();
+			};
 
-			for (int iYear = GeoData.GeoModel.Years.Length - 1; iYear >= 0; iYear--)
+			_MapViewerRight.InitializeGeoModel(GeoData.GeoModel);
+			_MapViewerRight.Sett.LoadFromFile(Paths.SETTINGS_FILE_RIGHT);
+			_MapViewerRight.OnMapBoundsChanged = (zoom, center) =>
 			{
-				uint year = GeoData.GeoModel.Years[iYear];
-				var rb = new RadioButton()
-				{
-					Name = $"year{year}",
-					Text = $"{year}",
-					Cursor = Cursors.Hand,
-					Font = new Font("Segoe UI", 12, FontStyle.Bold),
-					Tag = year,
-					AutoSize = true,
-					Checked = year == _MapViewer.Sett.Year
-				};
-				rb.Click += yearRB_ClickHandler;
-				YearFLP.Controls.Add(rb);
-			}
+				_MapViewerLeft.CenterAndZoom(zoom, center.X, center.Y);
+				_zoomControl.SelectedItemIndex = (int)zoom;
+				_zoomControl.Invalidate();
+			};
 
-			ZoomLevelTrB.Maximum = MapSettings.ZOOMS.Length - 1;
-			ZoomLevelTrB.Value = (int)_MapViewer.Sett.ZoomLevel;
+			_zoomControl.SetColors(ItemListControl.BackgroundColorsBlue, ItemListControl.TextColorsBlue);
+			_YearControlLeft.SetColors(ItemListControl.BackgroundColorsRed, ItemListControl.TextColorsRed);
+			_YearControlRight.SetColors(ItemListControl.BackgroundColorsRed, ItemListControl.TextColorsRed);
+
+			_zoomControl.Items = MapSettings.ZOOMS.Select(zoom => new StringWithTag<uint>(zoom.Level, $"Zoom {zoom.Level}", GetZoomDescription(zoom))).ToList();
+			List<StringWithTag<uint>> yearItemList = GeoData.GeoModel.Years
+				.OrderBy(year => year)
+				.Select(year => new StringWithTag<uint>(year, year.ToString(), GetYearDescription(year)))
+				.ToList();
+			_YearControlLeft.Items = yearItemList;
+			_YearControlRight.Items = yearItemList;
+
+			_zoomControl.SelectedItemIndex = (int)_MapViewerLeft.Sett.ZoomLevel;
+			_YearControlLeft.SelectedItemIndex = yearItemList.FindIndex(item => item.Tag == _MapViewerLeft.Sett.Year);
+			_YearControlRight.SelectedItemIndex = yearItemList.FindIndex(item => item.Tag == _MapViewerRight.Sett.Year);
+
+			_zoomControl.OnSelectedItemChanged += (zoom) =>
+			{
+				_MapViewerLeft.Sett.ZoomLevel = zoom - 1;
+				_MapViewerRight.Sett.ZoomLevel = zoom - 1;
+
+				_MapViewerLeft.Sett.CenterMap(_MapViewerLeft.Sett.GetCurrentMapCoordCenter());
+				_MapViewerRight.Sett.CenterMap(_MapViewerRight.Sett.GetCurrentMapCoordCenter());
+
+				_MapViewerLeft.Invalidate();
+				_MapViewerRight.Invalidate();
+			};
+			_YearControlLeft.OnSelectedItemChanged += (year) =>
+			{
+				_MapViewerLeft.Sett.Year = year;
+				_MapViewerLeft.Invalidate();
+			};
+			_YearControlRight.OnSelectedItemChanged += (year) =>
+			{
+				_MapViewerRight.Sett.Year = year;
+				_MapViewerRight.Invalidate();
+			};
 
 			// default drawing quality setting should be HIGH
 			SetDrawingQualityToolstripItemChecked(highToolStripMenuItem);
-
-			mouseCursorInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo;
-			drawingQualityInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo;
-			memoryAllocationInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo;
-			detailedTileInfoToolStripMenuItem.Checked = _MapViewer.Sett.CurrentDebugInfoShown.DetailedTileInfo;
+			debugONOFFToolStripMenuItem.Checked = _MapViewerLeft.DebugMode;
+			mouseCursorInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.MouseCursorInfo;
+			drawingQualityInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.DrawingQualityInfo;
+			memoryAllocationInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.MemoryAllocationInfo;
+			detailedTileInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.DetailedTileInfo;
 		}
 
-		private void ZoomLevelTrB_Scroll(object sender, EventArgs e)
+		public string GetYearDescription(uint year)
 		{
-			_MapViewer.Sett.ZoomLevel = (uint)ZoomLevelTrB.Value;
-			_MapViewer.Sett.CenterMap(_MapViewer.Sett.GetCurrentMapCoordCenter());
-			_MapViewer.Invalidate();
+			return (int)year switch
+			{
+				1938 or 1976 or 1992 or 2014 or 2019 or 2020 => "summer",
+				1956 or 2021 => "winter",
+				_ => null
+			};
+		}
+
+		public string GetZoomDescription(MapSettings.Zoom zoom)
+		{
+			return $"{zoom.Ratio:F2}x";
 		}
 
 		private void FViewer_KeyDown(object sender, KeyEventArgs e)
 		{
-			return;
+			//MessageBox.Show("Not yet implemented.");
 
 			//YearHeaderL.Text = e.KeyData.ToString();
 			//if ((e.KeyData & Keys.N) == Keys.N)
@@ -118,14 +163,15 @@ namespace MA41Viewer.UI
 
 		protected override void OnClosed(EventArgs e)
 		{
-			_MapViewer.Sett.SaveToFile(Paths.SETTINGS_FILE);
+			_MapViewerLeft.Sett.SaveToFile(Paths.SETTINGS_FILE_LEFT);
+			_MapViewerRight.Sett.SaveToFile(Paths.SETTINGS_FILE_RIGHT);
 			base.OnClosed(e);
 		}
 
 		#region Main menu events
 		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show($"by BogdanBBA{Environment.NewLine}{Environment.NewLine}December 2021 - January 2022");
+			MessageBox.Show($"by BogdanBBA{Environment.NewLine}{Environment.NewLine}December 2021 - January 2022{Environment.NewLine}October 2022");
 		}
 
 		private void ShowInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -142,14 +188,17 @@ namespace MA41Viewer.UI
 		{
 			var toolstripItemTag = int.Parse((sender as ToolStripMenuItem).Tag as string);
 			var location = DEFAULT_LOCATIONS[toolstripItemTag];
-			_MapViewer.CenterAndZoom(location.Item1, location.Item2, location.Item3);
+			_MapViewerLeft.CenterAndZoom(location.Item1, location.Item2, location.Item3);
+			_MapViewerRight.CenterAndZoom(location.Item1, location.Item2, location.Item3);
 		}
 
 		private void DebugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			debugONOFFToolStripMenuItem.Checked = !debugONOFFToolStripMenuItem.Checked;
-			_MapViewer.DebugMode = debugONOFFToolStripMenuItem.Checked;
-			_MapViewer.Invalidate();
+			_MapViewerLeft.DebugMode = debugONOFFToolStripMenuItem.Checked;
+			_MapViewerRight.DebugMode = debugONOFFToolStripMenuItem.Checked;
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void SetDrawingQualityToolstripItemChecked(ToolStripItem item)
@@ -163,63 +212,77 @@ namespace MA41Viewer.UI
 		private void LowToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
-			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.LOW);
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.LOW);
+			_MapViewerRight.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.LOW);
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void MediumToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
-			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.MEDIUM);
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.MEDIUM);
+			_MapViewerRight.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.MEDIUM);
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void HighToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SetDrawingQualityToolstripItemChecked(sender as ToolStripItem);
-			_MapViewer.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.HIGH);
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.HIGH);
+			_MapViewerRight.Sett.CurrentQualitySettings.SetFrom(MapSettings.QualitySettings.HIGH);
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void MouseCursorInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			mouseCursorInfoToolStripMenuItem.Checked = !mouseCursorInfoToolStripMenuItem.Checked;
-			_MapViewer.Sett.CurrentDebugInfoShown.MouseCursorInfo = mouseCursorInfoToolStripMenuItem.Checked;
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentDebugInfoShown.MouseCursorInfo = mouseCursorInfoToolStripMenuItem.Checked;
+			_MapViewerRight.Sett.CurrentDebugInfoShown.MouseCursorInfo = mouseCursorInfoToolStripMenuItem.Checked;
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void DrawingQualityInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			drawingQualityInfoToolStripMenuItem.Checked = !drawingQualityInfoToolStripMenuItem.Checked;
-			_MapViewer.Sett.CurrentDebugInfoShown.DrawingQualityInfo = drawingQualityInfoToolStripMenuItem.Checked;
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentDebugInfoShown.DrawingQualityInfo = drawingQualityInfoToolStripMenuItem.Checked;
+			_MapViewerRight.Sett.CurrentDebugInfoShown.DrawingQualityInfo = drawingQualityInfoToolStripMenuItem.Checked;
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void MemoryAllocationInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			memoryAllocationInfoToolStripMenuItem.Checked = !memoryAllocationInfoToolStripMenuItem.Checked;
-			_MapViewer.Sett.CurrentDebugInfoShown.MemoryAllocationInfo = memoryAllocationInfoToolStripMenuItem.Checked;
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentDebugInfoShown.MemoryAllocationInfo = memoryAllocationInfoToolStripMenuItem.Checked;
+			_MapViewerRight.Sett.CurrentDebugInfoShown.MemoryAllocationInfo = memoryAllocationInfoToolStripMenuItem.Checked;
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void DetailedTileInfoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			detailedTileInfoToolStripMenuItem.Checked = !detailedTileInfoToolStripMenuItem.Checked;
-			_MapViewer.Sett.CurrentDebugInfoShown.DetailedTileInfo = detailedTileInfoToolStripMenuItem.Checked;
-			_MapViewer.Invalidate();
+			_MapViewerLeft.Sett.CurrentDebugInfoShown.DetailedTileInfo = detailedTileInfoToolStripMenuItem.Checked;
+			_MapViewerRight.Sett.CurrentDebugInfoShown.DetailedTileInfo = detailedTileInfoToolStripMenuItem.Checked;
+			_MapViewerLeft.Invalidate();
+			_MapViewerRight.Invalidate();
 		}
 
 		private void CurrentViewToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
-			_MapViewer.SaveCurrentViewToFile(filename);
+			_MapViewerLeft.SaveCurrentViewToFile(filename);
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 
 		private void CurrentViewallYearsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
-			_MapViewer.SaveAllYearsToFile(filename);
+			_MapViewerLeft.SaveAllYearsToFile(filename);
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 		#endregion

@@ -30,11 +30,7 @@ namespace MA41Viewer.UI
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FViewer));
-			this._MapViewer = new MA41Viewer.UI.Controls.MapViewer();
-			this.YearFLP = new System.Windows.Forms.FlowLayoutPanel();
-			this.YearHeaderL = new System.Windows.Forms.Label();
-			this.ZoomLevelTrB = new System.Windows.Forms.TrackBar();
-			this.ZoomHeaderL = new System.Windows.Forms.Label();
+			this._MapViewerLeft = new MA41Viewer.UI.Controls.MapViewer();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,58 +58,21 @@ namespace MA41Viewer.UI
 			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			((System.ComponentModel.ISupportInitialize)(this.ZoomLevelTrB)).BeginInit();
+			this._MapViewerRight = new MA41Viewer.UI.Controls.MapViewer();
+			this._YearControlLeft = new MA41Viewer.src.UI.Controls.ItemListControl();
+			this._YearControlRight = new MA41Viewer.src.UI.Controls.ItemListControl();
+			this._zoomControl = new MA41Viewer.src.UI.Controls.ItemListControl();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// _MapViewer
+			// _MapViewerLeft
 			// 
-			this._MapViewer.DebugMode = false;
-			this._MapViewer.Location = new System.Drawing.Point(155, 27);
-			this._MapViewer.Name = "_MapViewer";
-			this._MapViewer.Size = new System.Drawing.Size(716, 251);
-			this._MapViewer.TabIndex = 0;
-			// 
-			// YearFLP
-			// 
-			this.YearFLP.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.YearFLP.Location = new System.Drawing.Point(12, 67);
-			this.YearFLP.Name = "YearFLP";
-			this.YearFLP.Size = new System.Drawing.Size(137, 310);
-			this.YearFLP.TabIndex = 1;
-			// 
-			// YearHeaderL
-			// 
-			this.YearHeaderL.AutoSize = true;
-			this.YearHeaderL.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.YearHeaderL.Location = new System.Drawing.Point(12, 27);
-			this.YearHeaderL.Name = "YearHeaderL";
-			this.YearHeaderL.Size = new System.Drawing.Size(51, 30);
-			this.YearHeaderL.TabIndex = 2;
-			this.YearHeaderL.Text = "Year";
-			// 
-			// ZoomLevelTrB
-			// 
-			this.ZoomLevelTrB.Cursor = System.Windows.Forms.Cursors.SizeNS;
-			this.ZoomLevelTrB.Location = new System.Drawing.Point(12, 420);
-			this.ZoomLevelTrB.Maximum = 12;
-			this.ZoomLevelTrB.Name = "ZoomLevelTrB";
-			this.ZoomLevelTrB.Orientation = System.Windows.Forms.Orientation.Vertical;
-			this.ZoomLevelTrB.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.ZoomLevelTrB.RightToLeftLayout = true;
-			this.ZoomLevelTrB.Size = new System.Drawing.Size(45, 137);
-			this.ZoomLevelTrB.TabIndex = 4;
-			this.ZoomLevelTrB.Scroll += new System.EventHandler(this.ZoomLevelTrB_Scroll);
-			// 
-			// ZoomHeaderL
-			// 
-			this.ZoomHeaderL.AutoSize = true;
-			this.ZoomHeaderL.Font = new System.Drawing.Font("Segoe UI Semilight", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.ZoomHeaderL.Location = new System.Drawing.Point(12, 380);
-			this.ZoomHeaderL.Name = "ZoomHeaderL";
-			this.ZoomHeaderL.Size = new System.Drawing.Size(67, 30);
-			this.ZoomHeaderL.TabIndex = 5;
-			this.ZoomHeaderL.Text = "Zoom";
+			this._MapViewerLeft.DebugMode = false;
+			this._MapViewerLeft.Location = new System.Drawing.Point(155, 27);
+			this._MapViewerLeft.OnMapBoundsChanged = null;
+			this._MapViewerLeft.Name = "_MapViewerLeft";
+			this._MapViewerLeft.Size = new System.Drawing.Size(716, 251);
+			this._MapViewerLeft.TabIndex = 0;
 			// 
 			// menuStrip1
 			// 
@@ -329,26 +288,68 @@ namespace MA41Viewer.UI
 			// currentViewToolStripMenuItem
 			// 
 			this.currentViewToolStripMenuItem.Name = "currentViewToolStripMenuItem";
-			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-			this.currentViewToolStripMenuItem.Text = "Current view";
+			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+			this.currentViewToolStripMenuItem.Text = "Current (left) view";
 			this.currentViewToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewToolStripMenuItem_Click);
 			// 
 			// currentViewallYearsToolStripMenuItem
 			// 
 			this.currentViewallYearsToolStripMenuItem.Name = "currentViewallYearsToolStripMenuItem";
-			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-			this.currentViewallYearsToolStripMenuItem.Text = "Current view (all years)";
+			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+			this.currentViewallYearsToolStripMenuItem.Text = "Current (left) view (all years)";
 			this.currentViewallYearsToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewallYearsToolStripMenuItem_Click);
+			// 
+			// _MapViewerRight
+			// 
+			this._MapViewerRight.DebugMode = false;
+			this._MapViewerRight.Location = new System.Drawing.Point(324, 219);
+			this._MapViewerRight.OnMapBoundsChanged = null;
+			this._MapViewerRight.Name = "_MapViewerRight";
+			this._MapViewerRight.Size = new System.Drawing.Size(716, 251);
+			this._MapViewerRight.TabIndex = 8;
+			// 
+			// _YearControlLeft
+			// 
+			this._YearControlLeft.Location = new System.Drawing.Point(275, 128);
+			this._YearControlLeft.Name = "_YearControlLeft";
+			this._YearControlLeft.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			this._YearControlLeft.SelectedItemIndex = 1;
+			this._YearControlLeft.Size = new System.Drawing.Size(568, 55);
+			this._YearControlLeft.TabIndex = 9;
+			this._YearControlLeft.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this._YearControlLeft.OnSelectedItemChanged = null;
+			// 
+			// _YearControlRight
+			// 
+			this._YearControlRight.Location = new System.Drawing.Point(429, 334);
+			this._YearControlRight.Name = "_YearControlRight";
+			this._YearControlRight.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			this._YearControlRight.SelectedItemIndex = 1;
+			this._YearControlRight.Size = new System.Drawing.Size(568, 55);
+			this._YearControlRight.TabIndex = 10;
+			this._YearControlRight.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this._YearControlRight.OnSelectedItemChanged = null;
+			// 
+			// _zoomControl
+			// 
+			this._zoomControl.Location = new System.Drawing.Point(22, 219);
+			this._zoomControl.Name = "_zoomControl";
+			this._zoomControl.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Vertical;
+			this._zoomControl.SelectedItemIndex = 2;
+			this._zoomControl.Size = new System.Drawing.Size(88, 253);
+			this._zoomControl.TabIndex = 11;
+			this._zoomControl.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this._zoomControl.OnSelectedItemChanged = null;
 			// 
 			// FViewer
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1231, 585);
-			this.Controls.Add(this.ZoomHeaderL);
-			this.Controls.Add(this.ZoomLevelTrB);
-			this.Controls.Add(this.YearHeaderL);
-			this.Controls.Add(this.YearFLP);
-			this.Controls.Add(this._MapViewer);
+			this.Controls.Add(this._zoomControl);
+			this.Controls.Add(this._YearControlRight);
+			this.Controls.Add(this._YearControlLeft);
+			this.Controls.Add(this._MapViewerRight);
+			this.Controls.Add(this._MapViewerLeft);
 			this.Controls.Add(this.menuStrip1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
@@ -360,7 +361,6 @@ namespace MA41Viewer.UI
 			this.Load += new System.EventHandler(this.FViewer_Load);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FViewer_KeyDown);
 			this.Resize += new System.EventHandler(this.FViewer_Resize);
-			((System.ComponentModel.ISupportInitialize)(this.ZoomLevelTrB)).EndInit();
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.ResumeLayout(false);
@@ -370,11 +370,7 @@ namespace MA41Viewer.UI
 
 		#endregion
 
-		private UI.Controls.MapViewer _MapViewer;
-		private System.Windows.Forms.FlowLayoutPanel YearFLP;
-		private System.Windows.Forms.Label YearHeaderL;
-		private System.Windows.Forms.TrackBar ZoomLevelTrB;
-		private System.Windows.Forms.Label ZoomHeaderL;
+		private UI.Controls.MapViewer _MapViewerLeft;
 		private System.Windows.Forms.MenuStrip menuStrip1;
 		private System.Windows.Forms.ToolStripMenuItem appToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem locationsToolStripMenuItem;
@@ -402,5 +398,9 @@ namespace MA41Viewer.UI
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem detailedTileInfoToolStripMenuItem;
+		private Controls.MapViewer _MapViewerRight;
+		private src.UI.Controls.ItemListControl _YearControlLeft;
+		private src.UI.Controls.ItemListControl _YearControlRight;
+		private src.UI.Controls.ItemListControl _zoomControl;
 	}
 }

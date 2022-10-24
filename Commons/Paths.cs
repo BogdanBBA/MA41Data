@@ -11,7 +11,8 @@ namespace MA41.Commons
 		public static string THUMBNAILS_FOLDER { get; private set; }
 		public static string EXPORTS_FOLDER { get; private set; }
 		public static string IMAGE_SIZE_DICTIONARY_FILE { get; private set; }
-		public static string SETTINGS_FILE { get; private set; }
+		public static string SETTINGS_FILE_LEFT { get; private set; }
+		public static string SETTINGS_FILE_RIGHT{ get; private set; }
 
 		private static string GetParentFolder(string name)
 		{
@@ -44,7 +45,8 @@ namespace MA41.Commons
 			}
 
 			IMAGE_SIZE_DICTIONARY_FILE = Path.Combine(ROOT_FOLDER, dataFolder, "image-sizes.txt");
-			SETTINGS_FILE = Path.Combine(ROOT_FOLDER, dataFolder, "settings.txt");
+			SETTINGS_FILE_LEFT = Path.Combine(ROOT_FOLDER, dataFolder, "settingsL.txt");
+			SETTINGS_FILE_RIGHT = Path.Combine(ROOT_FOLDER, dataFolder, "settingsR.txt");
 		}
 	}
 }

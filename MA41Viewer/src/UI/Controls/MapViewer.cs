@@ -13,7 +13,7 @@ namespace MA41Viewer.UI.Controls
 
 		private readonly object _lock = new();
 		public bool DebugMode { get; set; } = false;
-		protected Action<uint> MouseZoomCallback { get; private set; }
+		public Action<uint, PointF> OnMapBoundsChanged { get; set; }
 		protected GeoModel GeoModel { get; private set; }
 		public MapSettings Sett { get; protected set; }
 		protected ThumbnailDictionary ThumbDictionary { get; private set; }
@@ -27,10 +27,10 @@ namespace MA41Viewer.UI.Controls
 			FullSizeTileDictionary = new ThumbnailDictionary(2 * ThumbnailDictionary.DEFAULT_MINIMUM_FULLSIZE_CAPACITY);
 		}
 
-		public void InitializeGeoModel(GeoModel geoModel, Action<uint> mouseZoomCallback)
+		public void InitializeGeoModel(GeoModel geoModel)
 		{
 			GeoModel = geoModel;
-			MouseZoomCallback = mouseZoomCallback;
+			OnMapBoundsChanged = null;
 			Sett.MapviewSizePx = Size;
 			Sett.CenterMap(GeoModel.CenterCoordinate);
 			Invalidate();
@@ -54,7 +54,8 @@ namespace MA41Viewer.UI.Controls
 		protected override void OnMouseDoubleClick(MouseEventArgs e)
 		{
 			Sett.CenterMap(Sett.Translate_MapviewLocationPx_To_MapCoordinates(e.Location));
-			Invalidate();
+			Invalidate(); 
+			OnMapBoundsChanged?.Invoke(Sett.ZoomLevel, Sett.GetCurrentMapCoordCenter());
 		}
 
 		protected override void OnMouseEnter(EventArgs e)
@@ -97,13 +98,14 @@ namespace MA41Viewer.UI.Controls
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			Sett.MoveMap(e.Location);
-			Invalidate();
 			Sett.DrawingState = MapSettings.MapDrawingState.AtRest;
+			Invalidate();
+			OnMapBoundsChanged?.Invoke(Sett.ZoomLevel, Sett.GetCurrentMapCoordCenter());
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			CancellationTokenSource cancellationTokenSource = new ();
+			CancellationTokenSource cancellationTokenSource = new();
 			CancellationToken token = cancellationTokenSource.Token;
 
 			if (Sett.DrawingState == MapSettings.MapDrawingState.ZoomEvent)
@@ -111,9 +113,8 @@ namespace MA41Viewer.UI.Controls
 				cancellationTokenSource.Cancel();
 			}
 			Sett.DrawingState = MapSettings.MapDrawingState.ZoomEvent;
-			Sett.ZoomLevel = (uint)Math.Max(0, Math.Min(MapSettings.ZOOMS.Length - 1, Sett.ZoomLevel + (-e.Delta / SystemInformation.MouseWheelScrollDelta)));
+			Sett.ZoomLevel = (uint)Math.Max(0, Math.Min(MapSettings.ZOOMS.Length - 1, Sett.ZoomLevel + (+e.Delta / SystemInformation.MouseWheelScrollDelta)));
 			Sett.ResetMapAfterZoom(e.Location);
-			MouseZoomCallback(Sett.ZoomLevel);
 			Invalidate();
 			Task.Run(async () =>
 			{
@@ -122,6 +123,7 @@ namespace MA41Viewer.UI.Controls
 				{
 					Sett.DrawingState = MapSettings.MapDrawingState.AtRest;
 					Invalidate();
+					OnMapBoundsChanged?.Invoke(Sett.ZoomLevel, Sett.GetCurrentMapCoordCenter());
 				}
 			}, token);
 		}
