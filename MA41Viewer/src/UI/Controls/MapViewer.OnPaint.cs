@@ -1,4 +1,5 @@
 ﻿using MA41Viewer.Data;
+using Commons;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing.Text;
 
 namespace MA41Viewer.UI.Controls
 {
@@ -132,7 +134,7 @@ namespace MA41Viewer.UI.Controls
 				if (Sett.CurrentDebugInfoShown.MouseCursorInfo)
 				{
 					DrawDebugText(g, Sett.MouseLocationPx == PointF.Empty ? "Mouse out of bounds" : $"Mouse: mapview location {Sett.MouseLocationPx.X:F0}px, {Sett.MouseLocationPx.Y:F0}px / map coordinates {Sett.Translate_MapviewX_To_MapCoordinateX(Sett.MouseLocationPx.X):F1}, {Sett.Translate_MapviewY_To_MapCoordinateY(Sett.MouseLocationPx.Y):F1}", edgePx, y += 15, forceDebug);
-					DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta { Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, { Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", edgePx, y += 15, forceDebug);
+					DrawDebugText(g, Sett.LastMouseDown_MapviewLocationPx == PointF.Empty ? "Mouse not down" : $"Mouse was down at {Sett.LastMouseDown_MapviewLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y:F1} (delta {Sett.LastMouseDown_MapviewLocationPx.X - Sett.MouseLocationPx.X:F1}, {Sett.LastMouseDown_MapviewLocationPx.Y - Sett.MouseLocationPx.Y:F1})", edgePx, y += 15, forceDebug);
 				}
 				if (Sett.CurrentDebugInfoShown.DrawingQualityInfo)
 				{
@@ -147,6 +149,21 @@ namespace MA41Viewer.UI.Controls
 			}
 			DrawDebugText(g, $"Drawing took {debugInfo.DrawingDurationMs} ms", edgePx, -edgePx, true);
 			DrawDebugText(g, $"Drawing state: {Sett.DrawingState}", -edgePx, -edgePx, true);
+		}
+
+		private static void DrawYearOnExportBitmap(Bitmap frame, uint year)
+		{
+			using (var g = Graphics.FromImage(frame))
+			{
+				var tenthOfSmallerSide = Math.Min(frame.Width, frame.Height) / 10;
+				var yearArea = new RectangleF(6, 6, 2 * tenthOfSmallerSide, tenthOfSmallerSide);
+				var text = $"{year}";
+				var font = g.GetAdjustedFont(text, new Font("Ubuntu Mono", 10, FontStyle.Bold), yearArea.Width, 100, 6);
+				var fontSize = g.MeasureString(text, font);
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
+				g.FillRectangle(Brushes.Black, yearArea);
+				g.DrawString(text, font, Brushes.White, yearArea.GetXForCenteredText(fontSize.Width), yearArea.GetYForCenteredText(fontSize.Height));
+			}
 		}
 
 		public Bitmap GenerateAllYearsBitmap(uint[] years)
@@ -164,6 +181,7 @@ namespace MA41Viewer.UI.Controls
 				{
 					Sett.Year = year;
 					var frame = GenerateBitmap(out DebugInfoWrapper _);
+					DrawYearOnExportBitmap(frame, year);
 					g.DrawImageUnscaled(frame, location);
 					location.Offset(addX, addY);
 				}
