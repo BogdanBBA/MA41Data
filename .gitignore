@@ -337,5 +337,4 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
-data/settingsL.txt
-data/settingsR.txt
+*settings*.txt
