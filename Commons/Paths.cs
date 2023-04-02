@@ -6,13 +6,14 @@ namespace MA41.Commons
 	public static class Paths
 	{
 		public static string ROOT_FOLDER { get; private set; }
+		public static string OTHER_FOLDER { get; private set; }
 		public static string DOWNLOAD_FOLDER { get; private set; }
 		public static string IMAGES_FOLDER { get; private set; }
 		public static string THUMBNAILS_FOLDER { get; private set; }
 		public static string EXPORTS_FOLDER { get; private set; }
 		public static string IMAGE_SIZE_DICTIONARY_FILE { get; private set; }
 		public static string SETTINGS_FILE_LEFT { get; private set; }
-		public static string SETTINGS_FILE_RIGHT{ get; private set; }
+		public static string SETTINGS_FILE_RIGHT { get; private set; }
 
 		private static string GetParentFolder(string name)
 		{
@@ -30,12 +31,13 @@ namespace MA41.Commons
 			const string dataFolder = "data";
 
 			ROOT_FOLDER = GetParentFolder(rootFolderName);
+			OTHER_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "other");
 			DOWNLOAD_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "downloads");
 			IMAGES_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "unpacked");
 			THUMBNAILS_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "thumbnails");
 			EXPORTS_FOLDER = Path.Combine(ROOT_FOLDER, dataFolder, "exports");
 
-			foreach (string folder in new[] { DOWNLOAD_FOLDER, IMAGES_FOLDER, THUMBNAILS_FOLDER, EXPORTS_FOLDER })
+			foreach (string folder in new[] { OTHER_FOLDER, DOWNLOAD_FOLDER, IMAGES_FOLDER, THUMBNAILS_FOLDER, EXPORTS_FOLDER })
 			{
 				if (!Directory.Exists(folder))
 				{

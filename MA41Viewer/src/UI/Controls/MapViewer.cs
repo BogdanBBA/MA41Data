@@ -14,6 +14,7 @@ namespace MA41Viewer.UI.Controls
 		private readonly object _lock = new();
 		public bool DebugMode { get; set; } = false;
 		public Action<uint, PointF> OnMapBoundsChanged { get; set; }
+		public Action<Point?> OnMouseLocationPxChanged { get; set; }
 		protected GeoModel GeoModel { get; private set; }
 		public MapSettings Sett { get; protected set; }
 		protected ThumbnailDictionary ThumbDictionary { get; private set; }
@@ -31,6 +32,7 @@ namespace MA41Viewer.UI.Controls
 		{
 			GeoModel = geoModel;
 			OnMapBoundsChanged = null;
+			OnMouseLocationPxChanged = null;
 			Sett.MapviewSizePx = Size;
 			Sett.CenterMap(GeoModel.CenterCoordinate);
 			Invalidate();
@@ -54,7 +56,7 @@ namespace MA41Viewer.UI.Controls
 		protected override void OnMouseDoubleClick(MouseEventArgs e)
 		{
 			Sett.CenterMap(Sett.Translate_MapviewLocationPx_To_MapCoordinates(e.Location));
-			Invalidate(); 
+			Invalidate();
 			OnMapBoundsChanged?.Invoke(Sett.ZoomLevel, Sett.GetCurrentMapCoordCenter());
 		}
 
@@ -73,6 +75,17 @@ namespace MA41Viewer.UI.Controls
 			{
 				Invalidate();
 			}
+			OnMouseLocationPxChanged?.Invoke(null);
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			Sett.MouseLocationPx = e.Location;
+			if (DebugMode || Sett.DrawingState == MapSettings.MapDrawingState.MouseMovement)
+			{
+				Invalidate();
+			}
+			OnMouseLocationPxChanged?.Invoke(e.Location);
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -83,15 +96,7 @@ namespace MA41Viewer.UI.Controls
 			{
 				Invalidate();
 			}
-		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			Sett.MouseLocationPx = e.Location;
-			if (DebugMode || Sett.DrawingState == MapSettings.MapDrawingState.MouseMovement)
-			{
-				Invalidate();
-			}
+			//OnMouseLocationPxChanged?.Invoke(null);
 		}
 
 
@@ -101,6 +106,7 @@ namespace MA41Viewer.UI.Controls
 			Sett.DrawingState = MapSettings.MapDrawingState.AtRest;
 			Invalidate();
 			OnMapBoundsChanged?.Invoke(Sett.ZoomLevel, Sett.GetCurrentMapCoordCenter());
+			//OnMouseLocationPxChanged?.Invoke(e.Location);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e)

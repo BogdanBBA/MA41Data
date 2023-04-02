@@ -62,15 +62,18 @@ namespace MA41Viewer.UI
 			this._YearControlLeft = new MA41Viewer.src.UI.Controls.ItemListControl();
 			this._YearControlRight = new MA41Viewer.src.UI.Controls.ItemListControl();
 			this._zoomControl = new MA41Viewer.src.UI.Controls.ItemListControl();
+			this.CrosshairPB = new System.Windows.Forms.PictureBox();
 			this.menuStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.CrosshairPB)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _MapViewerLeft
 			// 
 			this._MapViewerLeft.DebugMode = false;
 			this._MapViewerLeft.Location = new System.Drawing.Point(155, 27);
-			this._MapViewerLeft.OnMapBoundsChanged = null;
 			this._MapViewerLeft.Name = "_MapViewerLeft";
+			this._MapViewerLeft.OnMapBoundsChanged = null;
+			this._MapViewerLeft.OnMouseLocationPxChanged = null;
 			this._MapViewerLeft.Size = new System.Drawing.Size(716, 251);
 			this._MapViewerLeft.TabIndex = 0;
 			// 
@@ -303,48 +306,64 @@ namespace MA41Viewer.UI
 			// 
 			this._MapViewerRight.DebugMode = false;
 			this._MapViewerRight.Location = new System.Drawing.Point(324, 219);
-			this._MapViewerRight.OnMapBoundsChanged = null;
 			this._MapViewerRight.Name = "_MapViewerRight";
+			this._MapViewerRight.OnMapBoundsChanged = null;
+			this._MapViewerRight.OnMouseLocationPxChanged = null;
 			this._MapViewerRight.Size = new System.Drawing.Size(716, 251);
 			this._MapViewerRight.TabIndex = 8;
 			// 
 			// _YearControlLeft
 			// 
+			this._YearControlLeft.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this._YearControlLeft.Location = new System.Drawing.Point(275, 128);
 			this._YearControlLeft.Name = "_YearControlLeft";
+			this._YearControlLeft.OnSelectedItemChanged = null;
 			this._YearControlLeft.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
 			this._YearControlLeft.SelectedItemIndex = 1;
 			this._YearControlLeft.Size = new System.Drawing.Size(568, 55);
 			this._YearControlLeft.TabIndex = 9;
 			this._YearControlLeft.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._YearControlLeft.OnSelectedItemChanged = null;
 			// 
 			// _YearControlRight
 			// 
+			this._YearControlRight.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this._YearControlRight.Location = new System.Drawing.Point(429, 334);
 			this._YearControlRight.Name = "_YearControlRight";
+			this._YearControlRight.OnSelectedItemChanged = null;
 			this._YearControlRight.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
 			this._YearControlRight.SelectedItemIndex = 1;
 			this._YearControlRight.Size = new System.Drawing.Size(568, 55);
 			this._YearControlRight.TabIndex = 10;
 			this._YearControlRight.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._YearControlRight.OnSelectedItemChanged = null;
 			// 
 			// _zoomControl
 			// 
+			this._zoomControl.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this._zoomControl.Location = new System.Drawing.Point(22, 219);
 			this._zoomControl.Name = "_zoomControl";
+			this._zoomControl.OnSelectedItemChanged = null;
 			this._zoomControl.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Vertical;
 			this._zoomControl.SelectedItemIndex = 2;
 			this._zoomControl.Size = new System.Drawing.Size(88, 253);
 			this._zoomControl.TabIndex = 11;
 			this._zoomControl.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._zoomControl.OnSelectedItemChanged = null;
+			// 
+			// CrosshairPB
+			// 
+			this.CrosshairPB.BackColor = System.Drawing.Color.Transparent;
+			this.CrosshairPB.ErrorImage = null;
+			this.CrosshairPB.InitialImage = null;
+			this.CrosshairPB.Location = new System.Drawing.Point(210, 206);
+			this.CrosshairPB.Name = "CrosshairPB";
+			this.CrosshairPB.Size = new System.Drawing.Size(32, 32);
+			this.CrosshairPB.TabIndex = 12;
+			this.CrosshairPB.TabStop = false;
 			// 
 			// FViewer
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(1231, 585);
+			this.Controls.Add(this.CrosshairPB);
 			this.Controls.Add(this._zoomControl);
 			this.Controls.Add(this._YearControlRight);
 			this.Controls.Add(this._YearControlLeft);
@@ -363,6 +382,7 @@ namespace MA41Viewer.UI
 			this.Resize += new System.EventHandler(this.FViewer_Resize);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.CrosshairPB)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -402,5 +422,6 @@ namespace MA41Viewer.UI
 		private src.UI.Controls.ItemListControl _YearControlLeft;
 		private src.UI.Controls.ItemListControl _YearControlRight;
 		private src.UI.Controls.ItemListControl _zoomControl;
+		private System.Windows.Forms.PictureBox CrosshairPB;
 	}
 }

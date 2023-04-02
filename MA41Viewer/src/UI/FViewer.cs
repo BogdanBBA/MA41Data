@@ -1,4 +1,5 @@
-﻿using MA41.Commons;
+﻿using Commons;
+using MA41.Commons;
 using MA41Viewer.Data;
 using MA41Viewer.src.UI.Controls;
 using MA41Viewer.UI.Controls;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -24,6 +26,8 @@ namespace MA41Viewer.UI
 			new(7, 10400, -16100)
 		};
 
+		private DateTime _lastCrosshairMoved = DateTime.MinValue;
+
 		public FViewer()
 		{
 			InitializeComponent();
@@ -41,6 +45,10 @@ namespace MA41Viewer.UI
 			}
 
 			InitializeMyComponents();
+
+			CrosshairPB.BackColor = Color.Transparent;
+			CrosshairPB.Load(Path.Combine(Paths.OTHER_FOLDER, "crosshair.png"));
+			//CrosshairPB.Image = GUtils.GenerateCrosshairImage(CrosshairPB.Width, Color.Red, 2.5f);
 		}
 
 		private void FViewer_Resize(object sender, EventArgs e)
@@ -74,6 +82,15 @@ namespace MA41Viewer.UI
 				_zoomControl.SelectedItemIndex = (int)zoom;
 				_zoomControl.Invalidate();
 			};
+			_MapViewerLeft.OnMouseLocationPxChanged = location =>
+			{
+				DateTime now = DateTime.Now;
+				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
+				_lastCrosshairMoved = now;
+				CrosshairPB.Parent = _MapViewerRight;
+				CrosshairPB.Location = location.HasValue ? new Point( location.Value.X,  location.Value.Y) : Point.Empty;
+				CrosshairPB.Visible = location.HasValue;
+			};
 
 			_MapViewerRight.InitializeGeoModel(GeoData.GeoModel);
 			_MapViewerRight.Sett.LoadFromFile(Paths.SETTINGS_FILE_RIGHT);
@@ -82,6 +99,15 @@ namespace MA41Viewer.UI
 				_MapViewerLeft.CenterAndZoom(zoom, center.X, center.Y);
 				_zoomControl.SelectedItemIndex = (int)zoom;
 				_zoomControl.Invalidate();
+			};
+			_MapViewerRight.OnMouseLocationPxChanged = location =>
+			{
+				DateTime now = DateTime.Now;
+				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
+				_lastCrosshairMoved = now;
+				CrosshairPB.Parent = _MapViewerLeft;
+				CrosshairPB.Location = location.HasValue ? new Point( location.Value.X,  location.Value.Y) : Point.Empty;
+				CrosshairPB.Visible = location.HasValue;
 			};
 
 			_zoomControl.SetColors(ItemListControl.BackgroundColorsBlue, ItemListControl.TextColorsBlue);

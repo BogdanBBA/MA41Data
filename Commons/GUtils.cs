@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace Commons
 {
@@ -34,5 +36,20 @@ namespace Commons
 
 		public static float GetYForCenteredText(this RectangleF rectangle, float textHeight)
 			=> rectangle.Top + rectangle.Height / 2f - textHeight / 2f;
+
+		public static Bitmap GenerateCrosshairImage(int bitmapSize, Color crosshairColor, float crosshairLineWidth)
+		{
+			Bitmap bitmap = new Bitmap(bitmapSize, bitmapSize, PixelFormat.Format32bppArgb);
+			Graphics g = Graphics.FromImage(bitmap);
+			g.CompositingMode = CompositingMode.SourceOver;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.Clear(Color.Transparent);
+			
+			Pen pen = new Pen(crosshairColor, crosshairLineWidth);
+			g.DrawLine(pen, 0, bitmapSize / 2, bitmapSize, bitmapSize / 2);
+			g.DrawLine(pen, bitmapSize / 2, 0, bitmapSize / 2, bitmapSize);
+			
+			return bitmap;
+		}
 	}
 }
