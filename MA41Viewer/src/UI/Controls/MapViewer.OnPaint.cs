@@ -13,7 +13,7 @@ namespace MA41Viewer.UI.Controls
 {
 	public partial class MapViewer
 	{
-		private struct DebugInfoWrapper
+		public struct DebugInfoWrapper
 		{
 			public bool KaboomExplosionNotOk;
 			public int VisibleTileCount;
@@ -189,7 +189,7 @@ namespace MA41Viewer.UI.Controls
 			return result;
 		}
 
-		private Bitmap GenerateBitmap(out DebugInfoWrapper oDebugInfo)
+		public Bitmap GenerateBitmap(out DebugInfoWrapper oDebugInfo)
 		{
 			var debugInfo = new DebugInfoWrapper() { KaboomExplosionNotOk = true, ThumbnailSizes = new HashSet<Size>() };
 			var result = new Bitmap(Size.Width, Size.Height);

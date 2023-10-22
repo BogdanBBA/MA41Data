@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static MA41Viewer.UI.Controls.MapViewer;
 
 namespace MA41Viewer.UI
 {
@@ -88,7 +89,7 @@ namespace MA41Viewer.UI
 				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
 				_lastCrosshairMoved = now;
 				CrosshairPB.Parent = _MapViewerRight;
-				CrosshairPB.Location = location.HasValue ? new Point( location.Value.X,  location.Value.Y) : Point.Empty;
+				CrosshairPB.Location = location.HasValue ? new Point(location.Value.X, location.Value.Y) : Point.Empty;
 				CrosshairPB.Visible = location.HasValue;
 			};
 
@@ -106,7 +107,7 @@ namespace MA41Viewer.UI
 				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
 				_lastCrosshairMoved = now;
 				CrosshairPB.Parent = _MapViewerLeft;
-				CrosshairPB.Location = location.HasValue ? new Point( location.Value.X,  location.Value.Y) : Point.Empty;
+				CrosshairPB.Location = location.HasValue ? new Point(location.Value.X, location.Value.Y) : Point.Empty;
 				CrosshairPB.Visible = location.HasValue;
 			};
 
@@ -312,5 +313,12 @@ namespace MA41Viewer.UI
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 		#endregion
+
+		private void CurrentViewsbothToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
+			_MapViewerLeft.SaveCurrentViewsToFile(_MapViewerRight, filename);
+			Process.Start("explorer.exe", $"/select, \"{filename}\"");
+		}
 	}
 }

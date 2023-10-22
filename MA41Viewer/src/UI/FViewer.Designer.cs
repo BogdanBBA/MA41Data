@@ -30,362 +30,343 @@ namespace MA41Viewer.UI
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FViewer));
-			this._MapViewerLeft = new MA41Viewer.UI.Controls.MapViewer();
-			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-			this.appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.debuggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.drawingQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mediumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.highToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.informationShownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.mouseCursorInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.drawingQualityInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.memoryAllocationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.detailedTileInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.locationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.viennaOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.innereStadtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.hauptbahnhofToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.lambrechtgasseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.rittingergasseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.hietzingPenzingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.iKEANordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this._MapViewerRight = new MA41Viewer.UI.Controls.MapViewer();
-			this._YearControlLeft = new MA41Viewer.src.UI.Controls.ItemListControl();
-			this._YearControlRight = new MA41Viewer.src.UI.Controls.ItemListControl();
-			this._zoomControl = new MA41Viewer.src.UI.Controls.ItemListControl();
-			this.CrosshairPB = new System.Windows.Forms.PictureBox();
-			this.menuStrip1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.CrosshairPB)).BeginInit();
-			this.SuspendLayout();
+			_MapViewerLeft = new Controls.MapViewer();
+			menuStrip1 = new System.Windows.Forms.MenuStrip();
+			appToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			debuggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			drawingQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			mediumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			highToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			informationShownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			mouseCursorInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			drawingQualityInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			memoryAllocationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			detailedTileInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			locationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			viennaOverviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			innereStadtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			hauptbahnhofToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			lambrechtgasseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			rittingergasseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			hietzingPenzingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			iKEANordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			currentViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			_MapViewerRight = new Controls.MapViewer();
+			_YearControlLeft = new src.UI.Controls.ItemListControl();
+			_YearControlRight = new src.UI.Controls.ItemListControl();
+			_zoomControl = new src.UI.Controls.ItemListControl();
+			CrosshairPB = new System.Windows.Forms.PictureBox();
+			currentViewsbothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			menuStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)CrosshairPB).BeginInit();
+			SuspendLayout();
 			// 
 			// _MapViewerLeft
 			// 
-			this._MapViewerLeft.DebugMode = false;
-			this._MapViewerLeft.Location = new System.Drawing.Point(155, 27);
-			this._MapViewerLeft.Name = "_MapViewerLeft";
-			this._MapViewerLeft.OnMapBoundsChanged = null;
-			this._MapViewerLeft.OnMouseLocationPxChanged = null;
-			this._MapViewerLeft.Size = new System.Drawing.Size(716, 251);
-			this._MapViewerLeft.TabIndex = 0;
+			_MapViewerLeft.DebugMode = false;
+			_MapViewerLeft.Location = new System.Drawing.Point(155, 27);
+			_MapViewerLeft.Name = "_MapViewerLeft";
+			_MapViewerLeft.OnMapBoundsChanged = null;
+			_MapViewerLeft.OnMouseLocationPxChanged = null;
+			_MapViewerLeft.Size = new System.Drawing.Size(716, 251);
+			_MapViewerLeft.TabIndex = 0;
 			// 
 			// menuStrip1
 			// 
-			this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.appToolStripMenuItem,
-            this.debuggingToolStripMenuItem,
-            this.locationsToolStripMenuItem,
-            this.exportToolStripMenuItem});
-			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1231, 24);
-			this.menuStrip1.TabIndex = 6;
-			this.menuStrip1.Text = "menuStrip1";
+			menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+			menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { appToolStripMenuItem, debuggingToolStripMenuItem, locationsToolStripMenuItem, exportToolStripMenuItem });
+			menuStrip1.Location = new System.Drawing.Point(0, 0);
+			menuStrip1.Name = "menuStrip1";
+			menuStrip1.Size = new System.Drawing.Size(1231, 24);
+			menuStrip1.TabIndex = 6;
+			menuStrip1.Text = "menuStrip1";
 			// 
 			// appToolStripMenuItem
 			// 
-			this.appToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem,
-            this.showInExplorerToolStripMenuItem,
-            this.exitToolStripMenuItem});
-			this.appToolStripMenuItem.Name = "appToolStripMenuItem";
-			this.appToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
-			this.appToolStripMenuItem.Text = "App";
+			appToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { aboutToolStripMenuItem, showInExplorerToolStripMenuItem, exitToolStripMenuItem });
+			appToolStripMenuItem.Name = "appToolStripMenuItem";
+			appToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
+			appToolStripMenuItem.Text = "App";
 			// 
 			// aboutToolStripMenuItem
 			// 
-			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-			this.aboutToolStripMenuItem.Text = "About";
-			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
+			aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+			aboutToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+			aboutToolStripMenuItem.Text = "About";
+			aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
 			// 
 			// showInExplorerToolStripMenuItem
 			// 
-			this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
-			this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-			this.showInExplorerToolStripMenuItem.Text = "Show in Explorer";
-			this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.ShowInExplorerToolStripMenuItem_Click);
+			showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
+			showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+			showInExplorerToolStripMenuItem.Text = "Show in Explorer";
+			showInExplorerToolStripMenuItem.Click += ShowInExplorerToolStripMenuItem_Click;
 			// 
 			// exitToolStripMenuItem
 			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-			this.exitToolStripMenuItem.Text = "Exit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			exitToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+			exitToolStripMenuItem.Text = "Exit";
+			exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
 			// 
 			// debuggingToolStripMenuItem
 			// 
-			this.debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.debugONOFFToolStripMenuItem,
-            this.drawingQualityToolStripMenuItem,
-            this.informationShownToolStripMenuItem});
-			this.debuggingToolStripMenuItem.Name = "debuggingToolStripMenuItem";
-			this.debuggingToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
-			this.debuggingToolStripMenuItem.Text = "Debugging";
+			debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { debugONOFFToolStripMenuItem, drawingQualityToolStripMenuItem, informationShownToolStripMenuItem });
+			debuggingToolStripMenuItem.Name = "debuggingToolStripMenuItem";
+			debuggingToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+			debuggingToolStripMenuItem.Text = "Debugging";
 			// 
 			// debugONOFFToolStripMenuItem
 			// 
-			this.debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			this.debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-			this.debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
-			this.debugONOFFToolStripMenuItem.Click += new System.EventHandler(this.DebugONOFFToolStripMenuItem_Click);
+			debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
+			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
+			debugONOFFToolStripMenuItem.Click += DebugONOFFToolStripMenuItem_Click;
 			// 
 			// drawingQualityToolStripMenuItem
 			// 
-			this.drawingQualityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lowToolStripMenuItem,
-            this.mediumToolStripMenuItem,
-            this.highToolStripMenuItem});
-			this.drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			this.drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-			this.drawingQualityToolStripMenuItem.Text = "Drawing quality";
+			drawingQualityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem });
+			drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
+			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
 			// 
-			this.lowToolStripMenuItem.Name = "lowToolStripMenuItem";
-			this.lowToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-			this.lowToolStripMenuItem.Text = "Low";
-			this.lowToolStripMenuItem.Click += new System.EventHandler(this.LowToolStripMenuItem_Click);
+			lowToolStripMenuItem.Name = "lowToolStripMenuItem";
+			lowToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			lowToolStripMenuItem.Text = "Low";
+			lowToolStripMenuItem.Click += LowToolStripMenuItem_Click;
 			// 
 			// mediumToolStripMenuItem
 			// 
-			this.mediumToolStripMenuItem.Name = "mediumToolStripMenuItem";
-			this.mediumToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-			this.mediumToolStripMenuItem.Text = "Medium";
-			this.mediumToolStripMenuItem.Click += new System.EventHandler(this.MediumToolStripMenuItem_Click);
+			mediumToolStripMenuItem.Name = "mediumToolStripMenuItem";
+			mediumToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			mediumToolStripMenuItem.Text = "Medium";
+			mediumToolStripMenuItem.Click += MediumToolStripMenuItem_Click;
 			// 
 			// highToolStripMenuItem
 			// 
-			this.highToolStripMenuItem.Name = "highToolStripMenuItem";
-			this.highToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-			this.highToolStripMenuItem.Text = "High";
-			this.highToolStripMenuItem.Click += new System.EventHandler(this.HighToolStripMenuItem_Click);
+			highToolStripMenuItem.Name = "highToolStripMenuItem";
+			highToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+			highToolStripMenuItem.Text = "High";
+			highToolStripMenuItem.Click += HighToolStripMenuItem_Click;
 			// 
 			// informationShownToolStripMenuItem
 			// 
-			this.informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mouseCursorInfoToolStripMenuItem,
-            this.drawingQualityInfoToolStripMenuItem,
-            this.memoryAllocationInfoToolStripMenuItem,
-            this.detailedTileInfoToolStripMenuItem});
-			this.informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			this.informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-			this.informationShownToolStripMenuItem.Text = "Information shown";
+			informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { mouseCursorInfoToolStripMenuItem, drawingQualityInfoToolStripMenuItem, memoryAllocationInfoToolStripMenuItem, detailedTileInfoToolStripMenuItem });
+			informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
+			informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
 			// 
-			this.mouseCursorInfoToolStripMenuItem.Name = "mouseCursorInfoToolStripMenuItem";
-			this.mouseCursorInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-			this.mouseCursorInfoToolStripMenuItem.Text = "Mouse cursor info";
-			this.mouseCursorInfoToolStripMenuItem.Click += new System.EventHandler(this.MouseCursorInfoToolStripMenuItem_Click);
+			mouseCursorInfoToolStripMenuItem.Name = "mouseCursorInfoToolStripMenuItem";
+			mouseCursorInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			mouseCursorInfoToolStripMenuItem.Text = "Mouse cursor info";
+			mouseCursorInfoToolStripMenuItem.Click += MouseCursorInfoToolStripMenuItem_Click;
 			// 
 			// drawingQualityInfoToolStripMenuItem
 			// 
-			this.drawingQualityInfoToolStripMenuItem.Name = "drawingQualityInfoToolStripMenuItem";
-			this.drawingQualityInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-			this.drawingQualityInfoToolStripMenuItem.Text = "Drawing quality info";
-			this.drawingQualityInfoToolStripMenuItem.Click += new System.EventHandler(this.DrawingQualityInfoToolStripMenuItem_Click);
+			drawingQualityInfoToolStripMenuItem.Name = "drawingQualityInfoToolStripMenuItem";
+			drawingQualityInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			drawingQualityInfoToolStripMenuItem.Text = "Drawing quality info";
+			drawingQualityInfoToolStripMenuItem.Click += DrawingQualityInfoToolStripMenuItem_Click;
 			// 
 			// memoryAllocationInfoToolStripMenuItem
 			// 
-			this.memoryAllocationInfoToolStripMenuItem.Name = "memoryAllocationInfoToolStripMenuItem";
-			this.memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-			this.memoryAllocationInfoToolStripMenuItem.Text = "Memory allocation info";
-			this.memoryAllocationInfoToolStripMenuItem.Click += new System.EventHandler(this.MemoryAllocationInfoToolStripMenuItem_Click);
+			memoryAllocationInfoToolStripMenuItem.Name = "memoryAllocationInfoToolStripMenuItem";
+			memoryAllocationInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			memoryAllocationInfoToolStripMenuItem.Text = "Memory allocation info";
+			memoryAllocationInfoToolStripMenuItem.Click += MemoryAllocationInfoToolStripMenuItem_Click;
 			// 
 			// detailedTileInfoToolStripMenuItem
 			// 
-			this.detailedTileInfoToolStripMenuItem.Name = "detailedTileInfoToolStripMenuItem";
-			this.detailedTileInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-			this.detailedTileInfoToolStripMenuItem.Text = "Detailed tile info";
-			this.detailedTileInfoToolStripMenuItem.Click += new System.EventHandler(this.DetailedTileInfoToolStripMenuItem_Click);
+			detailedTileInfoToolStripMenuItem.Name = "detailedTileInfoToolStripMenuItem";
+			detailedTileInfoToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+			detailedTileInfoToolStripMenuItem.Text = "Detailed tile info";
+			detailedTileInfoToolStripMenuItem.Click += DetailedTileInfoToolStripMenuItem_Click;
 			// 
 			// locationsToolStripMenuItem
 			// 
-			this.locationsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viennaOverviewToolStripMenuItem,
-            this.innereStadtToolStripMenuItem,
-            this.hauptbahnhofToolStripMenuItem,
-            this.lambrechtgasseToolStripMenuItem,
-            this.rittingergasseToolStripMenuItem,
-            this.hietzingPenzingToolStripMenuItem,
-            this.iKEANordToolStripMenuItem});
-			this.locationsToolStripMenuItem.Name = "locationsToolStripMenuItem";
-			this.locationsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-			this.locationsToolStripMenuItem.Text = "Locations";
+			locationsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { viennaOverviewToolStripMenuItem, innereStadtToolStripMenuItem, hauptbahnhofToolStripMenuItem, lambrechtgasseToolStripMenuItem, rittingergasseToolStripMenuItem, hietzingPenzingToolStripMenuItem, iKEANordToolStripMenuItem });
+			locationsToolStripMenuItem.Name = "locationsToolStripMenuItem";
+			locationsToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+			locationsToolStripMenuItem.Text = "Locations";
 			// 
 			// viennaOverviewToolStripMenuItem
 			// 
-			this.viennaOverviewToolStripMenuItem.Name = "viennaOverviewToolStripMenuItem";
-			this.viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.viennaOverviewToolStripMenuItem.Tag = "0";
-			this.viennaOverviewToolStripMenuItem.Text = "Vienna overview";
-			this.viennaOverviewToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			viennaOverviewToolStripMenuItem.Name = "viennaOverviewToolStripMenuItem";
+			viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			viennaOverviewToolStripMenuItem.Tag = "0";
+			viennaOverviewToolStripMenuItem.Text = "Vienna overview";
+			viennaOverviewToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// innereStadtToolStripMenuItem
 			// 
-			this.innereStadtToolStripMenuItem.Name = "innereStadtToolStripMenuItem";
-			this.innereStadtToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.innereStadtToolStripMenuItem.Tag = "1";
-			this.innereStadtToolStripMenuItem.Text = "Innere Stadt";
-			this.innereStadtToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			innereStadtToolStripMenuItem.Name = "innereStadtToolStripMenuItem";
+			innereStadtToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			innereStadtToolStripMenuItem.Tag = "1";
+			innereStadtToolStripMenuItem.Text = "Innere Stadt";
+			innereStadtToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// hauptbahnhofToolStripMenuItem
 			// 
-			this.hauptbahnhofToolStripMenuItem.Name = "hauptbahnhofToolStripMenuItem";
-			this.hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.hauptbahnhofToolStripMenuItem.Tag = "2";
-			this.hauptbahnhofToolStripMenuItem.Text = "Hauptbahnhof";
-			this.hauptbahnhofToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			hauptbahnhofToolStripMenuItem.Name = "hauptbahnhofToolStripMenuItem";
+			hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			hauptbahnhofToolStripMenuItem.Tag = "2";
+			hauptbahnhofToolStripMenuItem.Text = "Hauptbahnhof";
+			hauptbahnhofToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// lambrechtgasseToolStripMenuItem
 			// 
-			this.lambrechtgasseToolStripMenuItem.Name = "lambrechtgasseToolStripMenuItem";
-			this.lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.lambrechtgasseToolStripMenuItem.Tag = "3";
-			this.lambrechtgasseToolStripMenuItem.Text = "Lambrechtgasse";
-			this.lambrechtgasseToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			lambrechtgasseToolStripMenuItem.Name = "lambrechtgasseToolStripMenuItem";
+			lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			lambrechtgasseToolStripMenuItem.Tag = "3";
+			lambrechtgasseToolStripMenuItem.Text = "Lambrechtgasse";
+			lambrechtgasseToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// rittingergasseToolStripMenuItem
 			// 
-			this.rittingergasseToolStripMenuItem.Name = "rittingergasseToolStripMenuItem";
-			this.rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.rittingergasseToolStripMenuItem.Tag = "4";
-			this.rittingergasseToolStripMenuItem.Text = "Rittingergasse";
-			this.rittingergasseToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			rittingergasseToolStripMenuItem.Name = "rittingergasseToolStripMenuItem";
+			rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			rittingergasseToolStripMenuItem.Tag = "4";
+			rittingergasseToolStripMenuItem.Text = "Rittingergasse";
+			rittingergasseToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// hietzingPenzingToolStripMenuItem
 			// 
-			this.hietzingPenzingToolStripMenuItem.Name = "hietzingPenzingToolStripMenuItem";
-			this.hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.hietzingPenzingToolStripMenuItem.Tag = "5";
-			this.hietzingPenzingToolStripMenuItem.Text = "Hietzing/Penzing";
-			this.hietzingPenzingToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			hietzingPenzingToolStripMenuItem.Name = "hietzingPenzingToolStripMenuItem";
+			hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			hietzingPenzingToolStripMenuItem.Tag = "5";
+			hietzingPenzingToolStripMenuItem.Text = "Hietzing/Penzing";
+			hietzingPenzingToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// iKEANordToolStripMenuItem
 			// 
-			this.iKEANordToolStripMenuItem.Name = "iKEANordToolStripMenuItem";
-			this.iKEANordToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			this.iKEANordToolStripMenuItem.Tag = "6";
-			this.iKEANordToolStripMenuItem.Text = "IKEA Nord";
-			this.iKEANordToolStripMenuItem.Click += new System.EventHandler(this.Location_ToolStripMenuItem_Click);
+			iKEANordToolStripMenuItem.Name = "iKEANordToolStripMenuItem";
+			iKEANordToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+			iKEANordToolStripMenuItem.Tag = "6";
+			iKEANordToolStripMenuItem.Text = "IKEA Nord";
+			iKEANordToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
 			// 
 			// exportToolStripMenuItem
 			// 
-			this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.currentViewToolStripMenuItem,
-            this.currentViewallYearsToolStripMenuItem});
-			this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-			this.exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
-			this.exportToolStripMenuItem.Text = "Export";
+			exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { currentViewToolStripMenuItem, currentViewallYearsToolStripMenuItem, currentViewsbothToolStripMenuItem });
+			exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+			exportToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
+			exportToolStripMenuItem.Text = "Export";
 			// 
 			// currentViewToolStripMenuItem
 			// 
-			this.currentViewToolStripMenuItem.Name = "currentViewToolStripMenuItem";
-			this.currentViewToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
-			this.currentViewToolStripMenuItem.Text = "Current (left) view";
-			this.currentViewToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewToolStripMenuItem_Click);
+			currentViewToolStripMenuItem.Name = "currentViewToolStripMenuItem";
+			currentViewToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+			currentViewToolStripMenuItem.Text = "Current (left) view";
+			currentViewToolStripMenuItem.Click += CurrentViewToolStripMenuItem_Click;
 			// 
 			// currentViewallYearsToolStripMenuItem
 			// 
-			this.currentViewallYearsToolStripMenuItem.Name = "currentViewallYearsToolStripMenuItem";
-			this.currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
-			this.currentViewallYearsToolStripMenuItem.Text = "Current (left) view (all years)";
-			this.currentViewallYearsToolStripMenuItem.Click += new System.EventHandler(this.CurrentViewallYearsToolStripMenuItem_Click);
+			currentViewallYearsToolStripMenuItem.Name = "currentViewallYearsToolStripMenuItem";
+			currentViewallYearsToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+			currentViewallYearsToolStripMenuItem.Text = "Current (left) view (all years)";
+			currentViewallYearsToolStripMenuItem.Click += CurrentViewallYearsToolStripMenuItem_Click;
 			// 
 			// _MapViewerRight
 			// 
-			this._MapViewerRight.DebugMode = false;
-			this._MapViewerRight.Location = new System.Drawing.Point(324, 219);
-			this._MapViewerRight.Name = "_MapViewerRight";
-			this._MapViewerRight.OnMapBoundsChanged = null;
-			this._MapViewerRight.OnMouseLocationPxChanged = null;
-			this._MapViewerRight.Size = new System.Drawing.Size(716, 251);
-			this._MapViewerRight.TabIndex = 8;
+			_MapViewerRight.DebugMode = false;
+			_MapViewerRight.Location = new System.Drawing.Point(324, 219);
+			_MapViewerRight.Name = "_MapViewerRight";
+			_MapViewerRight.OnMapBoundsChanged = null;
+			_MapViewerRight.OnMouseLocationPxChanged = null;
+			_MapViewerRight.Size = new System.Drawing.Size(716, 251);
+			_MapViewerRight.TabIndex = 8;
 			// 
 			// _YearControlLeft
 			// 
-			this._YearControlLeft.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._YearControlLeft.Location = new System.Drawing.Point(275, 128);
-			this._YearControlLeft.Name = "_YearControlLeft";
-			this._YearControlLeft.OnSelectedItemChanged = null;
-			this._YearControlLeft.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
-			this._YearControlLeft.SelectedItemIndex = 1;
-			this._YearControlLeft.Size = new System.Drawing.Size(568, 55);
-			this._YearControlLeft.TabIndex = 9;
-			this._YearControlLeft.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_YearControlLeft.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_YearControlLeft.Location = new System.Drawing.Point(275, 128);
+			_YearControlLeft.Name = "_YearControlLeft";
+			_YearControlLeft.OnSelectedItemChanged = null;
+			_YearControlLeft.Orientation = src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			_YearControlLeft.SelectedItemIndex = 1;
+			_YearControlLeft.Size = new System.Drawing.Size(568, 55);
+			_YearControlLeft.TabIndex = 9;
+			_YearControlLeft.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			// 
 			// _YearControlRight
 			// 
-			this._YearControlRight.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._YearControlRight.Location = new System.Drawing.Point(429, 334);
-			this._YearControlRight.Name = "_YearControlRight";
-			this._YearControlRight.OnSelectedItemChanged = null;
-			this._YearControlRight.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Horizontal;
-			this._YearControlRight.SelectedItemIndex = 1;
-			this._YearControlRight.Size = new System.Drawing.Size(568, 55);
-			this._YearControlRight.TabIndex = 10;
-			this._YearControlRight.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_YearControlRight.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_YearControlRight.Location = new System.Drawing.Point(429, 334);
+			_YearControlRight.Name = "_YearControlRight";
+			_YearControlRight.OnSelectedItemChanged = null;
+			_YearControlRight.Orientation = src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			_YearControlRight.SelectedItemIndex = 1;
+			_YearControlRight.Size = new System.Drawing.Size(568, 55);
+			_YearControlRight.TabIndex = 10;
+			_YearControlRight.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			// 
 			// _zoomControl
 			// 
-			this._zoomControl.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this._zoomControl.Location = new System.Drawing.Point(22, 219);
-			this._zoomControl.Name = "_zoomControl";
-			this._zoomControl.OnSelectedItemChanged = null;
-			this._zoomControl.Orientation = MA41Viewer.src.UI.Controls.ItemListControl.Orientations.Vertical;
-			this._zoomControl.SelectedItemIndex = 2;
-			this._zoomControl.Size = new System.Drawing.Size(88, 253);
-			this._zoomControl.TabIndex = 11;
-			this._zoomControl.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_zoomControl.DescriptionFont = new System.Drawing.Font("Roboto Slab", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			_zoomControl.Location = new System.Drawing.Point(22, 219);
+			_zoomControl.Name = "_zoomControl";
+			_zoomControl.OnSelectedItemChanged = null;
+			_zoomControl.Orientation = src.UI.Controls.ItemListControl.Orientations.Vertical;
+			_zoomControl.SelectedItemIndex = 2;
+			_zoomControl.Size = new System.Drawing.Size(88, 253);
+			_zoomControl.TabIndex = 11;
+			_zoomControl.TextFont = new System.Drawing.Font("Roboto Slab", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			// 
 			// CrosshairPB
 			// 
-			this.CrosshairPB.BackColor = System.Drawing.Color.Transparent;
-			this.CrosshairPB.ErrorImage = null;
-			this.CrosshairPB.InitialImage = null;
-			this.CrosshairPB.Location = new System.Drawing.Point(210, 206);
-			this.CrosshairPB.Name = "CrosshairPB";
-			this.CrosshairPB.Size = new System.Drawing.Size(32, 32);
-			this.CrosshairPB.TabIndex = 12;
-			this.CrosshairPB.TabStop = false;
+			CrosshairPB.BackColor = System.Drawing.Color.Transparent;
+			CrosshairPB.ErrorImage = null;
+			CrosshairPB.InitialImage = null;
+			CrosshairPB.Location = new System.Drawing.Point(210, 206);
+			CrosshairPB.Name = "CrosshairPB";
+			CrosshairPB.Size = new System.Drawing.Size(32, 32);
+			CrosshairPB.TabIndex = 12;
+			CrosshairPB.TabStop = false;
+			// 
+			// currentViewsbothToolStripMenuItem
+			// 
+			currentViewsbothToolStripMenuItem.Name = "currentViewsbothToolStripMenuItem";
+			currentViewsbothToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+			currentViewsbothToolStripMenuItem.Text = "Current views (both)";
+			currentViewsbothToolStripMenuItem.Click += CurrentViewsbothToolStripMenuItem_Click;
 			// 
 			// FViewer
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(1231, 585);
-			this.Controls.Add(this.CrosshairPB);
-			this.Controls.Add(this._zoomControl);
-			this.Controls.Add(this._YearControlRight);
-			this.Controls.Add(this._YearControlLeft);
-			this.Controls.Add(this._MapViewerRight);
-			this.Controls.Add(this._MapViewerLeft);
-			this.Controls.Add(this.menuStrip1);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.KeyPreview = true;
-			this.MainMenuStrip = this.menuStrip1;
-			this.MinimumSize = new System.Drawing.Size(800, 600);
-			this.Name = "FViewer";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Wien MA41 Historical Aerial Imagery Viewer";
-			this.Load += new System.EventHandler(this.FViewer_Load);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FViewer_KeyDown);
-			this.Resize += new System.EventHandler(this.FViewer_Resize);
-			this.menuStrip1.ResumeLayout(false);
-			this.menuStrip1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.CrosshairPB)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			ClientSize = new System.Drawing.Size(1231, 585);
+			Controls.Add(CrosshairPB);
+			Controls.Add(_zoomControl);
+			Controls.Add(_YearControlRight);
+			Controls.Add(_YearControlLeft);
+			Controls.Add(_MapViewerRight);
+			Controls.Add(_MapViewerLeft);
+			Controls.Add(menuStrip1);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			KeyPreview = true;
+			MainMenuStrip = menuStrip1;
+			MinimumSize = new System.Drawing.Size(800, 600);
+			Name = "FViewer";
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			Text = "Wien MA41 Historical Aerial Imagery Viewer";
+			Load += FViewer_Load;
+			KeyDown += FViewer_KeyDown;
+			Resize += FViewer_Resize;
+			menuStrip1.ResumeLayout(false);
+			menuStrip1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)CrosshairPB).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -423,5 +404,6 @@ namespace MA41Viewer.UI
 		private src.UI.Controls.ItemListControl _YearControlRight;
 		private src.UI.Controls.ItemListControl _zoomControl;
 		private System.Windows.Forms.PictureBox CrosshairPB;
+		private System.Windows.Forms.ToolStripMenuItem currentViewsbothToolStripMenuItem;
 	}
 }
