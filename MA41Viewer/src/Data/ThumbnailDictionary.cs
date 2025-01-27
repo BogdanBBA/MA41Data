@@ -21,7 +21,7 @@ namespace MA41Viewer.Data
 				throw new ArgumentException($"The dictionary queue capacity needs to be positive (not {capacity})!");
 
 			DictionaryCapacity = capacity;
-			TupleList = new List<((uint, uint, uint, uint), Image)>();
+			TupleList = [];
 		}
 
 		public int Count
@@ -29,7 +29,7 @@ namespace MA41Viewer.Data
 
 		private int IndexOfThumb(uint year, uint square, uint quadrant, uint thumbnailSize)
 		{
-			var key = (year, square, quadrant, thumbnailSize);
+			(uint year, uint square, uint quadrant, uint thumbnailSize) key = (year, square, quadrant, thumbnailSize);
 			for (int index = 0; index < TupleList.Count; index++)
 			{
 				if (TupleList[index].Key == key)
@@ -40,10 +40,10 @@ namespace MA41Viewer.Data
 
 		public Image GetThumb(uint year, uint square, uint quadrant, uint thumbnailSize, Func<Image> getThumbIfItDoesntExistFunction)
 		{
-			var index = IndexOfThumb(year, square, quadrant, thumbnailSize);
+			int index = IndexOfThumb(year, square, quadrant, thumbnailSize);
 			if (index == -1)
 			{
-				var image = getThumbIfItDoesntExistFunction();
+				Image image = getThumbIfItDoesntExistFunction();
 				TupleList.Insert(0, ((year, square, quadrant, thumbnailSize), image));
 				index = 0;
 				while (TupleList.Count > DictionaryCapacity)
@@ -62,12 +62,12 @@ namespace MA41Viewer.Data
 		/// <returns>The resized image.</returns>
 		public static Bitmap ResizeImage(Image image, int width, int height)
 		{
-			var destRect = new Rectangle(0, 0, width, height);
-			var destImage = new Bitmap(width, height);
+			Rectangle destRect = new(0, 0, width, height);
+			Bitmap destImage = new(width, height);
 
 			destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-			using (var graphics = Graphics.FromImage(destImage))
+			using (Graphics graphics = Graphics.FromImage(destImage))
 			{
 				graphics.CompositingMode = CompositingMode.SourceCopy;
 				graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -75,7 +75,7 @@ namespace MA41Viewer.Data
 				graphics.SmoothingMode = SmoothingMode.HighQuality;
 				graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-				using (var wrapMode = new ImageAttributes())
+				using (ImageAttributes wrapMode = new())
 				{
 					wrapMode.SetWrapMode(WrapMode.TileFlipXY);
 					graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);

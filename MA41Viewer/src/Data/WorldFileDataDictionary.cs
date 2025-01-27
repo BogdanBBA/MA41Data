@@ -44,7 +44,7 @@ namespace MA41Viewer.Data
 
 		public WorldFileDataDictionary()
 		{
-			Years = new Dictionary<uint, WorldFileDataYear>();
+			Years = [];
 		}
 
 		public void Add(uint year, WorldFileDataYear data)

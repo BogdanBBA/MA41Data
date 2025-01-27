@@ -17,7 +17,7 @@ namespace MA41.Commons
 
 		private static string GetParentFolder(string name)
 		{
-			var folder = new DirectoryInfo(Environment.CurrentDirectory);
+			DirectoryInfo folder = new DirectoryInfo(Environment.CurrentDirectory);
 			while (folder.Name != name)
 			{
 				folder = folder.Parent;

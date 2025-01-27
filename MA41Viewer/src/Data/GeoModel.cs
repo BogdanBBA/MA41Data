@@ -11,7 +11,7 @@ namespace MA41Viewer.Data
 
 		public GeoModel()
 		{
-			WorldFileData = new Dictionary<TileInfo, WorldFileDataDictionary>();
+			WorldFileData = [];
 
 			// static population (necessary laying out), with empty data
 			uint maRow = 1, maCol = 2;
@@ -20,7 +20,7 @@ namespace MA41Viewer.Data
 			{
 				for (uint square = maRow * 10 + maCol, quadrant = 1; quadrant <= 4; quadrant++)
 				{
-					var tileInfo = new TileInfo(new TileInfo.AppTileInfo(appRow, appCol), new TileInfo.MA41TileInfo(square, quadrant));
+					TileInfo tileInfo = new(new TileInfo.AppTileInfo(appRow, appCol), new TileInfo.MA41TileInfo(square, quadrant));
 					WorldFileData.Add(tileInfo, new WorldFileDataDictionary());
 
 					switch (quadrant)
@@ -53,7 +53,7 @@ namespace MA41Viewer.Data
 				}
 			}
 
-			var s = string.Join(Environment.NewLine, WorldFileData.Keys.Select(x => $"[{x.App.Row:D2}, {x.App.Column:D2}] = {x.MA41.Square}/{x.MA41.Quadrant}"));
+			string s = string.Join(Environment.NewLine, WorldFileData.Keys.Select(x => $"[{x.App.Row:D2}, {x.App.Column:D2}] = {x.MA41.Square}/{x.MA41.Quadrant}"));
 		}
 
 		public (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdd)[] GetByYear(uint year)

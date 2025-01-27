@@ -31,14 +31,14 @@ namespace MA41Viewer.UI.Controls
 			const bool forceDebug = false;
 			lock (_lock)
 			{
-				DebugInfoWrapper debugInfo = new() { ThumbnailSizes = new HashSet<Size>() };
-				var stopwatch = Stopwatch.StartNew();
-				var g = e.Graphics;
+				DebugInfoWrapper debugInfo = new() { ThumbnailSizes = [] };
+				Stopwatch stopwatch = Stopwatch.StartNew();
+				Graphics g = e.Graphics;
 				switch (Sett.DrawingState)
 				{
 					case MapSettings.MapDrawingState.AtRest:
 						{
-							var bmp = GenerateBitmap(out debugInfo);
+							Bitmap bmp = GenerateBitmap(out debugInfo);
 							Sett.LastFrame = new KeyValuePair<RectangleF, Bitmap>(Sett.CurrentMapCoordBounds, bmp);
 							g.DrawImageUnscaled(bmp, Point.Empty);
 						}
@@ -50,7 +50,7 @@ namespace MA41Viewer.UI.Controls
 								DrawDebugText(g, "There is no 'last frame' available", 10, 10, true);
 								break;
 							}
-							var location = new Point((int)(Sett.MouseLocationPx.X - Sett.LastMouseDown_MapviewLocationPx.X), (int)(Sett.MouseLocationPx.Y - Sett.LastMouseDown_MapviewLocationPx.Y));
+							Point location = new((int)(Sett.MouseLocationPx.X - Sett.LastMouseDown_MapviewLocationPx.X), (int)(Sett.MouseLocationPx.Y - Sett.LastMouseDown_MapviewLocationPx.Y));
 							g.DrawImageUnscaled(Sett.LastFrame.Value.Value, location);
 						}
 						break;
@@ -85,10 +85,10 @@ namespace MA41Viewer.UI.Controls
 		protected void DrawDebugText(Graphics g, string text, float relX, float relY = 10.0f, bool forceDebug = false)
 		{
 			if (!DebugMode && !forceDebug) return;
-			var font = new Font("Ubuntu Mono", 10f, FontStyle.Bold);
-			var size = g.MeasureString(text, font);
-			var x = relX >= 0 ? relX : Width + relX - size.Width;
-			var y = relY >= 0 ? relY : Height + relY - size.Height;
+			Font font = new("Ubuntu Mono", 10f, FontStyle.Bold);
+			SizeF size = g.MeasureString(text, font);
+			float x = relX >= 0 ? relX : Width + relX - size.Width;
+			float y = relY >= 0 ? relY : Height + relY - size.Height;
 			g.FillRectangle(BACKBRUSH, new RectangleF(new PointF(x, y), size));
 			g.DrawString(text, font, Brushes.Black, x, y);
 		}
@@ -96,10 +96,10 @@ namespace MA41Viewer.UI.Controls
 		protected void DrawSquareInfo(Graphics g, RectangleF rect, uint year, (TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdy) info, Size imageSize, bool detailedInfo, bool forceDebug = false)
 		{
 			if (!DebugMode && !forceDebug) return;
-			var text = $"Year {year}{Environment.NewLine}Sq/Q {info.tileInfo.MA41.Square}/{info.tileInfo.MA41.Quadrant}{Environment.NewLine}Tile {info.tileInfo.App.Row},{info.tileInfo.App.Column}";
-			var font = new Font("Ubuntu Mono", 12.0f, FontStyle.Bold);
-			var size = g.MeasureString(text, font);
-			var location = new PointF(rect.Left + rect.Width / 2 - size.Width / 2, rect.Top + rect.Height / 2 - size.Height / 2);
+			string text = $"Year {year}{Environment.NewLine}Sq/Q {info.tileInfo.MA41.Square}/{info.tileInfo.MA41.Quadrant}{Environment.NewLine}Tile {info.tileInfo.App.Row},{info.tileInfo.App.Column}";
+			Font font = new("Ubuntu Mono", 12.0f, FontStyle.Bold);
+			SizeF size = g.MeasureString(text, font);
+			PointF location = new(rect.Left + rect.Width / 2 - size.Width / 2, rect.Top + rect.Height / 2 - size.Height / 2);
 			g.FillRectangle(BACKBRUSH, location.X, location.Y, size.Width, size.Height);
 			g.DrawString(text, font, Brushes.Purple, location);
 			if (detailedInfo)
@@ -114,9 +114,9 @@ namespace MA41Viewer.UI.Controls
 					.AppendLine($"   Location: {info.wfdy.TopLeftX:F0}m, {info.wfdy.TopLeftY:F0}m")
 					.AppendLine($"       Size: {info.wfdy.TileMapCoordinateBounds.Width:F0}m x {info.wfdy.TileMapCoordinateBounds.Height:F0}m")
 					.ToString();
-				var newFont = new Font("Ubuntu Mono", 10, FontStyle.Bold);
-				var newSize = g.MeasureString(text, newFont);
-				var newLocation = new PointF(rect.Left + rect.Width / 2 - newSize.Width / 2, location.Y + size.Height);
+				Font newFont = new("Ubuntu Mono", 10, FontStyle.Bold);
+				SizeF newSize = g.MeasureString(text, newFont);
+				PointF newLocation = new(rect.Left + rect.Width / 2 - newSize.Width / 2, location.Y + size.Height);
 				g.FillRectangle(BACKBRUSH, newLocation.X, newLocation.Y, newSize.Width, newSize.Height);
 				g.DrawString(text, newFont, Brushes.Black, newLocation);
 			}
@@ -153,13 +153,13 @@ namespace MA41Viewer.UI.Controls
 
 		private static void DrawYearOnExportBitmap(Bitmap frame, uint year)
 		{
-			using (var g = Graphics.FromImage(frame))
+			using (Graphics g = Graphics.FromImage(frame))
 			{
-				var tenthOfSmallerSide = Math.Min(frame.Width, frame.Height) / 10;
-				var yearArea = new RectangleF(6, 6, 2 * tenthOfSmallerSide, tenthOfSmallerSide);
-				var text = $"{year}";
-				var font = g.GetAdjustedFont(text, new Font("Ubuntu Mono", 10, FontStyle.Bold), yearArea.Width, 100, 6);
-				var fontSize = g.MeasureString(text, font);
+				int tenthOfSmallerSide = Math.Min(frame.Width, frame.Height) / 10;
+				RectangleF yearArea = new(6, 6, 2 * tenthOfSmallerSide, tenthOfSmallerSide);
+				string text = $"{year}";
+				Font font = g.GetAdjustedFont(text, new Font("Ubuntu Mono", 10, FontStyle.Bold), yearArea.Width, 100, 6);
+				SizeF fontSize = g.MeasureString(text, font);
 				g.TextRenderingHint = TextRenderingHint.AntiAlias;
 				g.FillRectangle(Brushes.Black, yearArea);
 				g.DrawString(text, font, Brushes.White, yearArea.GetXForCenteredText(fontSize.Width), yearArea.GetYForCenteredText(fontSize.Height));
@@ -169,18 +169,18 @@ namespace MA41Viewer.UI.Controls
 		public Bitmap GenerateAllYearsBitmap(uint[] years)
 		{
 			years = years.Where(year => year < 2019 || year > 2020).ToArray(); // meh
-			var vertical = Size.Width >= Size.Height;
-			var size = vertical ? new Size(Size.Width, years.Length * Size.Height) : new Size(years.Length * Size.Width, Size.Height);
-			var addX = vertical ? 0 : Size.Width;
-			var addY = vertical ? Size.Height : 0;
-			var location = Point.Empty;
-			var result = new Bitmap(size.Width, size.Height);
-			using (var g = Graphics.FromImage(result))
+			bool vertical = Size.Width >= Size.Height;
+			Size size = vertical ? new Size(Size.Width, years.Length * Size.Height) : new Size(years.Length * Size.Width, Size.Height);
+			int addX = vertical ? 0 : Size.Width;
+			int addY = vertical ? Size.Height : 0;
+			Point location = Point.Empty;
+			Bitmap result = new(size.Width, size.Height);
+			using (Graphics g = Graphics.FromImage(result))
 			{
-				foreach (var year in years)
+				foreach (uint year in years)
 				{
 					Sett.Year = year;
-					var frame = GenerateBitmap(out DebugInfoWrapper _);
+					Bitmap frame = GenerateBitmap(out DebugInfoWrapper _);
 					DrawYearOnExportBitmap(frame, year);
 					g.DrawImageUnscaled(frame, location);
 					location.Offset(addX, addY);
@@ -191,9 +191,9 @@ namespace MA41Viewer.UI.Controls
 
 		public Bitmap GenerateBitmap(out DebugInfoWrapper oDebugInfo)
 		{
-			var debugInfo = new DebugInfoWrapper() { KaboomExplosionNotOk = true, ThumbnailSizes = new HashSet<Size>() };
-			var result = new Bitmap(Size.Width, Size.Height);
-			using (var g = Graphics.FromImage(result))
+			DebugInfoWrapper debugInfo = new() { KaboomExplosionNotOk = true, ThumbnailSizes = [] };
+			Bitmap result = new(Size.Width, Size.Height);
+			using (Graphics g = Graphics.FromImage(result))
 			{
 				g.CompositingMode = Sett.CurrentQualitySettings.CompositingModeValue;
 				g.CompositingQuality = Sett.CurrentQualitySettings.CompositingQualityValue;
@@ -220,18 +220,18 @@ namespace MA41Viewer.UI.Controls
 
 				g.Clear(Color.WhiteSmoke);
 
-				var yearTileWFDY = GeoModel.GetByYear(Sett.Year.Value);
+				(TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdd)[] yearTileWFDY = GeoModel.GetByYear(Sett.Year.Value);
 				debugInfo.YearTileCount = yearTileWFDY.Length;
 
-				var visibleTileWFDY = yearTileWFDY.Where(wfdd => wfdd.wfdd.TileMapCoordinateBounds.IntersectsWith(Sett.CurrentMapCoordBounds)).ToArray();
+				(TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdd)[] visibleTileWFDY = yearTileWFDY.Where(wfdd => wfdd.wfdd.TileMapCoordinateBounds.IntersectsWith(Sett.CurrentMapCoordBounds)).ToArray();
 				debugInfo.VisibleTileCount = visibleTileWFDY.Length;
 
 				debugInfo.OldThumbnailCount = ThumbDictionary.Count;
 				debugInfo.OldFullsizeCount = FullSizeTileDictionary.Count;
 
-				foreach (var info in visibleTileWFDY)
+				foreach ((TileInfo tileInfo, WorldFileDataDictionary.WorldFileDataYear wfdd) info in visibleTileWFDY)
 				{
-					var mouseTile = Sett.Translate_MapCoordinateBounds_To_MapviewLocationBoundsPx(info.wfdd.TileMapCoordinateBounds);
+					RectangleF mouseTile = Sett.Translate_MapCoordinateBounds_To_MapviewLocationBoundsPx(info.wfdd.TileMapCoordinateBounds);
 					Image image;
 
 					// extend destination rectangle for tile outward, to avoid line artefacts at edges of tile image caused by floating-point resizing in g.DrawImage()
@@ -242,7 +242,7 @@ namespace MA41Viewer.UI.Controls
 						image = ThumbDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize, () =>
 						{
 							debugInfo.LoadedThumbnailCount++;
-							var thumbnailPath = GeoData.GetJpgThumbnailPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize);
+							string thumbnailPath = GeoData.GetJpgThumbnailPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, recommendedThumbnailSize);
 							return Image.FromFile(thumbnailPath);
 						});
 					}
@@ -252,7 +252,7 @@ namespace MA41Viewer.UI.Controls
 						image = FullSizeTileDictionary.GetThumb(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant, uint.MinValue, () =>
 						{
 							debugInfo.LoadedFullsizeCount++;
-							var path = GeoData.GetJpgPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant);
+							string path = GeoData.GetJpgPath(Sett.Year.Value, info.tileInfo.MA41.Square, info.tileInfo.MA41.Quadrant);
 							return Image.FromFile(path);
 						});
 					}

@@ -1,11 +1,12 @@
 using MA41.Commons;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MA41Geodaten
 {
@@ -15,54 +16,100 @@ namespace MA41Geodaten
 
 		public static readonly string URL_ROOT = "https://www.wien.gv.at/ma41datenviewer/downloads/geodaten";
 
-		public static readonly Dictionary<string, bool> YEAR_URL_TEMPLATES = new Dictionary<string, bool>()
+		public static readonly Dictionary<string, bool> YEAR_URL_TEMPLATES = new()
 		{
-			{ "{0}/op_img/{1}_{2}_op_2021.zip", true },
-			{ "{0}/op_img/{1}_{2}_op_2020.zip", true },
-			{ "{0}/op_img/{1}_{2}_op_2019.zip", true },
+			{ "{0}/op_img/{1}_{2}_op_2024.zip", true },
+			{ "{0}/op_img/{1}_{2}_op_2021.zip", false },
+			{ "{0}/op_img/{1}_{2}_op_2020.zip", false },
+			{ "{0}/op_img/{1}_{2}_op_2019.zip", false },
 			{ "{0}/op_img/{1}_{2}_op_2018.zip", false },
 			{ "{0}/op_img/{1}_{2}_op_2017.zip", false },
 			{ "{0}/op_img/{1}_{2}_op_2016.zip", false },
 			{ "{0}/op_img/{1}_{2}_op_2015.zip", false },
-			{ "{0}/op_img/{1}_{2}_op2014.zip", true },
-			{ "{0}/lb_img/{1}_{2}_lb1992.zip", true },
-			{ "{0}/lb_img/{1}_{2}_lb1976.zip", true },
-			{ "{0}/lb_img/{1}_{2}_lb1956.zip", true },
-			{ "{0}/lb_img/{1}_{2}_lb1938.zip", true }
+			{ "{0}/op_img/{1}_{2}_op2014.zip", false },
+			{ "{0}/lb_img/{1}_{2}_lb1992.zip", false },
+			{ "{0}/lb_img/{1}_{2}_lb1986.zip", true },
+			{ "{0}/lb_img/{1}_{2}_lb1981.zip", true },
+			{ "{0}/lb_img/{1}_{2}_lb1976.zip", false },
+			{ "{0}/lb_img/{1}_{2}_lb1971ul.zip", true },
+			{ "{0}/lb_img/{1}_{2}_lb1971.zip", true },
+			{ "{0}/lb_img/{1}_{2}_lb1961.zip", true },
+			{ "{0}/lb_img/{1}_{2}_lb1956.zip", false },
+			{ "{0}/lb_img/{1}_{2}_lb1938.zip", false }
 		};
 
 		public static readonly string URLS_NOT_FOUND_404_FILE = Path.Combine(Paths.DOWNLOAD_FOLDER, @"404s.txt");
 
-		static void DownloadFileCallback(object sender, AsyncCompletedEventArgs e)
+		private class TimedProgressReport
 		{
-			Console.WriteLine($"\tDownloadFileCallback: user state {e.UserState}");
-			if (e.Cancelled)
-				Console.WriteLine("\tFile download cancelled.");
-			if (e.Error != null)
-				Console.WriteLine($"\t{e.Error}");
+			private DateTime _lastReport;
+			private readonly IProgress<double> _progress;
+			private readonly object _lock = new();
+
+			public TimedProgressReport(int seconds)
+			{
+				_lastReport = DateTime.Now.Subtract(TimeSpan.FromSeconds(seconds));
+				_progress = new Progress<double>(p =>
+				{
+					if (p == 0.0)
+						Console.Write("\tDownloading... ");
+					else if (p == 100.0)
+						Console.WriteLine("done");
+					else
+					{
+						DateTime now = DateTime.Now;
+						lock (_lock)
+						{
+							if ((now - _lastReport).TotalSeconds >= 2.0)
+							{
+								Console.Write($"{p:F1}%... ");
+								_lastReport = now;
+							}
+						}
+					}
+				});
+			}
+
+			public void Report(long items, long total)
+				=> _progress.Report(items == 0 || total == 0 ? 0.0 : (items == total ? 100.0 : (double)items / total * 100.0));
 		}
 
-		static void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
+		static async Task DownloadFile(HttpClient web, string url, string destinationFilePath, TimedProgressReport progress)
 		{
-			Console.WriteLine("\tDownloadProgressCallback user state '{0}', downloaded {1} of {2} bytes. {3} % complete", (string)e.UserState, e.BytesReceived, e.TotalBytesToReceive, e.ProgressPercentage);
+			using (HttpResponseMessage response = await web.GetAsync(url, HttpCompletionOption.ResponseHeadersRead))
+			{
+				response.EnsureSuccessStatusCode();
+
+				using (FileStream fileStream = new(destinationFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
+				using (Stream httpStream = await response.Content.ReadAsStreamAsync())
+				{
+					long totalBytes = response.Content.Headers.ContentLength ?? -1L;
+					byte[] buffer = new byte[81920];
+					long totalRead = 0;
+					int bytesRead;
+
+					progress.Report(0, 0);
+					while ((bytesRead = await httpStream.ReadAsync(buffer)) > 0)
+					{
+						await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+						totalRead += bytesRead;
+						progress.Report(totalRead, totalBytes);
+					}
+				}
+			}
 		}
 
-		public static void Download()
+		public static async Task Download()
 		{
 			Console.WriteLine($" *** Downloading...");
 			Console.WriteLine($" *** Page coordinates: {string.Join(", ", COORDINATES.Select(coord => $"{coord.page}/{coord.part}"))}.\n");
-			Console.WriteLine($" *** URL templates: {string.Join(", ", YEAR_URL_TEMPLATES.Select(template => $"{template.Key} ({template.Value})"))}.\n");
+			Console.WriteLine($" *** All URL templates: {string.Join(", ", YEAR_URL_TEMPLATES.Select(template => $"{template.Key} ({template.Value})"))}.\n");
 
-			List<string> urlsNotFound404 = new List<string>();
-			if (File.Exists(URLS_NOT_FOUND_404_FILE))
-			{
-				urlsNotFound404.AddRange(File.ReadAllLines(URLS_NOT_FOUND_404_FILE));
-			}
+			List<string> urlsNotFound404 = File.Exists(URLS_NOT_FOUND_404_FILE) ? [.. File.ReadAllLines(URLS_NOT_FOUND_404_FILE)] : [];
+			TimedProgressReport timedReport = new(2);
 
-			using (WebClient web = new WebClient())
+			using (HttpClient web = new())
 			{
-				web.DownloadFileCompleted += DownloadFileCallback;
-				web.DownloadProgressChanged += DownloadProgressCallback;
 				string[] urlTemplates = YEAR_URL_TEMPLATES.Keys.Where(key => YEAR_URL_TEMPLATES[key]).ToArray();
 
 				if (urlTemplates.Length > 0)
@@ -96,12 +143,12 @@ namespace MA41Geodaten
 								try
 								{
 									fileDownloadedNow = true;
-									web.DownloadFile(url, file);
+									await DownloadFile(web, url, file, timedReport);
 									Console.WriteLine($"\tFile downloaded now ({new FileInfo(file).Length / 1024:N0} KB)");
 								}
-								catch (WebException wex)
+								catch (HttpRequestException rEx)
 								{
-									if (((HttpWebResponse)wex.Response)?.StatusCode == HttpStatusCode.NotFound)
+									if (rEx.StatusCode == HttpStatusCode.NotFound)
 									{
 										Console.WriteLine($"\tFile not found on server (404), will be skipped");
 										urlsNotFound404.Add(url);
@@ -109,7 +156,7 @@ namespace MA41Geodaten
 									}
 									else
 									{
-										Console.WriteLine($"\tWeb exception {((HttpWebResponse)wex.Response).StatusCode}: {wex} !");
+										Console.WriteLine($"\tHTTP web exception {rEx.StatusCode}: {rEx} !");
 									}
 								}
 							}

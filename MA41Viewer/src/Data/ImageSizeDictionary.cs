@@ -11,13 +11,13 @@ namespace MA41Viewer.Data
 
 		public static void Initialize()
 		{
-			Sizes = new Dictionary<(uint year, uint square, uint quadrant), (uint width, uint height)>();
+			Sizes = [];
 			if (File.Exists(Paths.IMAGE_SIZE_DICTIONARY_FILE))
 			{
 				string[] lines = File.ReadAllLines(Paths.IMAGE_SIZE_DICTIONARY_FILE);
 				foreach (string line in lines)
 				{
-					var values = line.Split(new char[] { '=', ',' }).Select(part => uint.Parse(part)).ToArray();
+					uint[] values = line.Split(['=', ',']).Select(uint.Parse).ToArray();
 					Sizes[(values[0], values[1], values[2])] = (values[3], values[4]);
 				}
 			}

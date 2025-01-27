@@ -1,5 +1,4 @@
-﻿using Commons;
-using MA41.Commons;
+﻿using MA41.Commons;
 using MA41Viewer.Data;
 using MA41Viewer.src.UI.Controls;
 using MA41Viewer.UI.Controls;
@@ -10,14 +9,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using static MA41Viewer.UI.Controls.MapViewer;
 
 namespace MA41Viewer.UI
 {
 	public partial class FViewer : Form
 	{
-		protected static readonly List<Tuple<uint, float, float>> DEFAULT_LOCATIONS = new() // order as per UI // X, Y, Zoom
-		{
+		protected static readonly List<Tuple<uint, float, float>> DEFAULT_LOCATIONS = // order as per UI // X, Y, Zoom		
+		[
 			new(16, 3750, -12250),
 			new(9, 3000, -11111),
 			new(6, 3350, -8500),
@@ -25,7 +23,7 @@ namespace MA41Viewer.UI
 			new(2, 6460, -19570),
 			new(7, -3400, -9250),
 			new(7, 10400, -16100)
-		};
+		];
 
 		private DateTime _lastCrosshairMoved = DateTime.MinValue;
 
@@ -54,7 +52,7 @@ namespace MA41Viewer.UI
 
 		private void FViewer_Resize(object sender, EventArgs e)
 		{
-			const int hPadd = 10, wZoom = 80, hYear = 45;
+			const int hPadd = 10, wZoom = 80, hYear = 50;
 			Rectangle controlArea = new(5, 25, Width - 22, Height - 70);
 
 			_zoomControl.SetBounds(controlArea.Left, controlArea.Top, wZoom, controlArea.Height);
@@ -85,6 +83,7 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerLeft.OnMouseLocationPxChanged = location =>
 			{
+				if (!CrosshairPB.Visible) return;
 				DateTime now = DateTime.Now;
 				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
 				_lastCrosshairMoved = now;
@@ -103,6 +102,7 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerRight.OnMouseLocationPxChanged = location =>
 			{
+				if (!CrosshairPB.Visible) return;
 				DateTime now = DateTime.Now;
 				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
 				_lastCrosshairMoved = now;
@@ -158,17 +158,26 @@ namespace MA41Viewer.UI
 			detailedTileInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.DetailedTileInfo;
 		}
 
-		public string GetYearDescription(uint year)
+		public static string GetYearDescription(uint year)
 		{
 			return (int)year switch
 			{
-				1938 or 1976 or 1992 or 2014 or 2019 or 2020 => "summer",
-				1956 or 2021 => "winter",
+				1938 => "Oct-Nov '38",
+				1956 => "Apr '56",
+				1961 => "Sep '61",
+				1971 => "!!!",
+				1976 => "May '76",
+				1981 => "May '81",
+				1986 => "Oct '86",
+				1992 => "May '92",
+				2014 => "Jun '14",
+				2019 => "Jun '19",
+				2024 => "Mar-Apr '24",
 				_ => null
 			};
 		}
 
-		public string GetZoomDescription(MapSettings.Zoom zoom)
+		public static string GetZoomDescription(MapSettings.Zoom zoom)
 		{
 			return $"{zoom.Ratio:F2}x";
 		}
@@ -211,10 +220,16 @@ namespace MA41Viewer.UI
 			Close();
 		}
 
+		private void CrosshairToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			CrosshairPB.Visible = !CrosshairPB.Visible;
+			crosshairToolStripMenuItem.Checked = CrosshairPB.Visible;
+		}
+
 		private void Location_ToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var toolstripItemTag = int.Parse((sender as ToolStripMenuItem).Tag as string);
-			var location = DEFAULT_LOCATIONS[toolstripItemTag];
+			int toolstripItemTag = int.Parse((sender as ToolStripMenuItem).Tag as string);
+			Tuple<uint, float, float> location = DEFAULT_LOCATIONS[toolstripItemTag];
 			_MapViewerLeft.CenterAndZoom(location.Item1, location.Item2, location.Item3);
 			_MapViewerRight.CenterAndZoom(location.Item1, location.Item2, location.Item3);
 		}
@@ -230,7 +245,7 @@ namespace MA41Viewer.UI
 
 		private void SetDrawingQualityToolstripItemChecked(ToolStripItem item)
 		{
-			foreach (var iItem in new[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem })
+			foreach (ToolStripMenuItem iItem in new[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem })
 			{
 				iItem.Checked = iItem.Equals(item);
 			}

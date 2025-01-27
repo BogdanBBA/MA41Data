@@ -1,5 +1,4 @@
 ﻿using MA41.Commons;
-using NLog;
 using SixLabors.ImageSharp;
 using System;
 using System.IO;
@@ -10,8 +9,6 @@ namespace MA41Viewer.Data
 {
 	public static class GeoData
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-
 		public static GeoModel GeoModel { get; private set; }
 
 		public static string Initialize()
@@ -22,24 +19,24 @@ namespace MA41Viewer.Data
 				GeoModel = new GeoModel();
 				string[] files = Directory.GetFiles(Paths.IMAGES_FOLDER, "*.*", SearchOption.AllDirectories);
 
-				var acceptedExtensions = new[] { ".jpg", ".jgw" };
-				var years = Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly).Select(yS => uint.Parse(Path.GetFileName(yS))).OrderBy(x => x).ToArray();
+				string[] acceptedExtensions = [".jpg", ".jgw"];
+				uint[] years = [.. Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly).Select(yS => uint.Parse(Path.GetFileName(yS))).OrderBy(x => x)];
 
 				// all files are either a JPG tile image or a JGW jpeg world data file
-				var distinctExtensions = files.Select(file => Path.GetExtension(file)).Distinct();
+				System.Collections.Generic.IEnumerable<string> distinctExtensions = files.Select(Path.GetExtension).Distinct();
 				if (distinctExtensions.Any(ext => !acceptedExtensions.Contains(ext)))
 					throw new ApplicationException($"There are unknown exceptions: only accepting {string.Join(", ", acceptedExtensions)}; files have {string.Join(", ", distinctExtensions)}.");
 
 				// read JGW
 				foreach (uint year in years)
 				{
-					var yearFolder = Path.Combine(Paths.IMAGES_FOLDER, year.ToString());
-					var jgwPaths = Directory.GetFiles(yearFolder, "*.jgw", SearchOption.TopDirectoryOnly);
+					string yearFolder = Path.Combine(Paths.IMAGES_FOLDER, year.ToString());
+					string[] jgwPaths = Directory.GetFiles(yearFolder, "*.jgw", SearchOption.TopDirectoryOnly);
 					foreach (string jgwPath in jgwPaths)
 					{
-						var match = Regex.Match(Path.GetFileNameWithoutExtension(jgwPath), @"(\d+).+(\d+)");
+						Match match = Regex.Match(Path.GetFileNameWithoutExtension(jgwPath), @"(\d+).+(\d+)");
 						(uint square, uint quadrant) = (uint.Parse(match.Groups[1].Value), uint.Parse(match.Groups[2].Value));
-						var jgw = new WorldFileDataDictionary.WorldFileDataYear(jgwPath);
+						WorldFileDataDictionary.WorldFileDataYear jgw = new(jgwPath);
 						GeoModel.GetByMA41Coordinates(square, quadrant).Add(year, jgw);
 
 						// also check now that for every JGW, there's a corresponding JPG and get its WxH size
@@ -49,9 +46,9 @@ namespace MA41Viewer.Data
 						(uint year, uint square, uint quadrant) imageSizeKey = (year, square, quadrant);
 						if (!ImageSizeDictionary.Sizes.ContainsKey(imageSizeKey))
 						{
-							using (var img = Image.Load(jpgPath))
+							using (Image img = Image.Load(jpgPath))
 							{
-								var size = img.Size();
+								Size size = img.Size;
 								ImageSizeDictionary.Sizes[imageSizeKey] = ((uint)size.Width, (uint)size.Height);
 								ImageSizeDictionary.Save();
 							}

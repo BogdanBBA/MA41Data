@@ -14,6 +14,38 @@ namespace MA41Geodaten
 
 		private const string FILENAME_PATTERN = @"(\d{1,2}).+(\d{1,2}).+(\d{4})";
 
+		public static void Validate()
+		{
+			Console.WriteLine($" *** Validating downloaded files...");
+			string[] zipPaths = Directory.GetFiles(Paths.DOWNLOAD_FOLDER, @"*.zip", SearchOption.TopDirectoryOnly);
+			int failures = 0;
+			for (int iZF = 0; iZF < zipPaths.Length; iZF++)
+			{
+				string zipPath = zipPaths[iZF];
+				try
+				{
+					if (!Regex.IsMatch(Path.GetFileNameWithoutExtension(zipPath), FILENAME_PATTERN))
+						throw new ApplicationException($"Zip file path '{zipPath}' does not match expected filename pattern!");
+					if (new FileInfo(zipPath).Length == 0)
+						throw new ApplicationException($"Zip file path '{zipPath}' is empty!");
+					using (ZipArchive zipFile = ZipFile.OpenRead(zipPath))
+					{
+						Console.WriteLine($"\t[{iZF,3}/{zipPaths.Length,3}] file '{zipPath}' contains {zipFile.Entries.Count} entries, OK");
+					}
+				}
+				catch (Exception ex)
+				{
+					failures++;
+					if (ex is not ApplicationException)
+						Console.WriteLine($"\t\tWarning, file '{zipPath}' threw unexpected exception {ex}!");
+					Console.WriteLine($"\t\tWill delete file '{zipPath}'. Press Enter to continue...");
+					Console.ReadLine();
+					File.Delete(zipPath);
+				}
+			}
+			Console.WriteLine($" *** Validation done, with {failures} failures.");
+		}
+
 		private static void DeleteDirectoryRecursive(string path, bool log = true)
 		{
 			if (!Directory.Exists(path))
@@ -30,24 +62,19 @@ namespace MA41Geodaten
 		}
 
 		private static string GetNewUnpackedFileExtension(string ext)
-		{
-			switch (ext.Replace(".", "").ToLowerInvariant())
+			=> ext.Replace(".", "").ToLowerInvariant() switch
 			{
-				case "jpg":
-					return "jpg";
-				case "jgw":
-				case "wld":
-					return "jgw";
-				default:
-					throw new ApplicationException($"Unexpected file extension '{ext}'!");
-			}
-		}
+				"jpg" => "jpg",
+				"jgw" or "wld" => "jgw",
+				_ => throw new ApplicationException($"Unexpected file extension '{ext}'!"),
+			};
 
 		public static void UnpackAndRename()
 		{
 			Console.WriteLine($" *** Unpacking and renaming...");
 
-			Console.WriteLine($" *** Warning: all files under '{UNPACKED_FOLDER}' will be erased! Press Enter to continue...");
+			int existingFileCount = Directory.Exists(UNPACKED_FOLDER) ? Directory.GetFiles(UNPACKED_FOLDER).Length : 0;
+			Console.WriteLine($" *** Warning: all files under '{UNPACKED_FOLDER}' ({existingFileCount} files) will be erased!\n\tPress Enter to continue...");
 			Console.ReadLine();
 			DeleteDirectoryRecursive(UNPACKED_FOLDER);
 
@@ -81,9 +108,9 @@ namespace MA41Geodaten
 
 		public static void Copy()
 		{
-			Console.WriteLine($" *** Copying (preparing for a later, manual resize)...");
+			Console.WriteLine($" *** Copying files ('{Paths.IMAGES_FOLDER}' -> '{Paths.THUMBNAILS_FOLDER}'; preparing for a later, manual resize)...");
 			Console.Write($"  *  Name the thumbnail-size destination folder (existing folders: {string.Join(", ", Directory.GetDirectories(Paths.THUMBNAILS_FOLDER, "*", SearchOption.TopDirectoryOnly).Select(dir => $"'{Path.GetFileNameWithoutExtension(dir)}'"))}): ");
-			var destFolder = Console.ReadLine();
+			string destFolder = Console.ReadLine();
 			destFolder = Path.Combine(Paths.THUMBNAILS_FOLDER, destFolder);
 			Console.WriteLine();
 			if (Directory.Exists(destFolder))
@@ -92,12 +119,12 @@ namespace MA41Geodaten
 				return;
 			}
 			Directory.CreateDirectory(destFolder);
-			var yearFolders = Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly);
-			foreach (var yearFolder in yearFolders)
+			string[] yearFolders = Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly);
+			foreach (string yearFolder in yearFolders)
 			{
 				uint year = uint.Parse(Path.GetFileNameWithoutExtension(yearFolder));
-				var files = Directory.GetFiles(yearFolder, "*.jpg", SearchOption.TopDirectoryOnly);
-				foreach (var srcFile in files)
+				string[] files = Directory.GetFiles(yearFolder, "*.jpg", SearchOption.TopDirectoryOnly);
+				foreach (string srcFile in files)
 				{
 					string destFile = Path.Combine(destFolder, $"{year}-{Path.GetFileName(srcFile)}");
 					Console.WriteLine($"  -  Copy '{srcFile}' -> '{destFile}'...");

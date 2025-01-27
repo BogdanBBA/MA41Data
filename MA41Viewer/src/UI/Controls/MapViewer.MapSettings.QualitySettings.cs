@@ -8,7 +8,7 @@ namespace MA41Viewer.UI.Controls
 	{
 		// thumbnail size/quality stuff
 
-		public static readonly uint[] THUMBNAILS_SIZES = { 128, 256, 512, 1024, 2048, 4096 };
+		public static readonly uint[] THUMBNAILS_SIZES = [128, 256, 512, 1024, 2048, 4096];
 
 		private static readonly Func<float, uint> GetThumbnailSize_LowQuality = (tileLength) => tileLength switch
 		{
@@ -45,7 +45,7 @@ namespace MA41Viewer.UI.Controls
 
 		public static bool TryGetRecommendedThumbnailSize(float tileLengthPx, uint qualityLevel, out uint recommendedThumbnailSize)
 		{
-			var qualityFunction = qualityLevel == 1 ? GetThumbnailSize_LowQuality : (qualityLevel == 2 ? GetThumbnailSize_MediumQuality : GetThumbnailSize_HighQuality);
+			Func<float, uint> qualityFunction = qualityLevel == 1 ? GetThumbnailSize_LowQuality : (qualityLevel == 2 ? GetThumbnailSize_MediumQuality : GetThumbnailSize_HighQuality);
 			recommendedThumbnailSize = qualityFunction(tileLengthPx);
 			return recommendedThumbnailSize != 0u;
 		}

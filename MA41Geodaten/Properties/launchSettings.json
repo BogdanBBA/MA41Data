@@ -1,8 +1,7 @@
 {
   "profiles": {
     "MA41Geodaten": {
-      "commandName": "Project",
-      "commandLineArgs": "copy"
+      "commandName": "Project"
     }
   }
 }

@@ -12,7 +12,7 @@ namespace MA41Viewer.src.UI.Controls
 {
 	public partial class ItemListControl : UserControl
 	{
-		private const bool DEBUG_MODE = false;
+		private static readonly bool DEBUG_MODE = false;
 
 		public enum Orientations { Horizontal, Vertical }
 
@@ -25,7 +25,7 @@ namespace MA41Viewer.src.UI.Controls
 		public static readonly ColorSetBySelected TextColorsBlue = new(new ColorSet("#2c7fd1", "#1b73cc", "#155ba1"), new ColorSet("#4e5052", "#58636e", "#497199"));
 
 		public Orientations Orientation { get; set; } = Orientations.Horizontal;
-		public List<StringWithTag<uint>> Items { get; set; } = new List<StringWithTag<uint>>() { new StringWithTag<uint>(1111, "ABCD"), new StringWithTag<uint>(2222, "WXYZ"), new StringWithTag<uint>(1234, "1234") };
+		public List<StringWithTag<uint>> Items { get; set; } = [new StringWithTag<uint>(1111, "ABCD"), new StringWithTag<uint>(2222, "WXYZ"), new StringWithTag<uint>(1234, "1234")];
 		public int SelectedItemIndex { get; set; } = 1;
 		public Font TextFont { get; set; } = DefaultTextFont;
 		public Font DescriptionFont { get; set; } = DefaultDescriptionFont;
@@ -106,7 +106,7 @@ namespace MA41Viewer.src.UI.Controls
 			return font;
 		}
 
-		private PointF GetDrawLocation(Graphics g, Rectangle cell, string @string, Font font, float verticalWeight, VerticalAlignment alignment)
+		private static PointF GetDrawLocation(Graphics g, Rectangle cell, string @string, Font font, float verticalWeight, VerticalAlignment alignment)
 		{
 			if (alignment == VerticalAlignment.Center) throw new ArgumentException("Not what I had in mind");
 			if (verticalWeight <= 0.0 || verticalWeight > 1.0) throw new ArgumentException("Not what I had in mind");
@@ -132,9 +132,15 @@ namespace MA41Viewer.src.UI.Controls
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var g = e.Graphics;
+			if (DesignMode)
+			{
+				e.Graphics.DrawString($"{GetType().Name} {Name}\nIn designer mode", TextFont, Brushes.Black, new PointF(0, 0));
+				return;
+			}
+
+			Graphics g = e.Graphics;
 			g.TextRenderingHint = TextRenderingHint.AntiAlias;
-			if (Items.Count == 0) g.Clear(BackgroundColors.NotSelected.Normal.Color);
+			if (Items is null || Items.Count == 0) g.Clear(BackgroundColors.NotSelected.Normal.Color);
 
 			const float textWeight = 0.65f;
 			int hoveredItemIndex = GetItemIndexByLocation(mouseLocation);
@@ -147,7 +153,7 @@ namespace MA41Viewer.src.UI.Controls
 			{
 				bool thisCellHovered = index == hoveredItemIndex;
 				bool thisCellSelected = index == SelectedItemIndex;
-				Rectangle cell = new Rectangle(x, y, cellSize.Width, cellSize.Height);
+				Rectangle cell = new(x, y, cellSize.Width, cellSize.Height);
 
 				g.FillRectangle(BackgroundColors[thisCellSelected].Get(thisCellHovered, thisCellHovered && mouseIsDown).AsBrush(), cell);
 

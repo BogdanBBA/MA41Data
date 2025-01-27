@@ -35,7 +35,7 @@ namespace MA41Viewer.UI.Controls
 			}
 		}
 
-		public static readonly float[] zoomRatios = { 0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f };
+		public static readonly float[] zoomRatios = [0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f];
 
 		public static readonly Zoom[] ZOOMS;
 
@@ -65,7 +65,7 @@ namespace MA41Viewer.UI.Controls
 		/// <param name="centerCoordinate">the map coordinate to the center the map on</param>
 		private RectangleF GetMapCoordBounds(PointF centerCoordinate)
 		{
-			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
+			float zoomRatio = ZOOMS[ZoomLevel].Ratio;
 			return new(centerCoordinate.X - MapviewSizePx.Width * zoomRatio / 2,
 				centerCoordinate.Y - MapviewSizePx.Height * zoomRatio / 2,
 				MapviewSizePx.Width * zoomRatio,
@@ -84,11 +84,11 @@ namespace MA41Viewer.UI.Controls
 		/// <param name="alsoUpdateLastFrameBounds">indicated whether the bounds of the last (saved) frame are to be updated to reflect the new map bounds after this zoom event</param>
 		public void ResetMapAfterZoom(PointF mouseMapviewLocationPx)
 		{
-			var centerPx = GetMapviewCenterPx();
-			var deltaToCenterPx = new SizeF(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
-			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
-			var oldMapBounds = CurrentMapCoordBounds;
-			var newMapBounds = GetMapCoordBounds(Translate_MapviewLocationPx_To_MapCoordinates(mouseMapviewLocationPx));
+			PointF centerPx = GetMapviewCenterPx();
+			SizeF deltaToCenterPx = new(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
+			float zoomRatio = ZOOMS[ZoomLevel].Ratio;
+			RectangleF oldMapBounds = CurrentMapCoordBounds;
+			RectangleF newMapBounds = GetMapCoordBounds(Translate_MapviewLocationPx_To_MapCoordinates(mouseMapviewLocationPx));
 			CurrentMapCoordBounds = new RectangleF(
 				newMapBounds.Left - deltaToCenterPx.Width * zoomRatio,
 				newMapBounds.Top - deltaToCenterPx.Height * zoomRatio,
@@ -101,8 +101,8 @@ namespace MA41Viewer.UI.Controls
 		/// <param name="mouseMapviewLocationPx">the mapview location of the mouse</param>
 		public void MoveMap(PointF mouseMapviewLocationPx)
 		{
-			var delta = new SizeF(LastMouseDown_MapviewLocationPx.X - mouseMapviewLocationPx.X, LastMouseDown_MapviewLocationPx.Y - mouseMapviewLocationPx.Y);
-			var zoomRatio = ZOOMS[ZoomLevel].Ratio;
+			SizeF delta = new(LastMouseDown_MapviewLocationPx.X - mouseMapviewLocationPx.X, LastMouseDown_MapviewLocationPx.Y - mouseMapviewLocationPx.Y);
+			float zoomRatio = ZOOMS[ZoomLevel].Ratio;
 			CurrentMapCoordBounds = new RectangleF(CurrentMapCoordBounds.Left + delta.Width * zoomRatio,
 				CurrentMapCoordBounds.Top + delta.Height * zoomRatio,
 				CurrentMapCoordBounds.Width,
@@ -153,12 +153,13 @@ namespace MA41Viewer.UI.Controls
 			string[] lines = File.ReadAllLines(path);
 			Year = uint.Parse(lines[0]);
 			ZoomLevel = uint.Parse(lines[1]);
-			float[] parts = lines[2].Split(',').Select(part => float.Parse(part)).ToArray();
+			float[] parts = lines[2].Split(',').Select(float.Parse).ToArray();
 			CenterMap(new PointF(parts[0], parts[1]));
 			// default drawing quality setting should be HIGH
 			//int[] qs = lines[3].Split(',').Select(part => int.Parse(part)).ToArray();
 			//CurrentQualitySettings = new QualitySettings(qs[0], qs[1], qs[2], qs[3], qs[4], qs[5], ...);
-			bool[] vals = lines[3].Split(',').Select(part => bool.Parse(part)).ToArray();
+			List<bool> vals = lines[3].Split(',').Select(bool.Parse).ToList();
+			if (vals.Count < 4) throw new ArgumentException($"Unexpected settings vals list: '{lines[3]}'");
 			CurrentDebugInfoShown.SetFrom(vals[0], vals[1], vals[2], vals[3]);
 		}
 

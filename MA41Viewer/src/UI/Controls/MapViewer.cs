@@ -137,18 +137,18 @@ namespace MA41Viewer.UI.Controls
 
 		public void SaveCurrentViewToFile(string filename)
 		{
-			var bmp = GenerateBitmap(out DebugInfoWrapper _);
+			Bitmap bmp = GenerateBitmap(out DebugInfoWrapper _);
 			bmp.Save(filename);
 		}
 
 		public void SaveCurrentViewsToFile(MapViewer otherMapViewer, string filename)
 		{
-			var bmpA = GenerateBitmap(out DebugInfoWrapper _);
-			var bmpB = otherMapViewer.GenerateBitmap(out DebugInfoWrapper _);
+			Bitmap bmpA = GenerateBitmap(out DebugInfoWrapper _);
+			Bitmap bmpB = otherMapViewer.GenerateBitmap(out DebugInfoWrapper _);
 			DrawYearOnExportBitmap(bmpA, Sett.Year.Value);
 			DrawYearOnExportBitmap(bmpB, otherMapViewer.Sett.Year.Value);
 
-			using Bitmap bmpResult = new Bitmap(bmpA.Width + bmpB.Width, bmpA.Height);
+			using Bitmap bmpResult = new(bmpA.Width + bmpB.Width, bmpA.Height);
 			using Graphics g = Graphics.FromImage(bmpResult);
 			g.CompositingMode = Sett.CurrentQualitySettings.CompositingModeValue;
 			g.CompositingQuality = Sett.CurrentQualitySettings.CompositingQualityValue;
@@ -164,7 +164,7 @@ namespace MA41Viewer.UI.Controls
 		public void SaveAllYearsToFile(string filename)
 		{
 			Sett.SaveState();
-			var bmp = GenerateAllYearsBitmap(GeoModel.Years);
+			Bitmap bmp = GenerateAllYearsBitmap(GeoModel.Years);
 			bmp.Save(filename);
 			Sett.RestoreState();
 		}
