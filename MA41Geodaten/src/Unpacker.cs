@@ -78,6 +78,7 @@ namespace MA41Geodaten
 			Console.ReadLine();
 			DeleteDirectoryRecursive(UNPACKED_FOLDER);
 
+			int archives = 0, totalFiles = 0;
 			string[] zipPaths = Directory.GetFiles(Paths.DOWNLOAD_FOLDER, @"*.zip", SearchOption.TopDirectoryOnly);
 			for (int zipPathIndex = 0; zipPathIndex < zipPaths.Length; zipPathIndex++)
 			{
@@ -94,16 +95,20 @@ namespace MA41Geodaten
 					throw new ApplicationException($"Was expecting exactly 2 files (got instead {files.Length}: {string.Join(", ", files.Select(file => $"'{file}'"))})!");
 				if (files.Any(file => !Regex.IsMatch(file, FILENAME_PATTERN)))
 					throw new ApplicationException($"One or more of unpacked files {string.Join(", ", files.Select(file => $"'{file}'"))} aren't in a good format!");
+				archives++;
 				foreach (string file in files)
 				{
 					string newFile = Path.Combine(folder, $"{Square}-{Quadrant}.{GetNewUnpackedFileExtension(Path.GetExtension(file))}");
 					Console.WriteLine($"   - Moving file '{file}' -> '{newFile}'...");
 					if (!File.Exists(newFile))
+					{
 						File.Move(file, newFile);
+						totalFiles++;
+					}
 				}
 			}
 
-			Console.WriteLine($" *** Done unpacking and renaming.\n");
+			Console.WriteLine($" *** Done unpacking and renaming {archives} archives and {totalFiles} files.\n");
 		}
 
 		public static void Copy()

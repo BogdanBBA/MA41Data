@@ -17,7 +17,7 @@ namespace MA41Geodaten
 
 		private static readonly string[] VALID_ARGUMENTS = [ARGUMENT_DOWNLOAD, ARGUMENT_VALIDATE, ARGUMENT_UNPACK, ARGUMENT_COPY];
 
-		private static readonly string[] DEFAULT_ARGUMENTS = [ARGUMENT_COPY];
+		private static readonly string[] DEFAULT_ARGUMENTS = [ARGUMENT_UNPACK]; // EDIT THIS IF NOT PASSING DEBUG ARGUMENTS
 
 		public static string GetCurrentFileStats()
 		{
