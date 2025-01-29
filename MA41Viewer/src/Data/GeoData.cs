@@ -1,6 +1,7 @@
 ﻿using MA41.Commons;
 using SixLabors.ImageSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,10 +21,10 @@ namespace MA41Viewer.Data
 				string[] files = Directory.GetFiles(Paths.IMAGES_FOLDER, "*.*", SearchOption.AllDirectories);
 
 				string[] acceptedExtensions = [".jpg", ".jgw"];
-				uint[] years = [.. Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly).Select(yS => uint.Parse(Path.GetFileName(yS))).OrderBy(x => x)];
+				uint[] years = [.. Directory.GetDirectories(Paths.IMAGES_FOLDER, "*", SearchOption.TopDirectoryOnly).Select(Path.GetFileName).Select(uint.Parse).OrderBy(x => x)];
 
 				// all files are either a JPG tile image or a JGW jpeg world data file
-				System.Collections.Generic.IEnumerable<string> distinctExtensions = files.Select(Path.GetExtension).Distinct();
+				IEnumerable<string> distinctExtensions = files.Select(Path.GetExtension).Distinct();
 				if (distinctExtensions.Any(ext => !acceptedExtensions.Contains(ext)))
 					throw new ApplicationException($"There are unknown exceptions: only accepting {string.Join(", ", acceptedExtensions)}; files have {string.Join(", ", distinctExtensions)}.");
 

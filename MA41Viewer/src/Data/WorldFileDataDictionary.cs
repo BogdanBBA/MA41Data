@@ -8,27 +8,17 @@ namespace MA41Viewer.Data
 {
 	public class WorldFileDataDictionary
 	{
-		public class WorldFileDataYear
+		public class WorldFileDataYear(string[] lines)
 		{
-			public float IncrementX { get; private set; }
-			public float IncrementY { get; private set; }
-			public float TopLeftX { get; private set; }
-			public float TopLeftY { get; private set; }
-			public SizeF TileImageSize { get; set; }
-			public RectangleF TileMapCoordinateBounds { get; set; }
+			public float IncrementX { get; private set; } = float.Parse(lines[0]);
+			public float IncrementY { get; private set; } = float.Parse(lines[3]);
+			public float TopLeftX { get; private set; } = float.Parse(lines[4]);
+			public float TopLeftY { get; private set; } = -(float.Parse(lines[5]) - 330000);
+			public SizeF TileImageSize { get; set; } = SizeF.Empty;
+			public RectangleF TileMapCoordinateBounds { get; set; } = RectangleF.Empty;
 
 			public WorldFileDataYear(string filePath)
 				: this(File.ReadAllLines(filePath)) { }
-
-			public WorldFileDataYear(string[] lines)
-			{
-				IncrementX = float.Parse(lines[0]);
-				IncrementY = float.Parse(lines[3]);
-				TopLeftX = float.Parse(lines[4]);
-				TopLeftY = -(float.Parse(lines[5]) - 330000);
-				TileImageSize = SizeF.Empty;
-				TileMapCoordinateBounds = RectangleF.Empty;
-			}
 
 			public void SetImageSize((uint width, uint height) size)
 			{

@@ -23,16 +23,10 @@ namespace MA41Viewer.UI.Controls
 
 		// static members and methods
 
-		public class Zoom
+		public class Zoom(uint level, float ratio)
 		{
-			public uint Level { get; private set; }
-			public float Ratio { get; private set; }
-
-			public Zoom(uint level, float ratio)
-			{
-				Level = level;
-				Ratio = ratio;
-			}
+			public uint Level { get; private set; } = level;
+			public float Ratio { get; private set; } = ratio;
 		}
 
 		public static readonly float[] zoomRatios = [0.114375f, 0.1525f, 0.22875f, 0.305f, 0.4575f, 0.61035f, 0.915525f, 1.2207f, 1.83105f, 2.4414f, 3.6621f, 4.8828f, 7.3242f, 9.7656f, 14.6484f, 19.5312f, 29.2968f];
@@ -88,7 +82,7 @@ namespace MA41Viewer.UI.Controls
 			PointF centerPx = GetMapviewCenterPx();
 			SizeF deltaToCenterPx = new(mouseMapviewLocationPx.X - centerPx.X, mouseMapviewLocationPx.Y - centerPx.Y);
 			float zoomRatio = ZOOMS[ZoomLevel].Ratio;
-			RectangleF oldMapBounds = CurrentMapCoordBounds;
+			//RectangleF oldMapBounds = CurrentMapCoordBounds;
 			RectangleF newMapBounds = GetMapCoordBounds(Translate_MapviewLocationPx_To_MapCoordinates(mouseMapviewLocationPx));
 			CurrentMapCoordBounds = new RectangleF(
 				newMapBounds.Left - deltaToCenterPx.Width * zoomRatio,
