@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MA41Viewer.UI
 {
@@ -110,7 +111,7 @@ namespace MA41Viewer.UI
 			_zoomControl.Items = MapSettings.ZOOMS.Select(zoom => new StringWithTag<uint>(zoom.Level, $"Zoom {zoom.Level}", GetZoomDescription(zoom))).ToList();
 			List<StringWithTag<uint>> yearItemList = GeoData.GeoModel.Years
 				.OrderBy(year => year)
-				.Select(year => new StringWithTag<uint>(year, year.ToString(), GetYearDescription(year)))
+				.Select(year => new StringWithTag<uint>(year, $"{year}", Datasets.GetInfoByYear(year).YearDescription))
 				.ToList();
 			_YearControlLeft.Items = yearItemList;
 			_YearControlRight.Items = yearItemList;
@@ -150,26 +151,6 @@ namespace MA41Viewer.UI
 			detailedTileInfoToolStripMenuItem.Checked = _MapViewerLeft.Sett.CurrentDebugInfoShown.DetailedTileInfo;
 		}
 
-		public static string GetYearDescription(uint year)
-		{
-			return (int)year switch
-			{
-				1938 => "Oct-Nov '38",
-				1956 => "Apr '56",
-				1961 => "Sep '61",
-				1971 => "May '71",
-				1972 => "May-Sep '71",
-				1976 => "May '76",
-				1981 => "May '81",
-				1986 => "Oct '86",
-				1992 => "May '92",
-				2014 => "Jun '14",
-				2019 => "Jun '19",
-				2024 => "Mar-Apr '24",
-				_ => null
-			};
-		}
-
 		public static string GetZoomDescription(MapSettings.Zoom zoom)
 		{
 			return $"{zoom.Ratio:F2}x";
@@ -200,8 +181,13 @@ namespace MA41Viewer.UI
 		#region Main menu events
 		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			string nl = Environment.NewLine;
-			MessageBox.Show($"by BogdanBBA{nl}{nl}December 2021 - January 2022{nl}October 2022{nl}January 2025");
+			TaskDialog.ShowDialog(new()
+			{
+				Caption = $"About MA41Data Viewer",
+				Heading = "by BogdanBBA",
+				Text = $"December 2021 - January 2022{Environment.NewLine}October 2022{Environment.NewLine}January 2025",
+				Buttons = { new("Awesome!") }
+			}); // https://www.wien.gv.at/stadtentwicklung/stadtvermessung/service/luftarchiv.html
 		}
 
 		private void ShowInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -230,6 +216,31 @@ namespace MA41Viewer.UI
 			Tuple<uint, float, float> location = DEFAULT_LOCATIONS[toolstripItemTag];
 			_MapViewerLeft.CenterAndZoom(location.Item1, location.Item2, location.Item3);
 			_MapViewerRight.CenterAndZoom(location.Item1, location.Item2, location.Item3);
+		}
+
+		private void DatasetInfoleftToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ShowDatasetInfo(_MapViewerLeft.Sett.Year.GetValueOrDefault(0));
+		}
+
+		private void DatasetInforightToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ShowDatasetInfo(_MapViewerRight.Sett.Year.GetValueOrDefault(0));
+		}
+
+		private void ShowDatasetInfo(uint year)
+		{
+			Datasets.DatasetInfo data = Datasets.GetInfoByYear(year);
+
+			TaskDialogButton openUrlButton = new("Open URL");
+			openUrlButton.Click += (_, _) => Process.Start(new ProcessStartInfo { FileName = data.URL, UseShellExecute = true });
+			TaskDialog.ShowDialog(new()
+			{
+				Caption = $"Dataset info {data.Year}",
+				Heading = $"Year: {data.Year} ({data.YearDescription})",
+				Text = $"{data.DatasetDescription}{Environment.NewLine}{Environment.NewLine}{data.URL}",
+				Buttons = { openUrlButton, new("Close") }
+			});
 		}
 
 		private void DebugONOFFToolStripMenuItem_Click(object sender, EventArgs e)
@@ -325,7 +336,6 @@ namespace MA41Viewer.UI
 			_MapViewerLeft.SaveAllYearsToFile(filename);
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
-		#endregion
 
 		private void CurrentViewsbothToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -333,5 +343,6 @@ namespace MA41Viewer.UI
 			_MapViewerLeft.SaveCurrentViewsToFile(_MapViewerRight, filename);
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
+		#endregion
 	}
 }
