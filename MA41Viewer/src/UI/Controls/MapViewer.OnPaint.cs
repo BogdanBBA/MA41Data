@@ -260,6 +260,15 @@ namespace MA41Viewer.UI.Controls
 
 					g.DrawImage(image, mouseTile);
 
+					if (Sett.CrosshairLocationPx is not null )
+					{
+						Point crosshair = Sett.CrosshairLocationPx.Value;
+						const float halfSize = 7f;
+						//g.DrawRectangle(CROSSHAIR_PEN, new RectangleF(crosshair.X - halfSize, crosshair.Y - halfSize, 2 * halfSize + 1, 2 * halfSize + 1));
+						g.DrawLine(CROSSHAIR_PEN, crosshair.X, crosshair.Y - halfSize, crosshair.X, crosshair.Y + halfSize);
+						g.DrawLine(CROSSHAIR_PEN, crosshair.X - halfSize, crosshair.Y, crosshair.X + halfSize, crosshair.Y);
+					}
+
 					if (DebugMode)
 					{
 						g.DrawRectangle(Pens.Purple, mouseTile.Left, mouseTile.Top, mouseTile.Width, mouseTile.Height);

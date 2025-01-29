@@ -10,6 +10,7 @@ namespace MA41Viewer.UI.Controls
 	public partial class MapViewer : UserControl
 	{
 		protected static readonly Brush BACKBRUSH = new SolidBrush(Color.FromArgb(96, 255, 255, 255));
+		protected static readonly Pen CROSSHAIR_PEN = new(Color.GreenYellow, 1); //width will be rounded to 1 in non-SmoothingMode.AntiAlias graphics, leave 1 for consistency
 
 		private readonly object _lock = new();
 		public bool DebugMode { get; set; } = false;
@@ -42,6 +43,12 @@ namespace MA41Viewer.UI.Controls
 		{
 			Sett.ZoomLevel = zoomLevel;
 			Sett.CenterMap(new PointF(centerCoordinateX, centerCoordinateY));
+			Invalidate();
+		}
+
+		public void CrosshairChanged(Point? location)
+		{
+			Sett.CrosshairLocationPx = location;
 			Invalidate();
 		}
 

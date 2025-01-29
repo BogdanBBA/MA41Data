@@ -53,6 +53,7 @@ namespace MA41Viewer.UI.Controls
 		public MapDrawingState DrawingState { get; set; } = MapDrawingState.AtRest;
 		public SizeF MapviewSizePx { get; set; } = SizeF.Empty;
 		public PointF MouseLocationPx { get; set; } = PointF.Empty;
+		public Point? CrosshairLocationPx { get; set; } = null;
 		public RectangleF CurrentMapCoordBounds { get; set; } = RectangleF.Empty;
 		public KeyValuePair<RectangleF, Bitmap>? LastFrame { get; set; } = null;
 		public uint ZoomLevel { get; set; } = 11;

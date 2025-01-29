@@ -25,7 +25,7 @@ namespace MA41Viewer.UI
 			new(7, 10400, -16100)
 		];
 
-		private DateTime _lastCrosshairMoved = DateTime.MinValue;
+		//private DateTime _lastCrosshairMoved = DateTime.MinValue;
 
 		public FViewer()
 		{
@@ -44,24 +44,20 @@ namespace MA41Viewer.UI
 			}
 
 			InitializeMyComponents();
-
-			CrosshairPB.BackColor = Color.Transparent;
-			CrosshairPB.Load(Path.Combine(Paths.OTHER_FOLDER, "crosshair.png"));
-			//CrosshairPB.Image = GUtils.GenerateCrosshairImage(CrosshairPB.Width, Color.Red, 2.5f);
 		}
 
 		private void FViewer_Resize(object sender, EventArgs e)
 		{
-			const int hPadd = 10, wZoom = 80, hYear = 50;
-			Rectangle controlArea = new(5, 25, Width - 22, Height - 70);
+			const int hPadd = 10, wZoom = 60, hYear = 50;
+			Rectangle allControlsArea = new(5, 25, Width - 22, Height - 70);
 
-			_zoomControl.SetBounds(controlArea.Left, controlArea.Top, wZoom, controlArea.Height);
+			_zoomControl.SetBounds(allControlsArea.Left, allControlsArea.Top, wZoom, allControlsArea.Height);
 			_zoomControl.Invalidate();
 
-			_YearControlLeft.SetBounds(_zoomControl.Right + hPadd, controlArea.Top, (controlArea.Width - _zoomControl.Right - hPadd) / 2 - hPadd / 2, hYear);
+			_YearControlLeft.SetBounds(_zoomControl.Right + hPadd, allControlsArea.Top, (allControlsArea.Width - _zoomControl.Right - hPadd) / 2 - hPadd / 2, hYear);
 			_YearControlLeft.Invalidate();
 
-			_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, controlArea.Height - _YearControlLeft.Height);
+			_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, allControlsArea.Height - _YearControlLeft.Height);
 			_MapViewerLeft.Invalidate();
 
 			_YearControlRight.SetBounds(_YearControlLeft.Right + hPadd, _YearControlLeft.Top, _YearControlLeft.Width, _YearControlLeft.Height);
@@ -83,13 +79,11 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerLeft.OnMouseLocationPxChanged = location =>
 			{
-				if (!CrosshairPB.Visible) return;
-				DateTime now = DateTime.Now;
-				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
-				_lastCrosshairMoved = now;
-				CrosshairPB.Parent = _MapViewerRight;
-				CrosshairPB.Location = location.HasValue ? new Point(location.Value.X, location.Value.Y) : Point.Empty;
-				CrosshairPB.Visible = location.HasValue;
+				if (!CrosshairToolStripMenuItem.Checked) return;
+				//DateTime now = DateTime.Now;
+				//if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
+				//_lastCrosshairMoved = now;
+				_MapViewerRight.CrosshairChanged(_MapViewerLeft.Sett.DrawingState == MapSettings.MapDrawingState.AtRest ? location : null);
 			};
 
 			_MapViewerRight.InitializeGeoModel(GeoData.GeoModel);
@@ -102,13 +96,11 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerRight.OnMouseLocationPxChanged = location =>
 			{
-				if (!CrosshairPB.Visible) return;
-				DateTime now = DateTime.Now;
-				if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
-				_lastCrosshairMoved = now;
-				CrosshairPB.Parent = _MapViewerLeft;
-				CrosshairPB.Location = location.HasValue ? new Point(location.Value.X, location.Value.Y) : Point.Empty;
-				CrosshairPB.Visible = location.HasValue;
+				if (!CrosshairToolStripMenuItem.Checked) return;
+				//DateTime now = DateTime.Now;
+				//if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
+				//_lastCrosshairMoved = now;
+				_MapViewerLeft.CrosshairChanged(_MapViewerRight.Sett.DrawingState == MapSettings.MapDrawingState.AtRest ? location : null);
 			};
 
 			_zoomControl.SetColors(ItemListControl.BackgroundColorsBlue, ItemListControl.TextColorsBlue);
@@ -207,12 +199,13 @@ namespace MA41Viewer.UI
 		#region Main menu events
 		private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show($"by BogdanBBA{Environment.NewLine}{Environment.NewLine}December 2021 - January 2022{Environment.NewLine}October 2022");
+			string nl = Environment.NewLine;
+			MessageBox.Show($"by BogdanBBA{nl}{nl}December 2021 - January 2022{nl}October 2022{nl}January 2025");
 		}
 
 		private void ShowInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			System.Diagnostics.Process.Start("explorer.exe", Paths.ROOT_FOLDER);
+			Process.Start("explorer.exe", Paths.ROOT_FOLDER);
 		}
 
 		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -222,8 +215,12 @@ namespace MA41Viewer.UI
 
 		private void CrosshairToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CrosshairPB.Visible = !CrosshairPB.Visible;
-			crosshairToolStripMenuItem.Checked = CrosshairPB.Visible;
+			CrosshairToolStripMenuItem.Checked = !CrosshairToolStripMenuItem.Checked;
+			if (!CrosshairToolStripMenuItem.Checked)
+			{
+				_MapViewerLeft.CrosshairChanged(null);
+				_MapViewerRight.CrosshairChanged(null);
+			}
 		}
 
 		private void Location_ToolStripMenuItem_Click(object sender, EventArgs e)

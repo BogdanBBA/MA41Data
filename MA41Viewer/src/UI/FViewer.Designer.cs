@@ -38,7 +38,7 @@ namespace MA41Viewer.UI
 			exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			debuggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			crosshairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			CrosshairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			drawingQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			mediumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,9 +64,7 @@ namespace MA41Viewer.UI
 			_YearControlLeft = new src.UI.Controls.ItemListControl();
 			_YearControlRight = new src.UI.Controls.ItemListControl();
 			_zoomControl = new src.UI.Controls.ItemListControl();
-			CrosshairPB = new System.Windows.Forms.PictureBox();
 			menuStrip1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)CrosshairPB).BeginInit();
 			SuspendLayout();
 			// 
 			// _MapViewerLeft
@@ -119,7 +117,7 @@ namespace MA41Viewer.UI
 			// 
 			// debuggingToolStripMenuItem
 			// 
-			debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { debugONOFFToolStripMenuItem, crosshairToolStripMenuItem, drawingQualityToolStripMenuItem, informationShownToolStripMenuItem });
+			debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { debugONOFFToolStripMenuItem, CrosshairToolStripMenuItem, drawingQualityToolStripMenuItem, informationShownToolStripMenuItem });
 			debuggingToolStripMenuItem.Name = "debuggingToolStripMenuItem";
 			debuggingToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
 			debuggingToolStripMenuItem.Text = "Debugging";
@@ -127,22 +125,24 @@ namespace MA41Viewer.UI
 			// debugONOFFToolStripMenuItem
 			// 
 			debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
 			debugONOFFToolStripMenuItem.Click += DebugONOFFToolStripMenuItem_Click;
 			// 
-			// crosshairToolStripMenuItem
+			// CrosshairToolStripMenuItem
 			// 
-			crosshairToolStripMenuItem.Name = "crosshairToolStripMenuItem";
-			crosshairToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-			crosshairToolStripMenuItem.Text = "Crosshair";
-			crosshairToolStripMenuItem.Click += CrosshairToolStripMenuItem_Click;
+			CrosshairToolStripMenuItem.Checked = true;
+			CrosshairToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+			CrosshairToolStripMenuItem.Name = "CrosshairToolStripMenuItem";
+			CrosshairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			CrosshairToolStripMenuItem.Text = "Crosshair";
+			CrosshairToolStripMenuItem.Click += CrosshairToolStripMenuItem_Click;
 			// 
 			// drawingQualityToolStripMenuItem
 			// 
 			drawingQualityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem });
 			drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
@@ -170,7 +170,7 @@ namespace MA41Viewer.UI
 			// 
 			informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { mouseCursorInfoToolStripMenuItem, drawingQualityInfoToolStripMenuItem, memoryAllocationInfoToolStripMenuItem, detailedTileInfoToolStripMenuItem });
 			informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
@@ -336,25 +336,12 @@ namespace MA41Viewer.UI
 			_zoomControl.SelectedItemIndex = 2;
 			_zoomControl.Size = new System.Drawing.Size(430, 152);
 			_zoomControl.TabIndex = 11;
-			_zoomControl.TextFont = new System.Drawing.Font("Roboto Slab Light", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-			// 
-			// CrosshairPB
-			// 
-			CrosshairPB.BackColor = System.Drawing.Color.Transparent;
-			CrosshairPB.ErrorImage = null;
-			CrosshairPB.InitialImage = null;
-			CrosshairPB.Location = new System.Drawing.Point(1082, 38);
-			CrosshairPB.Name = "CrosshairPB";
-			CrosshairPB.Size = new System.Drawing.Size(32, 32);
-			CrosshairPB.TabIndex = 12;
-			CrosshairPB.TabStop = false;
-			CrosshairPB.Visible = false;
+			_zoomControl.TextFont = new System.Drawing.Font("Bahnschrift Light Condensed", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
 			// 
 			// FViewer
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			ClientSize = new System.Drawing.Size(1136, 585);
-			Controls.Add(CrosshairPB);
 			Controls.Add(_zoomControl);
 			Controls.Add(_YearControlRight);
 			Controls.Add(_YearControlLeft);
@@ -374,7 +361,6 @@ namespace MA41Viewer.UI
 			Resize += FViewer_Resize;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)CrosshairPB).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -413,8 +399,7 @@ namespace MA41Viewer.UI
 		private src.UI.Controls.ItemListControl _YearControlLeft;
 		private src.UI.Controls.ItemListControl _YearControlRight;
 		private src.UI.Controls.ItemListControl _zoomControl;
-		private System.Windows.Forms.PictureBox CrosshairPB;
 		private System.Windows.Forms.ToolStripMenuItem currentViewsbothToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem crosshairToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem CrosshairToolStripMenuItem;
 	}
 }
