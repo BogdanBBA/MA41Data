@@ -260,7 +260,7 @@ namespace MA41Viewer.UI.Controls
 
 					g.DrawImage(image, mouseTile);
 
-					if (Sett.CrosshairLocationPx is not null )
+					if (Sett.CrosshairLocationPx is not null)
 					{
 						Point crosshair = Sett.CrosshairLocationPx.Value;
 						const float halfSize = 7f;

@@ -1,6 +1,7 @@
 ﻿using MA41Viewer.Data;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -171,7 +172,10 @@ namespace MA41Viewer.UI.Controls
 		public void SaveAllYearsToFile(string filename)
 		{
 			Sett.SaveState();
-			Bitmap bmp = GenerateAllYearsBitmap(GeoModel.Years);
+			uint[] years = [1938, 1956, 1961, 1971, 1981, 1992, 2014, 2024];
+			if (years.Any(year => !GeoModel.Years.Contains(year)))
+				years = GeoModel.Years;
+			Bitmap bmp = GenerateAllYearsBitmap(years);
 			bmp.Save(filename);
 			Sett.RestoreState();
 		}

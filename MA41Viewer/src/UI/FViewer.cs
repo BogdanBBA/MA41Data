@@ -26,8 +26,6 @@ namespace MA41Viewer.UI
 			new(7, 10400, -16100)
 		];
 
-		//private DateTime _lastCrosshairMoved = DateTime.MinValue;
-
 		public FViewer()
 		{
 			InitializeComponent();
@@ -49,22 +47,32 @@ namespace MA41Viewer.UI
 
 		private void FViewer_Resize(object sender, EventArgs e)
 		{
-			const int hPadd = 10, wZoom = 60, hYear = 50;
+			const int zoomCtrlWidth = 60, yearCtrlHeight = 50, paddH = 10;
 			Rectangle allControlsArea = new(5, 25, Width - 22, Height - 70);
 
-			_zoomControl.SetBounds(allControlsArea.Left, allControlsArea.Top, wZoom, allControlsArea.Height);
+			_zoomControl.SetBounds(allControlsArea.Left, allControlsArea.Top, zoomCtrlWidth, allControlsArea.Height);
+
+			if (ToggleSecondViewToolStripMenuItem.Checked)
+			{
+				_YearControlLeft.SetBounds(_zoomControl.Right + paddH, allControlsArea.Top, (allControlsArea.Width - _zoomControl.Right - paddH) / 2 - paddH / 2, yearCtrlHeight);
+				_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, allControlsArea.Height - _YearControlLeft.Height);
+				_YearControlRight.SetBounds(_YearControlLeft.Right + paddH, _YearControlLeft.Top, _YearControlLeft.Width, _YearControlLeft.Height);
+				_MapViewerRight.SetBounds(_YearControlRight.Left, _YearControlRight.Bottom, _YearControlRight.Width, _MapViewerLeft.Height);
+				_YearControlRight.Visible = true;
+				_MapViewerRight.Visible = true;
+			}
+			else
+			{
+				_YearControlLeft.SetBounds(_zoomControl.Right + paddH, allControlsArea.Top, allControlsArea.Width - _zoomControl.Right - paddH, yearCtrlHeight);
+				_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, allControlsArea.Height - _YearControlLeft.Height);
+				_YearControlRight.Visible = false;
+				_MapViewerRight.Visible = false;
+			}
+
 			_zoomControl.Invalidate();
-
-			_YearControlLeft.SetBounds(_zoomControl.Right + hPadd, allControlsArea.Top, (allControlsArea.Width - _zoomControl.Right - hPadd) / 2 - hPadd / 2, hYear);
 			_YearControlLeft.Invalidate();
-
-			_MapViewerLeft.SetBounds(_YearControlLeft.Left, _YearControlLeft.Bottom, _YearControlLeft.Width, allControlsArea.Height - _YearControlLeft.Height);
 			_MapViewerLeft.Invalidate();
-
-			_YearControlRight.SetBounds(_YearControlLeft.Right + hPadd, _YearControlLeft.Top, _YearControlLeft.Width, _YearControlLeft.Height);
 			_YearControlRight.Invalidate();
-
-			_MapViewerRight.SetBounds(_YearControlRight.Left, _YearControlRight.Bottom, _YearControlRight.Width, _MapViewerLeft.Height);
 			_MapViewerRight.Invalidate();
 		}
 
@@ -80,11 +88,10 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerLeft.OnMouseLocationPxChanged = location =>
 			{
+				if (!_MapViewerRight.Visible) return; // check only here
 				if (!CrosshairToolStripMenuItem.Checked) return;
-				//DateTime now = DateTime.Now;
-				//if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
-				//_lastCrosshairMoved = now;
-				_MapViewerRight.CrosshairChanged(_MapViewerLeft.Sett.DrawingState == MapSettings.MapDrawingState.AtRest ? location : null);
+				if (_MapViewerLeft.Sett.DrawingState == MapSettings.MapDrawingState.AtRest /*&& location != null*/)
+					_MapViewerRight.CrosshairChanged(location); // TODO
 			};
 
 			_MapViewerRight.InitializeGeoModel(GeoData.GeoModel);
@@ -98,10 +105,8 @@ namespace MA41Viewer.UI
 			_MapViewerRight.OnMouseLocationPxChanged = location =>
 			{
 				if (!CrosshairToolStripMenuItem.Checked) return;
-				//DateTime now = DateTime.Now;
-				//if (_lastCrosshairMoved.AddMilliseconds(250).CompareTo(now) > 0) return;
-				//_lastCrosshairMoved = now;
-				_MapViewerLeft.CrosshairChanged(_MapViewerRight.Sett.DrawingState == MapSettings.MapDrawingState.AtRest ? location : null);
+				if (_MapViewerRight.Sett.DrawingState == MapSettings.MapDrawingState.AtRest /*&& location != null*/)
+					_MapViewerLeft.CrosshairChanged(location); // TODO
 			};
 
 			_zoomControl.SetColors(ItemListControl.BackgroundColorsBlue, ItemListControl.TextColorsBlue);
@@ -198,6 +203,12 @@ namespace MA41Viewer.UI
 		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void ToggleSecondViewToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ToggleSecondViewToolStripMenuItem.Checked = !ToggleSecondViewToolStripMenuItem.Checked;
+			FViewer_Resize(sender, e);
 		}
 
 		private void CrosshairToolStripMenuItem_Click(object sender, EventArgs e)
@@ -344,5 +355,6 @@ namespace MA41Viewer.UI
 			Process.Start("explorer.exe", $"/select, \"{filename}\"");
 		}
 		#endregion
+
 	}
 }

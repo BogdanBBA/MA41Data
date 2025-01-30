@@ -38,8 +38,9 @@ namespace MA41Viewer.UI
 			toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			debuggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			CrosshairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			drawingQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			lowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			mediumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,8 @@ namespace MA41Viewer.UI
 			_YearControlLeft = new src.UI.Controls.ItemListControl();
 			_YearControlRight = new src.UI.Controls.ItemListControl();
 			_zoomControl = new src.UI.Controls.ItemListControl();
-			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			ToggleSecondViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -127,32 +129,37 @@ namespace MA41Viewer.UI
 			// 
 			// debuggingToolStripMenuItem
 			// 
-			debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { CrosshairToolStripMenuItem, toolStripSeparator3, debugONOFFToolStripMenuItem, drawingQualityToolStripMenuItem, informationShownToolStripMenuItem });
+			debuggingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { ToggleSecondViewToolStripMenuItem, toolStripSeparator4, CrosshairToolStripMenuItem, toolStripSeparator3, debugONOFFToolStripMenuItem, drawingQualityToolStripMenuItem, informationShownToolStripMenuItem });
 			debuggingToolStripMenuItem.Name = "debuggingToolStripMenuItem";
 			debuggingToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
 			debuggingToolStripMenuItem.Text = "Settings";
-			// 
-			// debugONOFFToolStripMenuItem
-			// 
-			debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-			debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
-			debugONOFFToolStripMenuItem.Click += DebugONOFFToolStripMenuItem_Click;
 			// 
 			// CrosshairToolStripMenuItem
 			// 
 			CrosshairToolStripMenuItem.Checked = true;
 			CrosshairToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
 			CrosshairToolStripMenuItem.Name = "CrosshairToolStripMenuItem";
-			CrosshairToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			CrosshairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			CrosshairToolStripMenuItem.Text = "Crosshair";
 			CrosshairToolStripMenuItem.Click += CrosshairToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator3
+			// 
+			toolStripSeparator3.Name = "toolStripSeparator3";
+			toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+			// 
+			// debugONOFFToolStripMenuItem
+			// 
+			debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
+			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
+			debugONOFFToolStripMenuItem.Click += DebugONOFFToolStripMenuItem_Click;
 			// 
 			// drawingQualityToolStripMenuItem
 			// 
 			drawingQualityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem });
 			drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
@@ -180,7 +187,7 @@ namespace MA41Viewer.UI
 			// 
 			informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { mouseCursorInfoToolStripMenuItem, drawingQualityInfoToolStripMenuItem, memoryAllocationInfoToolStripMenuItem, detailedTileInfoToolStripMenuItem });
 			informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			informationShownToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+			informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
@@ -221,7 +228,7 @@ namespace MA41Viewer.UI
 			// viennaOverviewToolStripMenuItem
 			// 
 			viennaOverviewToolStripMenuItem.Name = "viennaOverviewToolStripMenuItem";
-			viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			viennaOverviewToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			viennaOverviewToolStripMenuItem.Tag = "0";
 			viennaOverviewToolStripMenuItem.Text = "Vienna overview";
 			viennaOverviewToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -229,7 +236,7 @@ namespace MA41Viewer.UI
 			// innereStadtToolStripMenuItem
 			// 
 			innereStadtToolStripMenuItem.Name = "innereStadtToolStripMenuItem";
-			innereStadtToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			innereStadtToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			innereStadtToolStripMenuItem.Tag = "1";
 			innereStadtToolStripMenuItem.Text = "Innere Stadt";
 			innereStadtToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -237,7 +244,7 @@ namespace MA41Viewer.UI
 			// hauptbahnhofToolStripMenuItem
 			// 
 			hauptbahnhofToolStripMenuItem.Name = "hauptbahnhofToolStripMenuItem";
-			hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			hauptbahnhofToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			hauptbahnhofToolStripMenuItem.Tag = "2";
 			hauptbahnhofToolStripMenuItem.Text = "Hauptbahnhof";
 			hauptbahnhofToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -245,7 +252,7 @@ namespace MA41Viewer.UI
 			// lambrechtgasseToolStripMenuItem
 			// 
 			lambrechtgasseToolStripMenuItem.Name = "lambrechtgasseToolStripMenuItem";
-			lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			lambrechtgasseToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			lambrechtgasseToolStripMenuItem.Tag = "3";
 			lambrechtgasseToolStripMenuItem.Text = "Lambrechtgasse";
 			lambrechtgasseToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -253,7 +260,7 @@ namespace MA41Viewer.UI
 			// rittingergasseToolStripMenuItem
 			// 
 			rittingergasseToolStripMenuItem.Name = "rittingergasseToolStripMenuItem";
-			rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			rittingergasseToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			rittingergasseToolStripMenuItem.Tag = "4";
 			rittingergasseToolStripMenuItem.Text = "Rittingergasse";
 			rittingergasseToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -261,7 +268,7 @@ namespace MA41Viewer.UI
 			// hietzingPenzingToolStripMenuItem
 			// 
 			hietzingPenzingToolStripMenuItem.Name = "hietzingPenzingToolStripMenuItem";
-			hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			hietzingPenzingToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			hietzingPenzingToolStripMenuItem.Tag = "5";
 			hietzingPenzingToolStripMenuItem.Text = "Hietzing/Penzing";
 			hietzingPenzingToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -269,7 +276,7 @@ namespace MA41Viewer.UI
 			// iKEANordToolStripMenuItem
 			// 
 			iKEANordToolStripMenuItem.Name = "iKEANordToolStripMenuItem";
-			iKEANordToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			iKEANordToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			iKEANordToolStripMenuItem.Tag = "6";
 			iKEANordToolStripMenuItem.Text = "IKEA Nord";
 			iKEANordToolStripMenuItem.Click += Location_ToolStripMenuItem_Click;
@@ -277,19 +284,19 @@ namespace MA41Viewer.UI
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+			toolStripSeparator1.Size = new System.Drawing.Size(170, 6);
 			// 
 			// DatasetInfoleftToolStripMenuItem
 			// 
 			DatasetInfoleftToolStripMenuItem.Name = "DatasetInfoleftToolStripMenuItem";
-			DatasetInfoleftToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			DatasetInfoleftToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			DatasetInfoleftToolStripMenuItem.Text = "Dataset info (left)";
 			DatasetInfoleftToolStripMenuItem.Click += DatasetInfoleftToolStripMenuItem_Click;
 			// 
 			// DatasetInforightToolStripMenuItem
 			// 
 			DatasetInforightToolStripMenuItem.Name = "DatasetInforightToolStripMenuItem";
-			DatasetInforightToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			DatasetInforightToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			DatasetInforightToolStripMenuItem.Text = "Dataset info (right)";
 			DatasetInforightToolStripMenuItem.Click += DatasetInforightToolStripMenuItem_Click;
 			// 
@@ -367,10 +374,17 @@ namespace MA41Viewer.UI
 			_zoomControl.TabIndex = 11;
 			_zoomControl.TextFont = new System.Drawing.Font("Bahnschrift Light Condensed", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
 			// 
-			// toolStripSeparator3
+			// toggleSecondViewToolStripMenuItem
 			// 
-			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(172, 6);
+			ToggleSecondViewToolStripMenuItem.Name = "toggleSecondViewToolStripMenuItem";
+			ToggleSecondViewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			ToggleSecondViewToolStripMenuItem.Text = "Toggle second view";
+			ToggleSecondViewToolStripMenuItem.Click += ToggleSecondViewToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator4
+			// 
+			toolStripSeparator4.Name = "toolStripSeparator4";
+			toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
 			// 
 			// FViewer
 			// 
@@ -440,5 +454,7 @@ namespace MA41Viewer.UI
 		private System.Windows.Forms.ToolStripMenuItem DatasetInforightToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+		private System.Windows.Forms.ToolStripMenuItem ToggleSecondViewToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 	}
 }
