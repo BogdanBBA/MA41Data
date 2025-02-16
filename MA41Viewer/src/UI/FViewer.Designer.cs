@@ -66,9 +66,9 @@ namespace MA41Viewer.UI
 			currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			currentViewsbothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			_MapViewerRight = new Controls.MapViewer();
-			_YearControlLeft = new src.UI.Controls.ItemListControl();
-			_YearControlRight = new src.UI.Controls.ItemListControl();
-			_zoomControl = new src.UI.Controls.ItemListControl();
+			_YearControlLeft = new UI.Controls.ItemListControl();
+			_YearControlRight = new UI.Controls.ItemListControl();
+			_zoomControl = new UI.Controls.ItemListControl();
 			ToggleSecondViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			menuStrip1.SuspendLayout();
@@ -344,7 +344,7 @@ namespace MA41Viewer.UI
 			_YearControlLeft.Location = new System.Drawing.Point(407, 85);
 			_YearControlLeft.Name = "_YearControlLeft";
 			_YearControlLeft.OnSelectedItemChanged = null;
-			_YearControlLeft.Orientation = src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			_YearControlLeft.Orientation = UI.Controls.ItemListControl.Orientations.Horizontal;
 			_YearControlLeft.SelectedItemIndex = 1;
 			_YearControlLeft.Size = new System.Drawing.Size(568, 129);
 			_YearControlLeft.TabIndex = 9;
@@ -356,7 +356,7 @@ namespace MA41Viewer.UI
 			_YearControlRight.Location = new System.Drawing.Point(631, 355);
 			_YearControlRight.Name = "_YearControlRight";
 			_YearControlRight.OnSelectedItemChanged = null;
-			_YearControlRight.Orientation = src.UI.Controls.ItemListControl.Orientations.Horizontal;
+			_YearControlRight.Orientation = UI.Controls.ItemListControl.Orientations.Horizontal;
 			_YearControlRight.SelectedItemIndex = 1;
 			_YearControlRight.Size = new System.Drawing.Size(568, 104);
 			_YearControlRight.TabIndex = 10;
@@ -368,7 +368,7 @@ namespace MA41Viewer.UI
 			_zoomControl.Location = new System.Drawing.Point(12, 307);
 			_zoomControl.Name = "_zoomControl";
 			_zoomControl.OnSelectedItemChanged = null;
-			_zoomControl.Orientation = src.UI.Controls.ItemListControl.Orientations.Vertical;
+			_zoomControl.Orientation = UI.Controls.ItemListControl.Orientations.Vertical;
 			_zoomControl.SelectedItemIndex = 2;
 			_zoomControl.Size = new System.Drawing.Size(430, 152);
 			_zoomControl.TabIndex = 11;
@@ -444,9 +444,9 @@ namespace MA41Viewer.UI
 		private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem detailedTileInfoToolStripMenuItem;
 		private Controls.MapViewer _MapViewerRight;
-		private src.UI.Controls.ItemListControl _YearControlLeft;
-		private src.UI.Controls.ItemListControl _YearControlRight;
-		private src.UI.Controls.ItemListControl _zoomControl;
+		private UI.Controls.ItemListControl _YearControlLeft;
+		private UI.Controls.ItemListControl _YearControlRight;
+		private UI.Controls.ItemListControl _zoomControl;
 		private System.Windows.Forms.ToolStripMenuItem currentViewsbothToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem CrosshairToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

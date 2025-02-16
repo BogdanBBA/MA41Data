@@ -5,6 +5,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "member", Target = "~F:MA41Viewer.src.UI.Controls.ItemListControl.BackgroundColorsRed")]
-[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "member", Target = "~F:MA41Viewer.src.UI.Controls.ItemListControl.TextColorsRed")]
+[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "member", Target = "~F:MA41Viewer.UI.Controls.ItemListControl.BackgroundColorsRed")]
+[assembly: SuppressMessage("Style", "IDE0090:Use 'new(...)'", Justification = "<Pending>", Scope = "member", Target = "~F:MA41Viewer.UI.Controls.ItemListControl.TextColorsRed")]
 [assembly: SuppressMessage("Performance", "SYSLIB1045:Convert to 'GeneratedRegexAttribute'.", Justification = "<Pending>", Scope = "member", Target = "~M:MA41Viewer.Data.GeoData.Initialize~System.String")]

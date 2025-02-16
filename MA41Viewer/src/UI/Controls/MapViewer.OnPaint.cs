@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Text;
+using static MA41Viewer.UI.FExport;
 
 namespace MA41Viewer.UI.Controls
 {
@@ -166,7 +167,7 @@ namespace MA41Viewer.UI.Controls
 			}
 		}
 
-		public Bitmap GenerateAllYearsBitmap(uint[] years)
+		public Bitmap GenerateAllYearsBitmap(uint[] years, Action<TaskProgress> reportProgress)
 		{
 			years = years.Where(year => year < 2019 || year > 2020).ToArray(); // meh
 			bool vertical = Size.Width >= Size.Height;
@@ -177,8 +178,10 @@ namespace MA41Viewer.UI.Controls
 			Bitmap result = new(size.Width, size.Height);
 			using (Graphics g = Graphics.FromImage(result))
 			{
-				foreach (uint year in years)
+				for (int iYear = 0; iYear < years.Length; iYear++)
 				{
+					uint year = years[iYear];
+					reportProgress(new TaskProgress($"Exporting map {iYear + 1} of {years.Length} (year {year})", iYear, years.Length));
 					Sett.Year = year;
 					Bitmap frame = GenerateBitmap(out DebugInfoWrapper _);
 					DrawYearOnExportBitmap(frame, year);

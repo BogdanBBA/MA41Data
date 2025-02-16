@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace MA41Viewer.src.UI.Controls
+namespace MA41Viewer.UI.Controls
 {
 	public partial class ItemListControl : UserControl
 	{

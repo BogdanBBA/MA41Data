@@ -1,5 +1,5 @@
 ﻿
-namespace MA41Viewer.src.UI.Controls
+namespace MA41Viewer.UI.Controls
 {
 	partial class ItemListControl
 	{

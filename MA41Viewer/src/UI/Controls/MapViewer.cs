@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static MA41Viewer.UI.FExport;
 
 namespace MA41Viewer.UI.Controls
 {
@@ -143,19 +144,24 @@ namespace MA41Viewer.UI.Controls
 		}
 		#endregion
 
-		public void SaveCurrentViewToFile(string filename)
+		public void SaveCurrentViewToFile(string filename, Action<TaskProgress> reportProgress)
 		{
+			reportProgress(new TaskProgress("Exporting map...", 0, 1));
 			Bitmap bmp = GenerateBitmap(out DebugInfoWrapper _);
 			bmp.Save(filename);
 		}
 
-		public void SaveCurrentViewsToFile(MapViewer otherMapViewer, string filename)
+		public void SaveCurrentViewsToFile(MapViewer otherMapViewer, string filename, Action<TaskProgress> reportProgress)
 		{
+			reportProgress(new TaskProgress("Exporting maps...", 0, 2));
 			Bitmap bmpA = GenerateBitmap(out DebugInfoWrapper _);
-			Bitmap bmpB = otherMapViewer.GenerateBitmap(out DebugInfoWrapper _);
 			DrawYearOnExportBitmap(bmpA, Sett.Year.Value);
+
+			reportProgress(new TaskProgress("Exporting maps...", 1, 2));
+			Bitmap bmpB = otherMapViewer.GenerateBitmap(out DebugInfoWrapper _);
 			DrawYearOnExportBitmap(bmpB, otherMapViewer.Sett.Year.Value);
 
+			reportProgress(new TaskProgress("Exporting maps...", 2, 2));
 			using Bitmap bmpResult = new(bmpA.Width + bmpB.Width, bmpA.Height);
 			using Graphics g = Graphics.FromImage(bmpResult);
 			g.CompositingMode = Sett.CurrentQualitySettings.CompositingModeValue;
@@ -169,13 +175,13 @@ namespace MA41Viewer.UI.Controls
 			bmpResult.Save(filename);
 		}
 
-		public void SaveAllYearsToFile(string filename)
+		public void SaveAllYearsToFile(string filename, Action<TaskProgress> reportProgress)
 		{
 			Sett.SaveState();
 			uint[] years = [1938, 1956, 1961, 1971, 1981, 1992, 2014, 2024];
 			if (years.Any(year => !GeoModel.Years.Contains(year)))
 				years = GeoModel.Years;
-			Bitmap bmp = GenerateAllYearsBitmap(years);
+			Bitmap bmp = GenerateAllYearsBitmap(years, reportProgress);
 			bmp.Save(filename);
 			Sett.RestoreState();
 		}

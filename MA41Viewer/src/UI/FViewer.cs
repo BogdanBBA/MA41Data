@@ -1,15 +1,12 @@
 ﻿using MA41.Commons;
 using MA41Viewer.Data;
-using MA41Viewer.src.UI.Controls;
 using MA41Viewer.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MA41Viewer.UI
 {
@@ -336,23 +333,17 @@ namespace MA41Viewer.UI
 
 		private void CurrentViewToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
-			_MapViewerLeft.SaveCurrentViewToFile(filename);
-			Process.Start("explorer.exe", $"/select, \"{filename}\"");
+			new FExport().Export_OneView_OneYear(this, _MapViewerLeft, $@"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png");
 		}
 
 		private void CurrentViewallYearsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
-			_MapViewerLeft.SaveAllYearsToFile(filename);
-			Process.Start("explorer.exe", $"/select, \"{filename}\"");
+			new FExport().Export_OneView_AllYears(this, _MapViewerLeft, @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png");
 		}
 
 		private void CurrentViewsbothToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			string filename = @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png";
-			_MapViewerLeft.SaveCurrentViewsToFile(_MapViewerRight, filename);
-			Process.Start("explorer.exe", $"/select, \"{filename}\"");
+			new FExport().Export_TwoViews_OneYear(this, _MapViewerLeft, _MapViewerRight, @$"{Paths.EXPORTS_FOLDER}\{DateTime.Now:yyyyMMdd_HHmmss}.png");
 		}
 		#endregion
 
