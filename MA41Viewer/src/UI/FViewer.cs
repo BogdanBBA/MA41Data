@@ -85,10 +85,14 @@ namespace MA41Viewer.UI
 			};
 			_MapViewerLeft.OnMouseLocationPxChanged = location =>
 			{
-				if (!_MapViewerRight.Visible) return; // check only here
+				if (!_MapViewerRight.Visible) return; // check only here!
 				if (!CrosshairToolStripMenuItem.Checked) return;
-				if (_MapViewerLeft.Sett.DrawingState == MapSettings.MapDrawingState.AtRest /*&& location != null*/)
-					_MapViewerRight.CrosshairChanged(location); // TODO
+				if (_MapViewerLeft.Sett.DrawingState == MapSettings.MapDrawingState.AtRest)
+					_MapViewerRight.CrosshairChanged(location);
+			};
+			_MapViewerLeft.OnScrollWithModifierKey = (key, forwards) =>
+			{
+				_YearControlLeft.SelectedItemIndex += forwards ? 1 : -1;
 			};
 
 			_MapViewerRight.InitializeGeoModel(GeoData.GeoModel);
@@ -102,8 +106,12 @@ namespace MA41Viewer.UI
 			_MapViewerRight.OnMouseLocationPxChanged = location =>
 			{
 				if (!CrosshairToolStripMenuItem.Checked) return;
-				if (_MapViewerRight.Sett.DrawingState == MapSettings.MapDrawingState.AtRest /*&& location != null*/)
-					_MapViewerLeft.CrosshairChanged(location); // TODO
+				if (_MapViewerRight.Sett.DrawingState == MapSettings.MapDrawingState.AtRest)
+					_MapViewerLeft.CrosshairChanged(location);
+			};
+			_MapViewerRight.OnScrollWithModifierKey = (key, forwards) =>
+			{
+				_YearControlRight.SelectedItemIndex += forwards ? 1 : -1;
 			};
 
 			_zoomControl.SetColors(ItemListControl.BackgroundColorsBlue, ItemListControl.TextColorsBlue);
@@ -187,7 +195,7 @@ namespace MA41Viewer.UI
 			{
 				Caption = $"About MA41Data Viewer",
 				Heading = "by BogdanBBA",
-				Text = $"December 2021 - January 2022{Environment.NewLine}October 2022{Environment.NewLine}January 2025",
+				Text = $"December 2021 - January 2022{Environment.NewLine}October 2022{Environment.NewLine}January - February 2025",
 				Buttons = { new("Awesome!") }
 			}); // https://www.wien.gv.at/stadtentwicklung/stadtvermessung/service/luftarchiv.html
 		}
@@ -236,7 +244,7 @@ namespace MA41Viewer.UI
 			ShowDatasetInfo(_MapViewerRight.Sett.Year.GetValueOrDefault(0));
 		}
 
-		private void ShowDatasetInfo(uint year)
+		private static void ShowDatasetInfo(uint year)
 		{
 			Datasets.DatasetInfo data = Datasets.GetInfoByYear(year);
 

@@ -38,6 +38,8 @@ namespace MA41Viewer.UI
 			toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			debuggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			ToggleSecondViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			CrosshairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			debugONOFFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,11 +68,9 @@ namespace MA41Viewer.UI
 			currentViewallYearsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			currentViewsbothToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			_MapViewerRight = new Controls.MapViewer();
-			_YearControlLeft = new UI.Controls.ItemListControl();
-			_YearControlRight = new UI.Controls.ItemListControl();
-			_zoomControl = new UI.Controls.ItemListControl();
-			ToggleSecondViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			_YearControlLeft = new Controls.ItemListControl();
+			_YearControlRight = new Controls.ItemListControl();
+			_zoomControl = new Controls.ItemListControl();
 			menuStrip1.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -81,6 +81,7 @@ namespace MA41Viewer.UI
 			_MapViewerLeft.Name = "_MapViewerLeft";
 			_MapViewerLeft.OnMapBoundsChanged = null;
 			_MapViewerLeft.OnMouseLocationPxChanged = null;
+			_MapViewerLeft.OnScrollWithModifierKey = null;
 			_MapViewerLeft.Size = new System.Drawing.Size(716, 251);
 			_MapViewerLeft.TabIndex = 0;
 			// 
@@ -134,24 +135,34 @@ namespace MA41Viewer.UI
 			debuggingToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
 			debuggingToolStripMenuItem.Text = "Settings";
 			// 
+			// ToggleSecondViewToolStripMenuItem
+			// 
+			ToggleSecondViewToolStripMenuItem.Name = "ToggleSecondViewToolStripMenuItem";
+			ToggleSecondViewToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+			ToggleSecondViewToolStripMenuItem.Text = "Toggle second view";
+			ToggleSecondViewToolStripMenuItem.Click += ToggleSecondViewToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator4
+			// 
+			toolStripSeparator4.Name = "toolStripSeparator4";
+			toolStripSeparator4.Size = new System.Drawing.Size(232, 6);
+			// 
 			// CrosshairToolStripMenuItem
 			// 
-			CrosshairToolStripMenuItem.Checked = true;
-			CrosshairToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
 			CrosshairToolStripMenuItem.Name = "CrosshairToolStripMenuItem";
-			CrosshairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			CrosshairToolStripMenuItem.Text = "Crosshair";
+			CrosshairToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+			CrosshairToolStripMenuItem.Text = "Toggle crosshair on other view";
 			CrosshairToolStripMenuItem.Click += CrosshairToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+			toolStripSeparator3.Size = new System.Drawing.Size(232, 6);
 			// 
 			// debugONOFFToolStripMenuItem
 			// 
 			debugONOFFToolStripMenuItem.Name = "debugONOFFToolStripMenuItem";
-			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			debugONOFFToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
 			debugONOFFToolStripMenuItem.Text = "Debug: ON/OF";
 			debugONOFFToolStripMenuItem.Click += DebugONOFFToolStripMenuItem_Click;
 			// 
@@ -159,7 +170,7 @@ namespace MA41Viewer.UI
 			// 
 			drawingQualityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lowToolStripMenuItem, mediumToolStripMenuItem, highToolStripMenuItem });
 			drawingQualityToolStripMenuItem.Name = "drawingQualityToolStripMenuItem";
-			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			drawingQualityToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
 			drawingQualityToolStripMenuItem.Text = "Drawing quality";
 			// 
 			// lowToolStripMenuItem
@@ -187,7 +198,7 @@ namespace MA41Viewer.UI
 			// 
 			informationShownToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { mouseCursorInfoToolStripMenuItem, drawingQualityInfoToolStripMenuItem, memoryAllocationInfoToolStripMenuItem, detailedTileInfoToolStripMenuItem });
 			informationShownToolStripMenuItem.Name = "informationShownToolStripMenuItem";
-			informationShownToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			informationShownToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
 			informationShownToolStripMenuItem.Text = "Information shown";
 			// 
 			// mouseCursorInfoToolStripMenuItem
@@ -335,6 +346,7 @@ namespace MA41Viewer.UI
 			_MapViewerRight.Name = "_MapViewerRight";
 			_MapViewerRight.OnMapBoundsChanged = null;
 			_MapViewerRight.OnMouseLocationPxChanged = null;
+			_MapViewerRight.OnScrollWithModifierKey = null;
 			_MapViewerRight.Size = new System.Drawing.Size(716, 251);
 			_MapViewerRight.TabIndex = 8;
 			// 
@@ -373,18 +385,6 @@ namespace MA41Viewer.UI
 			_zoomControl.Size = new System.Drawing.Size(430, 152);
 			_zoomControl.TabIndex = 11;
 			_zoomControl.TextFont = new System.Drawing.Font("Bahnschrift Light Condensed", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-			// 
-			// toggleSecondViewToolStripMenuItem
-			// 
-			ToggleSecondViewToolStripMenuItem.Name = "toggleSecondViewToolStripMenuItem";
-			ToggleSecondViewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			ToggleSecondViewToolStripMenuItem.Text = "Toggle second view";
-			ToggleSecondViewToolStripMenuItem.Click += ToggleSecondViewToolStripMenuItem_Click;
-			// 
-			// toolStripSeparator4
-			// 
-			toolStripSeparator4.Name = "toolStripSeparator4";
-			toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
 			// 
 			// FViewer
 			// 

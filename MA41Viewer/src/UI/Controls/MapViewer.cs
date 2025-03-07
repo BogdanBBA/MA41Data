@@ -18,6 +18,7 @@ namespace MA41Viewer.UI.Controls
 		public bool DebugMode { get; set; } = false;
 		public Action<uint, PointF> OnMapBoundsChanged { get; set; }
 		public Action<Point?> OnMouseLocationPxChanged { get; set; }
+		public Action<Keys, bool> OnScrollWithModifierKey { get; set; }
 		protected GeoModel GeoModel { get; private set; }
 		public MapSettings Sett { get; protected set; }
 		protected ThumbnailDictionary ThumbDictionary { get; private set; }
@@ -118,15 +119,27 @@ namespace MA41Viewer.UI.Controls
 			//OnMouseLocationPxChanged?.Invoke(e.Location);
 		}
 
+		private static bool ModifierKeyPressed(out Keys first, params Keys[] keys)
+		{
+			first = keys.FirstOrDefault(key => (ModifierKeys & key) == key, Keys.None);
+			return first != Keys.None;
+		}
+
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
 			CancellationTokenSource cancellationTokenSource = new();
 			CancellationToken token = cancellationTokenSource.Token;
 
-			if (Sett.DrawingState == MapSettings.MapDrawingState.ZoomEvent)
+			if (ModifierKeyPressed(out Keys key, Keys.Control, Keys.Shift, Keys.Alt))
 			{
 				cancellationTokenSource.Cancel();
+				OnScrollWithModifierKey?.Invoke(key, e.Delta > 0);
+				return;
 			}
+
+			if (Sett.DrawingState == MapSettings.MapDrawingState.ZoomEvent)
+				cancellationTokenSource.Cancel();
+
 			Sett.DrawingState = MapSettings.MapDrawingState.ZoomEvent;
 			Sett.ZoomLevel = (uint)Math.Max(0, Math.Min(MapSettings.ZOOMS.Length - 1, Sett.ZoomLevel + (+e.Delta / SystemInformation.MouseWheelScrollDelta)));
 			Sett.ResetMapAfterZoom(e.Location);

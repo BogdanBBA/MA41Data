@@ -26,7 +26,19 @@ namespace MA41Viewer.UI.Controls
 
 		public Orientations Orientation { get; set; } = Orientations.Horizontal;
 		public List<StringWithTag<uint>> Items { get; set; } = [new StringWithTag<uint>(1111, "ABCD"), new StringWithTag<uint>(2222, "WXYZ"), new StringWithTag<uint>(1234, "1234")];
-		public int SelectedItemIndex { get; set; } = 1;
+		private int _selectedItemIndex = 0;
+		public int SelectedItemIndex
+		{
+			get => _selectedItemIndex;
+			set
+			{
+				if (value < 0 || value >= Items.Count)
+					return;
+				_selectedItemIndex = value;
+				OnSelectedItemChanged?.Invoke(Items[_selectedItemIndex].Tag);
+				Invalidate();
+			}
+		}
 		public Font TextFont { get; set; } = DefaultTextFont;
 		public Font DescriptionFont { get; set; } = DefaultDescriptionFont;
 		public ColorSetBySelected BackgroundColors { get; private set; }
@@ -90,6 +102,12 @@ namespace MA41Viewer.UI.Controls
 
 			if (SelectedItemIndex >= 0 && SelectedItemIndex < Items.Count)
 				OnSelectedItemChanged?.Invoke(Items[SelectedItemIndex].Tag);
+		}
+
+		protected override void OnMouseWheel(MouseEventArgs e)
+		{
+			base.OnMouseWheel(e);
+			SelectedItemIndex += e.Delta > 0 ? 1 : -1;
 		}
 
 		protected Font GetFontToUse(Graphics g, Font font, Size cellSize, int hPadding, int vPadding)
